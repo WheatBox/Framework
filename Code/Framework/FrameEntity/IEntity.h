@@ -16,11 +16,12 @@ namespace Frame {
 
 	public:
 
-		IEntity() = delete;
-		IEntity(int id)
-			: m_id(id)
-		{}
-		virtual ~IEntity() {};
+		IEntity() = default;
+		virtual ~IEntity() = default;
+
+		void __Initialize(EntityId id) {
+			m_id = id;
+		}
 
 		EntityId GetId() const { return m_id; }
 		
@@ -57,7 +58,7 @@ namespace Frame {
 		// 数值越小，离镜头越近，渲染越晚
 		// Mainly used to represent occlusion relationships (rendering order)
 		// The smaller the value, the closer it is to the camera, and the later it renders
-		int z = 0;
+		int m_zDepth = 0;
 
 	};
 

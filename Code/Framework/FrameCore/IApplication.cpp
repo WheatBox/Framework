@@ -32,10 +32,14 @@ namespace Frame {
 				ProcessSdlEvent(sdlEvent);
 			}
 
+			gRenderer->RenderBegin();
+
 			MainLoopPriority();
 			/* ------------- Main Loop ------------- */
 			
 			gEntitySystem->ProcessUpdateEvent();
+
+			gEntitySystem->ProcessRenderEvent();
 			
 			/* ------------------------------------- */
 			MainLoopLast();

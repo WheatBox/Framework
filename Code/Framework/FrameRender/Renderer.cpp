@@ -14,6 +14,8 @@ namespace Frame {
 	}
 
 	void CRenderer::RenderBegin() {
+		SetDrawColorAlpha(m_backgroundColor.r, m_backgroundColor.g, m_backgroundColor.b, 255);
+		SDL_RenderClear(m_sdlRenderer);
 	}
 
 	void CRenderer::RenderEnd() {

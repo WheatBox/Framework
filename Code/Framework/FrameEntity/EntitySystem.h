@@ -12,7 +12,7 @@ namespace Frame {
 
 	public:
 		CEntitySystem();
-		virtual ~CEntitySystem() = default;
+		virtual ~CEntitySystem();
 
 	private:
 		EntitiesMap m_entities {};
@@ -26,11 +26,13 @@ namespace Frame {
 		}
 		const EntitiesMap & GetEntities() const { return m_entities; }
 
-		template<typename EntT>
-		IEntity * SpawnEntity() {
-			IEntity * p = new EntT { m_idNext };
+		template<typename EntityType>
+		EntityType * SpawnEntity() {
+			EntityType * p = new EntityType {};
 			if(p != nullptr) {
-				HandleEntityEventFlags(p);
+				HandleEntityEventFlags(static_cast<IEntity *>(p));
+				
+				p->__Initialize(m_idNext);
 				m_entities[m_idNext++] = p;
 			}
 			return p;
@@ -47,7 +49,7 @@ namespace Frame {
 		void HandleEntityEventFlags(IEntity * pEntity);
 
 		void ProcessUpdateEvent();
-		// void RenderEvent();
+		void ProcessRenderEvent();
 
 	private:
 		CBaseEntityEventProcessor * m_pEventProcessors[EntityEvent::EFlagIndex::eEFI__END];

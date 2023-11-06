@@ -23,6 +23,9 @@ namespace Frame {
 		Uint8 m_alpha = 255;
 
 	public:
+		ColorRGB m_backgroundColor { 0, 0, 0 };
+
+	public:
 		enum class EBlendMode {
 
 			// 从 SDL_blendmode.h 里面复制过来的（包括注释）

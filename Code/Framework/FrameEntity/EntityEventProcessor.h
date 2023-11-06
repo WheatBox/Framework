@@ -5,7 +5,6 @@
 #include <initializer_list>
 #include <stdint.h>
 #include <unordered_set>
-#include <unordered_map>
 
 namespace Frame {
 
@@ -38,7 +37,7 @@ namespace Frame {
 		virtual void Remove(IEntity * pEntity) = 0;
 
 	};
-	
+
 	// 没有排序
 	// No sorting
 	class CEntityEventProcessor final : public CBaseEntityEventProcessor {
@@ -55,11 +54,26 @@ namespace Frame {
 		virtual void Remove(IEntity * pEntity) override;
 	};
 
+	// 在 Join() 时，立刻生效
+	// Effective immediately, when Join().
+	class CEntityEventProcessorImmediately final : public CBaseEntityEventProcessor {
+	public:
+		CEntityEventProcessorImmediately(EntityEvent::EFlag flag)
+			: CBaseEntityEventProcessor(flag)
+		{}
+
+		virtual void Join(IEntity * pEntity) override;
+
+	private:
+		virtual void Process() override {}
+		virtual void Remove(IEntity * pEntity) override { pEntity; }
+	};
+
 	// 根据 IEntity::z 进行排序
 	// Sort according to IEntity::z
 	class CEntityEventProcessorZSort final : public CBaseEntityEventProcessor {
 	private:
-		std::unordered_map<int, IEntity *> m_map;
+		std::unordered_set<IEntity *> m_set;
 
 	public:
 		CEntityEventProcessorZSort(EntityEvent::EFlag flag)
