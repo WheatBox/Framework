@@ -1,0 +1,2 @@
+﻿#include <FrameCore/Log.h>
+
