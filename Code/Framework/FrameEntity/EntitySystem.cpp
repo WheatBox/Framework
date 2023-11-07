@@ -21,15 +21,24 @@ namespace Frame {
 		}
 	}
 
-	void CEntitySystem::HandleEntityEventFlags(IEntity * pEntity) {
-		EntityEvent::Flags flags = pEntity->GetEventFlags();
-		for(Uint8 i = 0; flags && i < EntityEvent::EFlagIndex::eEFI__END; i++) {
-			if(flags & 1) {
-				m_pEventProcessors[i]->Join(pEntity);
-			}
-			flags >>= 1;
-		}
+#define __ComponentDoSomethingAboutProcessors(__doWhat) \
+	EntityEvent::Flags flags = pComponent->GetEventFlags(); \
+	for(Uint8 i = 0; flags && i < EntityEvent::EFlagIndex::eEFI__END; i++) { \
+		if(flags & 1) { \
+			m_pEventProcessors[i]->__doWhat(pComponent); \
+		} \
+		flags >>= 1; \
 	}
+
+	void CEntitySystem::ComponentAddIntoProcessors(IEntityComponent * pComponent) {
+		__ComponentDoSomethingAboutProcessors(Add);
+	}
+
+	void CEntitySystem::ComponentRemoveFromProcessors(IEntityComponent * pComponent) {
+		__ComponentDoSomethingAboutProcessors(Remove);
+	}
+
+#undef __ComponentDoSomethingAboutProcessors
 
 	void CEntitySystem::ProcessUpdateEvent() {
 		// TODO - 帧耗时

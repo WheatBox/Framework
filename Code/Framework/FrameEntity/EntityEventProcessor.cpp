@@ -1,6 +1,7 @@
 ﻿#include <FrameEntity/EntityEventProcessor.h>
 
 #include <FrameEntity/IEntity.h>
+#include <FrameEntity/IEntityComponent.h>
 
 #include <vector>
 #include <algorithm>
@@ -13,39 +14,39 @@ namespace Frame {
 		}
 	}
 	
-	void CEntityEventProcessor::Join(IEntity * pEntity) {
-		m_set.insert(pEntity);
+	void CEntityEventProcessor::Add(IEntityComponent * pComponent) {
+		m_set.insert(pComponent);
 	}
 
-	void CEntityEventProcessor::Remove(IEntity * pEntity) {
-		auto it = m_set.find(pEntity);
+	void CEntityEventProcessor::Remove(IEntityComponent * pComponent) {
+		auto it = m_set.find(pComponent);
 		if(it != m_set.end()) {
 			m_set.erase(it);
 		}
 	}
 
-	void CEntityEventProcessorImmediately::Join(IEntity * pEntity) {
-		pEntity->ProcessEvent(m_event);
+	void CEntityEventProcessorImmediately::Add(IEntityComponent * pComponent) {
+		pComponent->ProcessEvent(m_event);
 	}
 
 	void CEntityEventProcessorZSort::Process() {
-		std::vector<IEntity *> sortedVector { m_set.begin(), m_set.end() };
+		std::vector<IEntityComponent *> sortedVector { m_set.begin(), m_set.end() };
 		std::sort(sortedVector.begin(), sortedVector.end(),
-			[](IEntity * a, IEntity * b) {
-				return a->m_zDepth - b->m_zDepth;
+			[](IEntityComponent * a, IEntityComponent * b) {
+				return a->GetEntity()->m_zDepth - b->GetEntity()->m_zDepth;
 			}
 		);
-		for(IEntity * pEntity : sortedVector) {
-			pEntity->ProcessEvent(m_event);
+		for(IEntityComponent * pComponent : sortedVector) {
+			pComponent->ProcessEvent(m_event);
 		}
 	}
 
-	void CEntityEventProcessorZSort::Join(IEntity * pEntity) {
-		m_set.insert(pEntity);
+	void CEntityEventProcessorZSort::Add(IEntityComponent * pComponent) {
+		m_set.insert(pComponent);
 	}
 
-	void CEntityEventProcessorZSort::Remove(IEntity * pEntity) {
-		auto it = m_set.find(pEntity);
+	void CEntityEventProcessorZSort::Remove(IEntityComponent * pComponent) {
+		auto it = m_set.find(pComponent);
 		if(it != m_set.end()) {
 			m_set.erase(it);
 		}

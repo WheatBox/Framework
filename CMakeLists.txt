@@ -119,7 +119,8 @@ endmacro(AddFiles)
 
 AddFiles(CODE_FILES
 	Code
-	Code/Entities
+	Code/Diary
+	Code/Diary/Components
 	Code/Framework/FrameCore
 	Code/Framework/FrameEntity
 	Code/Framework/FrameMath

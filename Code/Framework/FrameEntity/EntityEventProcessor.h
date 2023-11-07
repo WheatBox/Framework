@@ -2,13 +2,13 @@
 
 #include <FrameEntity/EntityEvent.h>
 
-#include <initializer_list>
 #include <stdint.h>
+#include <initializer_list>
 #include <unordered_set>
 
 namespace Frame {
 
-	struct IEntity;
+	struct IEntityComponent;
 
 	class CBaseEntityEventProcessor {
 	protected:
@@ -33,8 +33,8 @@ namespace Frame {
 		}
 
 		virtual void Process() = 0;
-		virtual void Join(IEntity * pEntity) = 0;
-		virtual void Remove(IEntity * pEntity) = 0;
+		virtual void Add(IEntityComponent * pComponent) = 0;
+		virtual void Remove(IEntityComponent * pComponent) = 0;
 
 	};
 
@@ -42,7 +42,7 @@ namespace Frame {
 	// No sorting
 	class CEntityEventProcessor final : public CBaseEntityEventProcessor {
 	private:
-		std::unordered_set<IEntity *> m_set;
+		std::unordered_set<IEntityComponent *> m_set;
 
 	public:
 		CEntityEventProcessor(EntityEvent::EFlag flag)
@@ -50,8 +50,8 @@ namespace Frame {
 		{}
 
 		virtual void Process() override;
-		virtual void Join(IEntity * pEntity) override;
-		virtual void Remove(IEntity * pEntity) override;
+		virtual void Add(IEntityComponent * pComponent) override;
+		virtual void Remove(IEntityComponent * pComponent) override;
 	};
 
 	// 在 Join() 时，立刻生效
@@ -62,18 +62,18 @@ namespace Frame {
 			: CBaseEntityEventProcessor(flag)
 		{}
 
-		virtual void Join(IEntity * pEntity) override;
+		virtual void Add(IEntityComponent * pComponent) override;
 
 	private:
 		virtual void Process() override {}
-		virtual void Remove(IEntity * pEntity) override { pEntity; }
+		virtual void Remove(IEntityComponent * pComponent) override { pComponent; }
 	};
 
 	// 根据 IEntity::z 进行排序
 	// Sort according to IEntity::z
 	class CEntityEventProcessorZSort final : public CBaseEntityEventProcessor {
 	private:
-		std::unordered_set<IEntity *> m_set;
+		std::unordered_set<IEntityComponent *> m_set;
 
 	public:
 		CEntityEventProcessorZSort(EntityEvent::EFlag flag)
@@ -81,8 +81,8 @@ namespace Frame {
 		{}
 
 		virtual void Process() override;
-		virtual void Join(IEntity * pEntity) override;
-		virtual void Remove(IEntity * pEntity) override;
+		virtual void Add(IEntityComponent * pComponent) override;
+		virtual void Remove(IEntityComponent * pComponent) override;
 	};
 
 }

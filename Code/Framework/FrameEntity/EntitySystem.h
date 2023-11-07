@@ -1,6 +1,9 @@
 ﻿#pragma once
 
 #include <FrameEntity/IEntity.h>
+#include <FrameEntity/IEntityComponent.h>
+
+#include <unordered_map>
 
 namespace Frame {
 
@@ -26,13 +29,9 @@ namespace Frame {
 		}
 		const EntitiesMap & GetEntities() const { return m_entities; }
 
-		template<typename EntityType>
-		EntityType * SpawnEntity() {
-			EntityType * p = new EntityType {};
+		IEntity * SpawnEntity() {
+			IEntity * p = new IEntity { m_idNext };
 			if(p != nullptr) {
-				HandleEntityEventFlags(static_cast<IEntity *>(p));
-				
-				p->__Initialize(m_idNext);
 				m_entities[m_idNext++] = p;
 			}
 			return p;
@@ -46,7 +45,8 @@ namespace Frame {
 			}
 		}
 
-		void HandleEntityEventFlags(IEntity * pEntity);
+		void ComponentAddIntoProcessors(IEntityComponent * pComponent);
+		void ComponentRemoveFromProcessors(IEntityComponent * pComponent);
 
 		void ProcessUpdateEvent();
 		void ProcessRenderEvent();

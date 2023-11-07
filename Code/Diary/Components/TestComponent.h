@@ -1,8 +1,8 @@
 ﻿#pragma once
 
-#include <FrameEntity/IEntity.h>
+#include <FrameEntity/IEntityComponent.h>
 
-class CTestEntity final : public Frame::IEntity {
+class CTestComponent final : public Frame::IEntityComponent {
 
 public:
 

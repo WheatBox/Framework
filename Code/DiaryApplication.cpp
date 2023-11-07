@@ -6,7 +6,7 @@
 #include <FrameEntity/EntitySystem.h>
 #include <FrameRender/Renderer.h>
 
-#include "Entities/TestEntity.h"
+#include "Diary/Components/TestComponent.h"
 
 void CDiaryApplication::ProcessSdlEvent(SDL_Event & sdlEvent) {
 	switch(sdlEvent.type) {
@@ -20,9 +20,13 @@ void CDiaryApplication::MainLoopPriority() {
 	static bool b = false;
 	if(!b) {
 		b = true;
-		Frame::IEntity * pEntity = Frame::gEntitySystem->SpawnEntity<CTestEntity>();
-		pEntity->m_position = { 400, 300 };
-		pEntity->m_size = { 200, 150 };
+		
+		if(Frame::IEntity * pEntity = Frame::gEntitySystem->SpawnEntity()) {
+			pEntity->m_position = { 400, 300 };
+			pEntity->m_size = { 200, 150 };
+			
+			pEntity->CreateComponent<CTestComponent>();
+		}
 		
 		Frame::gRenderer->m_backgroundColor = 0x00004F;
 	}

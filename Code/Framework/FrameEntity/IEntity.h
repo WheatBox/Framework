@@ -1,51 +1,27 @@
 ﻿#pragma once
 
+#include <FrameCore/Globals.h>
 #include <FrameMath/Vector2.h>
-#include <FrameEntity/EntityEvent.h>
 
-#include <unordered_map>
+#include <unordered_set>
 
 namespace Frame {
 	
 	typedef unsigned int EntityId;
 
+	struct IEntityComponent;
+
 	struct IEntity {
+		
+		const EntityId m_id;
 
-	private:
-		EntityId m_id;
-
-	public:
-
-		IEntity() = default;
+		IEntity() = delete;
+		IEntity(EntityId id)
+			: m_id(id)
+		{}
 		virtual ~IEntity() = default;
 
-		void __Initialize(EntityId id) {
-			m_id = id;
-		}
-
 		EntityId GetId() const { return m_id; }
-		
-		// Example:
-		//	virtual EntityEvent::Flags GetEventFlags() override {
-		//		return EntityEvent::EFlag::Nothing
-		//			| EntityEvent::EFlag::Initialize
-		//			| EntityEvent::EFlag::Update
-		//			...;
-		//	}
-		virtual EntityEvent::Flags GetEventFlags() = 0;
-
-		// Example:
-		//	virtual void ProcessEvent(const EntityEvent::SEvent & event) override {
-		//		switch(event.flag) {
-		//		case EntityEvent::EFlag::Nothing:
-		//		{
-		//			// 没啥，这只是一个样例而已
-		//			// Nothing, this is just a example
-		//		}
-		//		break;
-		//		}
-		//	}
-		virtual void ProcessEvent(const EntityEvent::SEvent & event) = 0;
 
 		Vec2 m_position { 0.f };
 		Vec2 m_size { 0.f };
@@ -59,6 +35,37 @@ namespace Frame {
 		// Mainly used to represent occlusion relationships (rendering order)
 		// The smaller the value, the closer it is to the camera, and the later it renders
 		int m_zDepth = 0;
+
+		template<typename ComponentType>
+		ComponentType * CreateComponent() {
+			ComponentType * pComponent = new ComponentType {};
+			InitializeComponent(pComponent);
+			ComponentAddIntoProcessors(pComponent);
+			m_components.insert(pComponent);
+			return pComponent;
+		}
+
+		template<typename ComponentType>
+		ComponentType * GetComponent() {
+			// TODO - Reflection
+			return nullptr;
+		}
+
+		template<typename ComponentType>
+		ComponentType * GetOrCreateComponent() {
+			if(ComponentType * pComponent = GetComponent<ComponentType>()) {
+				return pComponent;
+			}
+			return CreateComponent<ComponentType>();
+		}
+
+		void RemoveComponent(IEntityComponent * pComponent);
+
+	private:
+		std::unordered_set<IEntityComponent *> m_components;
+		
+		void InitializeComponent(IEntityComponent * pComponent);
+		void ComponentAddIntoProcessors(IEntityComponent * pComponent);
 
 	};
 
