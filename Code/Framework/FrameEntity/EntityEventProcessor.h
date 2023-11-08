@@ -69,8 +69,8 @@ namespace Frame {
 		virtual void Remove(IEntityComponent * pComponent) override { pComponent; }
 	};
 
-	// 根据 IEntity::z 进行排序
-	// Sort according to IEntity::z
+	// 根据 IEntity::m_zDepth 进行排序
+	// Sort according to IEntity::m_zDepth
 	class CEntityEventProcessorZSort final : public CBaseEntityEventProcessor {
 	private:
 		std::unordered_set<IEntityComponent *> m_set;

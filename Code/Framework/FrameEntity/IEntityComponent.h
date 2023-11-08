@@ -11,7 +11,7 @@ namespace Frame {
 		IEntityComponent() = default;
 		virtual ~IEntityComponent() = default;
 
-		void __Initialize(IEntity * pEntity) {
+		void Construct(IEntity * pEntity) {
 			m_pEntity = pEntity;
 		}
 
@@ -22,7 +22,7 @@ namespace Frame {
 		//			| EntityEvent::EFlag::Update
 		//			...;
 		//	}
-		virtual EntityEvent::Flags GetEventFlags() = 0;
+		virtual EntityEvent::Flags GetEventFlags() const = 0;
 
 		// Example:
 		//	virtual void ProcessEvent(const EntityEvent::SEvent & event) override {

@@ -16,7 +16,7 @@ namespace Frame {
 	}
 
 	void IEntity::InitializeComponent(IEntityComponent * pComponent) {
-		pComponent->__Initialize(this);
+		pComponent->Construct(this);
 	}
 
 }

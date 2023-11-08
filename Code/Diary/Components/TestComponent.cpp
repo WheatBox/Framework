@@ -5,7 +5,7 @@
 #include <FrameCore/Globals.h>
 #include <FrameRender/Renderer.h>
 
-Frame::EntityEvent::Flags CTestComponent::GetEventFlags() {
+Frame::EntityEvent::Flags CTestComponent::GetEventFlags() const {
 	return Frame::EntityEvent::EFlag::Update
 		 | Frame::EntityEvent::EFlag::Render
 		;
