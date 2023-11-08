@@ -16,7 +16,7 @@ namespace Frame {
 		}
 
 		// Example:
-		//	virtual EntityEvent::Flags GetEventFlags() override {
+		//	virtual EntityEvent::Flags GetEventFlags() const override {
 		//		return EntityEvent::EFlag::Nothing
 		//			| EntityEvent::EFlag::Initialize
 		//			| EntityEvent::EFlag::Update

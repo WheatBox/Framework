@@ -124,7 +124,9 @@ AddFiles(CODE_FILES
 	Code/Framework/FrameCore
 	Code/Framework/FrameEntity
 	Code/Framework/FrameMath
+	Code/Framework/FrameReflection
 	Code/Framework/FrameRender
+	Code/Framework/FrameUtility
 )
 
 AddFiles(ASSET_FILES

@@ -9,12 +9,6 @@ namespace Frame {
 		gEntitySystem->ComponentAddIntoProcessors(pComponent);
 	}
 
-	void IEntity::RemoveComponent(IEntityComponent * pComponent) {
-		gEntitySystem->ComponentRemoveFromProcessors(pComponent);
-		m_components.erase(pComponent);
-		delete pComponent;
-	}
-
 	void IEntity::InitializeComponent(IEntityComponent * pComponent) {
 		pComponent->Construct(this);
 	}

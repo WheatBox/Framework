@@ -5,6 +5,10 @@
 #include <FrameCore/Globals.h>
 #include <FrameRender/Renderer.h>
 
+REGISTER_ENTITY_COMPONENT(CTestComponent);
+REGISTER_ENTITY_COMPONENT(CTestComponent2);
+REGISTER_ENTITY_COMPONENT(CTestComponent3);
+
 Frame::EntityEvent::Flags CTestComponent::GetEventFlags() const {
 	return Frame::EntityEvent::EFlag::Update
 		 | Frame::EntityEvent::EFlag::Render
@@ -43,6 +47,17 @@ void CTestComponent::ProcessEvent(const Frame::EntityEvent::SEvent & event) {
 			pos.y + size.y / 3,
 			true
 		);
+	}
+	break;
+	}
+}
+
+void CTestComponent2::ProcessEvent(const Frame::EntityEvent::SEvent & event) {
+	switch(event.flag) {
+	case Frame::EntityEvent::Render:
+	{
+		Frame::gRenderer->SetDrawColor(0xEEEEEE);
+		Frame::gRenderer->DrawRectangle(120, 40, 400, 200, true);
 	}
 	break;
 	}

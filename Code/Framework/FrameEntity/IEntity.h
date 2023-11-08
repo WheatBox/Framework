@@ -2,8 +2,10 @@
 
 #include <FrameCore/Globals.h>
 #include <FrameMath/Vector2.h>
+#include <FrameUtility/GUID.h>
 
-#include <unordered_set>
+#include <unordered_map>
+#include <string>
 
 namespace Frame {
 	
@@ -41,13 +43,18 @@ namespace Frame {
 			ComponentType * pComponent = new ComponentType {};
 			InitializeComponent(pComponent);
 			ComponentAddIntoProcessors(pComponent);
-			m_components.insert(pComponent);
+
+			m_components.insert(std::pair<GUID, IEntityComponent *> { SComponentType<ComponentType>::GetGUID(), pComponent });
+			
 			return pComponent;
 		}
 
 		template<typename ComponentType>
 		ComponentType * GetComponent() {
-			// TODO - Reflection
+			auto it = m_components.find(SComponentType<ComponentType>::GetGUID());
+			if(it != m_components.end()) {
+				return static_cast<ComponentType *>(it->second);
+			}
 			return nullptr;
 		}
 
@@ -59,10 +66,18 @@ namespace Frame {
 			return CreateComponent<ComponentType>();
 		}
 
-		void RemoveComponent(IEntityComponent * pComponent);
+		template<typename ComponentType>
+		void RemoveComponent() {
+			auto it = m_components.find(SComponentType<ComponentType>::GetGUID());
+			if(it != m_components.end()) {
+				gEntitySystem->ComponentRemoveFromProcessors(it->second);
+				delete static_cast<ComponentType *>(it->second);
+				m_components.erase(it);
+			}
+		}
 
 	private:
-		std::unordered_set<IEntityComponent *> m_components;
+		std::unordered_map<GUID, IEntityComponent *> m_components;
 		
 		void InitializeComponent(IEntityComponent * pComponent);
 		void ComponentAddIntoProcessors(IEntityComponent * pComponent);
