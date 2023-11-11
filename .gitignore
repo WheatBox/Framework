@@ -1,3 +1,5 @@
 Bin/
 Build/
+
 Third/SDL2_ttf-devel-2.20.2-VC/*
+!Third/SDL2_ttf-devel-2.20.2-VC/__Place_holder_for_git__.txt
