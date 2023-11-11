@@ -1,6 +1,7 @@
 ﻿#pragma once
 
 #include <FrameMath/ColorMath.h>
+
 #include <SDL_blendmode.h>
 
 struct SDL_Renderer;
@@ -8,24 +9,28 @@ struct SDL_Window;
 
 namespace Frame {
 
+	class CShapeRenderer;
+	class CTextRenderer;
+
+	struct STexture;
+
 	class CRenderer {
+
 	public:
 		CRenderer() = default;
 		virtual ~CRenderer() = default;
 
 		void Initialize(SDL_Window * sdlWindow);
 
-	private:
-		SDL_Renderer * m_sdlRenderer = nullptr;
-		SDL_Window * m_sdlWindow = nullptr;
+		SDL_Renderer * GetSdlRenderer() const {
+			return m_sdlRenderer;
+		}
 
-		ColorRGB m_color { 255, 255, 255 };
-		Uint8 m_alpha = 255;
+		CShapeRenderer * m_pShapeRenderer = nullptr;
+		CTextRenderer * m_pTextRenderer = nullptr;
 
-	public:
 		ColorRGB m_backgroundColor { 0, 0, 0 };
 
-	public:
 		enum class EBlendMode {
 
 			// 从 SDL_blendmode.h 里面复制过来的（包括注释）
@@ -58,6 +63,13 @@ namespace Frame {
 			Invalid = SDL_BLENDMODE_INVALID
 		};
 
+	private:
+		SDL_Renderer * m_sdlRenderer = nullptr;
+
+		ColorRGB m_color { 255, 255, 255 };
+		Uint8 m_alpha = 255;
+		EBlendMode m_blendMode {};
+
 	public:
 
 		void RenderBegin();
@@ -67,37 +79,33 @@ namespace Frame {
 		/* |                Set Draw Params                | */
 		/* +-----------------------------------------------+ */
 
-		inline void SetDrawColor(Uint8 r, Uint8 g, Uint8 b) {
-			SetDrawColorAlpha(r, g, b, m_alpha);
+		void SetColor(const ColorRGB & rgb) {
+			SetColorAlpha(rgb.r, rgb.g, rgb.b, m_alpha);
 		}
-		inline void SetDrawColor(int rgb) {
-			SetDrawColorAlpha(rgb, m_alpha);
+		void SetColor(Uint8 r, Uint8 g, Uint8 b) {
+			SetColorAlpha(r, g, b, m_alpha);
 		}
-
-		inline void SetDrawAlpha(Uint8 alpha) {
-			SetDrawColorAlpha(m_color.r, m_color.g, m_color.b, alpha);
+		void SetAlpha(Uint8 alpha) {
+			SetColorAlpha(m_color.r, m_color.g, m_color.b, alpha);
 		}
+		void SetColorAlpha(const ColorRGB & rgb, Uint8 alpha) {
+			SetColorAlpha(rgb.r, rgb.g, rgb.b, alpha);
+		}
+		void SetColorAlpha(Uint8 r, Uint8 g, Uint8 b, Uint8 alpha);
 
-		void SetDrawColorAlpha(Uint8 r, Uint8 g, Uint8 b, Uint8 alpha);
-		void SetDrawColorAlpha(int rgb, Uint8 alpha);
+		ColorRGB GetColor() const { return m_color; }
+		Uint8 GetAlpha() const { return m_alpha; }
 
-		void SetDrawBlendMode(EBlendMode blendModes);
+		void SetBlendMode(EBlendMode blendMode);
+
+		EBlendMode GetBlendMode() const { return m_blendMode; }
 
 		/* +-----------------------------------------------+ */
-		/* |               Draw Basic Shapes               | */
+		/* |                 Draw  Texture                 | */
 		/* +-----------------------------------------------+ */
 
-		void DrawPixel(int x, int y);
-		void DrawPixel(float x, float y);
+		void DrawTexture(int x, int y, STexture * pTexture);
 
-		void DrawLine(int x1, int y1, int x2, int y2);
-		void DrawLine(float x1, float y1, float x2, float y2);
-
-		void DrawRectangle(int x1, int y1, int x2, int y2, bool fill = false);
-		void DrawRectangle(float x1, float y1, float x2, float y2, bool fill = false);
-		void DrawRectangleWH(int x, int y, int w, int h, bool fill = false);
-		void DrawRectangleWH(float x, float y, float w, float h, bool fill = false);
-		
 	};
 
 };
