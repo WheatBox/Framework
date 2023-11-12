@@ -1,6 +1,6 @@
 ﻿#include <FrameEntity/EntityEventProcessor.h>
 
-#include <FrameEntity/IEntity.h>
+#include <FrameEntity/CEntity.h>
 #include <FrameEntity/IEntityComponent.h>
 
 #include <vector>
@@ -33,7 +33,7 @@ namespace Frame {
 		std::vector<IEntityComponent *> sortedVector { m_set.begin(), m_set.end() };
 		std::sort(sortedVector.begin(), sortedVector.end(),
 			[](IEntityComponent * a, IEntityComponent * b) {
-				return a->GetEntity()->m_zDepth - b->GetEntity()->m_zDepth;
+				return a->GetEntity()->GetZDepth() - b->GetEntity()->GetZDepth();
 			}
 		);
 		for(IEntityComponent * pComponent : sortedVector) {

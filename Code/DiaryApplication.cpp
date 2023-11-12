@@ -22,9 +22,8 @@ void CDiaryApplication::MainLoopPriority() {
 	if(!b) {
 		b = true;
 		
-		if(Frame::IEntity * pEntity = Frame::gEntitySystem->SpawnEntity()) {
-			pEntity->m_position = { 400, 300 };
-			pEntity->m_size = { 200, 150 };
+		if(Frame::CEntity * pEntity = Frame::gEntitySystem->SpawnEntity()) {
+			pEntity->SetPosition({ 400, 300 });
 
 			SDL_Log("%lld", Frame::SComponentType<CTestComponent>::GetGUID().high);
 			SDL_Log("%lld", Frame::SComponentType<CTestComponent2>::GetGUID().high);
@@ -33,7 +32,7 @@ void CDiaryApplication::MainLoopPriority() {
 			SDL_Log("---------------------------------");
 			auto show = [pEntity]() { SDL_Log("%p %p %p", pEntity->GetComponent<CTestComponent>(), pEntity->GetComponent<CTestComponent2>(), pEntity->GetComponent<CTestComponent3>()); };
 			show();
-			pEntity->CreateComponent<CTestComponent>();
+			pEntity->CreateComponent<CTestComponent>()->SetSize({ 200, 150 });
 			pEntity->CreateComponent<CTestComponent2>();
 			show();
 			pEntity->RemoveComponent<CTestComponent>();

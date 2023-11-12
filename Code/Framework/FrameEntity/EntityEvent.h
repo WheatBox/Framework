@@ -40,10 +40,10 @@ namespace Frame {
 
 			// 渲染
 			// 该事件下每个实体对象会按照 m_zDepth 进行排序后再执行
-			// 关于 m_zDepth，详情请见 IEntity，位于 <FrameEntity/IEntity.h>
+			// 关于 m_zDepth，详情请见 CEntity，位于 <FrameEntity/CEntity.h>
 			// Render
 			// Under this event, each entity object will be sorted by m_zDepth before execution
-			// About m_zDepth, please refer to IEntity for details, located at <FrameEntity/IEntity.h>
+			// About m_zDepth, please refer to CEntity for details, located at <FrameEntity/CEntity.h>
 			Render = FlagBit(EFlagIndex::eEFI_Render),
 
 			// 从日记上移除

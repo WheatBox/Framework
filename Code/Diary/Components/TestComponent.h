@@ -3,6 +3,8 @@
 #include <FrameEntity/IEntityComponent.h>
 #include <FrameEntity/ComponentRegister.h>
 
+#include <FrameMath/Vector2.h>
+
 class CTestComponent final : public Frame::IEntityComponent {
 
 public:
@@ -13,6 +15,12 @@ public:
 	static void Register(Frame::SComponentType<CTestComponent> type) {
 		type.SetGUID("{F103ABD5-7F46-4CE6-B20C-84AE2EB9CB5B}");
 	}
+
+	void SetSize(const Frame::Vec2 & size) { m_size = size; }
+
+private:
+
+	Frame::Vec2 m_size;
 
 };
 

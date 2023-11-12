@@ -12,21 +12,22 @@ namespace Frame {
 
 	struct IEntityComponent;
 
-	struct IEntity {
-		
-		const EntityId m_id;
+	class CEntity {
 
-		IEntity() = delete;
-		IEntity(EntityId id)
+	public:
+
+		CEntity() = delete;
+		CEntity(EntityId id)
 			: m_id(id)
 		{}
-		virtual ~IEntity() = default;
+		virtual ~CEntity() = default;
 
-		EntityId GetId() const { return m_id; }
+	private:
 
-		Vec2 m_position { 0.f };
-		Vec2 m_size { 0.f };
-		Vec2 m_offset { 0.f };
+		const EntityId m_id;
+
+		Vec2 m_vPosition { 0.f };
+		Vec2 m_vScale { 1.f };
 
 		// 角度 | Degree
 		float m_rotation = 0.f;
@@ -36,6 +37,32 @@ namespace Frame {
 		// Mainly used to represent occlusion relationships (rendering order)
 		// The smaller the value, the closer it is to the camera, and the later it renders
 		int m_zDepth = 0;
+
+	public:
+
+		EntityId GetId() const { return m_id; }
+
+		const Vec2 & GetPosition() const { return m_vPosition; }
+		const Vec2 & GetScale() const { return m_vScale; }
+		float GetRotation() const { return m_rotation; }
+		int GetZDepth() const { return m_zDepth; }
+
+		void SetPosition(const Vec2 & vPos) { m_vPosition = vPos; }
+		void SetScale(const Vec2 & vScale) { m_vScale = vScale; }
+		void SetRotation(float rotation) { m_rotation = rotation; }
+		void SetZDepth(int zDepth) { m_zDepth = zDepth; }
+
+		void Translate(const Vec2 & vPosAdd) {
+			m_vPosition += vPosAdd;
+		}
+
+		void Scale(const Vec2 & vScaleMultiply) {
+			m_vScale *= vScaleMultiply;
+		}
+
+		void Rotate(float rotAdd) {
+			m_rotation += rotAdd;
+		}
 
 		template<typename ComponentType>
 		ComponentType * CreateComponent() {

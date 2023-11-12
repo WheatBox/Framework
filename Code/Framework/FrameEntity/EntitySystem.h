@@ -1,6 +1,6 @@
 ﻿#pragma once
 
-#include <FrameEntity/IEntity.h>
+#include <FrameEntity/CEntity.h>
 #include <FrameEntity/IEntityComponent.h>
 
 #include <unordered_map>
@@ -9,7 +9,7 @@ namespace Frame {
 
 	class CBaseEntityEventProcessor;
 
-	typedef std::unordered_map<EntityId, IEntity *> EntitiesMap;
+	typedef std::unordered_map<EntityId, CEntity *> EntitiesMap;
 	
 	class CEntitySystem {
 
@@ -23,14 +23,14 @@ namespace Frame {
 
 	public:
 
-		IEntity * GetEntity(EntityId id) const {
+		CEntity * GetEntity(EntityId id) const {
 			EntitiesMap::const_iterator it = m_entities.find(id);
 			return (it == m_entities.end()) ? nullptr : it->second;
 		}
 		const EntitiesMap & GetEntities() const { return m_entities; }
 
-		IEntity * SpawnEntity() {
-			IEntity * p = new IEntity { m_idNext };
+		CEntity * SpawnEntity() {
+			CEntity * p = new CEntity { m_idNext };
 			if(p != nullptr) {
 				m_entities[m_idNext++] = p;
 			}

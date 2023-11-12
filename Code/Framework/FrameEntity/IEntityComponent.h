@@ -4,14 +4,14 @@
 
 namespace Frame {
 
-	struct IEntity;
+	class CEntity;
 
 	struct IEntityComponent {
 
 		IEntityComponent() = default;
 		virtual ~IEntityComponent() = default;
 
-		void Construct(IEntity * pEntity) {
+		void Construct(CEntity * pEntity) {
 			m_pEntity = pEntity;
 		}
 
@@ -37,11 +37,11 @@ namespace Frame {
 		//	}
 		virtual void ProcessEvent(const EntityEvent::SEvent & event) = 0;
 
-		IEntity * GetEntity() const {
+		CEntity * GetEntity() const {
 			return m_pEntity;
 		}
 	protected:
-		IEntity * m_pEntity;
+		CEntity * m_pEntity = nullptr;
 
 	};
 

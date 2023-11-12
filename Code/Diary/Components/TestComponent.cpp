@@ -1,6 +1,6 @@
 ﻿#include "TestComponent.h"
 
-#include <FrameEntity/IEntity.h>
+#include <FrameEntity/CEntity.h>
 
 #include <FrameCore/Globals.h>
 #include <FrameRender/Renderer.h>
@@ -22,32 +22,30 @@ void CTestComponent::ProcessEvent(const Frame::EntityEvent::SEvent & event) {
 	switch(event.flag) {
 	case Frame::EntityEvent::Update:
 	{
-		m_pEntity->m_rotation += 1.f;
+		m_pEntity->Rotate(1.f);
 		
-		Frame::Vec2 pos = m_pEntity->m_position;
-		Frame::Vec2 size = m_pEntity->m_size;
+		Frame::Vec2 pos = m_pEntity->GetPosition();
 
 		Frame::gRenderer->SetColor(0x81F377);
 		Frame::gRenderer->m_pShapeRenderer->DrawRectangle(
-			pos.x - size.x / 2,
-			pos.y - size.y / 2,
-			pos.x + size.x / 2,
-			pos.y + size.y / 2,
+			pos.x - m_size.x / 2,
+			pos.y - m_size.y / 2,
+			pos.x + m_size.x / 2,
+			pos.y + m_size.y / 2,
 			true
 		);
 	}
 	break;
 	case Frame::EntityEvent::Render:
 	{
-		Frame::Vec2 pos = m_pEntity->m_position;
-		Frame::Vec2 size = m_pEntity->m_size;
+		Frame::Vec2 pos = m_pEntity->GetPosition();
 
 		Frame::gRenderer->SetColor(0x8D6B94);
 		Frame::gRenderer->m_pShapeRenderer->DrawRectangle(
-			pos.x - size.x / 3,
-			pos.y - size.y / 3,
-			pos.x + size.x / 3,
-			pos.y + size.y / 3,
+			pos.x - m_size.x / 3,
+			pos.y - m_size.y / 3,
+			pos.x + m_size.x / 3,
+			pos.y + m_size.y / 3,
 			true
 		);
 	}

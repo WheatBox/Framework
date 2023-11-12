@@ -1,15 +1,15 @@
-﻿#include <FrameEntity/IEntity.h>
+﻿#include <FrameEntity/CEntity.h>
 
 #include <FrameCore/Globals.h>
 #include <FrameEntity/EntitySystem.h>
 
 namespace Frame {
 
-	void IEntity::ComponentAddIntoProcessors(IEntityComponent * pComponent) {
+	void CEntity::ComponentAddIntoProcessors(IEntityComponent * pComponent) {
 		gEntitySystem->ComponentAddIntoProcessors(pComponent);
 	}
 
-	void IEntity::InitializeComponent(IEntityComponent * pComponent) {
+	void CEntity::InitializeComponent(IEntityComponent * pComponent) {
 		pComponent->Construct(this);
 	}
 
