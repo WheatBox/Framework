@@ -2,29 +2,71 @@
 
 #include <FrameRender/BasicRenderingTypes.h>
 
-#include <vector>
+#include <FrameMath/Vector2.h>
 
 namespace Frame {
 
-	class CTexture {
-	public:
-		CTexture() = delete;
-		CTexture(SDL_Texture * _texture, int _width, int _height)
-			: texture(_texture)
-			, width(_width)
-			, height(_height)
-		{}
-		virtual ~CTexture() = default;
+	struct ISprite {
 
-		SDL_Texture * texture = nullptr;
-		int width = 0;
-		int height = 0;
+		virtual SDL_Texture * GetSdlTexture() const = 0;
+
+		int GetWidth() const { return m_width; }
+		int GetHeight() const { return m_height; }
+
+		const Vec2 & GetOffset() const { return m_vOffset; }
+		float GetXOffset() const { return m_vOffset.x; }
+		float GetYOffset() const { return m_vOffset.y; }
+
+		void SetOffset(const Vec2 & vOffset) { m_vOffset = vOffset; }
+
+	protected:
+		int m_width = 0;
+		int m_height = 0;
+		Vec2 m_vOffset {};
+	};
+
+	class CStaticSprite : public ISprite {
+	public:
+		CStaticSprite() = delete;
+
+		CStaticSprite(SDL_Surface * sdlSurface, bool bFreeSurface)
+			: CStaticSprite(sdlSurface, { 0, 0 }, bFreeSurface)
+		{}
+		CStaticSprite(SDL_Surface * sdlSurface, const Vec2 & vOffset, bool bFreeSurface);
+
+		CStaticSprite(const char * filename); // TODO
+		
+		// TODO - 若无法正常初始化，则将 sdlTexture 设为一张错误提示图片
+
+		virtual ~CStaticSprite();
+
+		virtual SDL_Texture * GetSdlTexture() const override { return m_sdlTexture; }
+	private:
+		SDL_Texture * m_sdlTexture;
+	};
+	
+	class CAnimatedSprite : public ISprite {
+	public:
+		CAnimatedSprite() = delete;
+		CAnimatedSprite(SDL_Renderer * sdlRenderer, SDL_Surface ** sdlSurfaces, int frameCount, int width, int height, const Vec2 & vOffset);
+		// TODO - sdlSurfaces to m_frames
+		virtual ~CAnimatedSprite() = default;
+
+		virtual SDL_Texture * GetSdlTexture() const override { return m_frames[0]; }
+		SDL_Texture * GetSdlTexture(int frame) const { return m_frames[frame % m_frameCount]; }
+
+		SDL_Texture ** GetFrames() const { return m_frames; }
+		int GetFrameCount() const { return m_frameCount; }
+
+	private:
+		SDL_Texture ** m_frames;
+		int m_frameCount;
 	};
 
 	class CFont {
 	public:
 		CFont() = delete;
-		CFont(const char * file, int size);
+		CFont(const char * filename, int fontSize);
 		virtual ~CFont();
 
 		enum class EHAlign {
@@ -76,10 +118,28 @@ namespace Frame {
 	public:
 		CAssetsManager();
 
-		CTexture * CreateTexture(SDL_Renderer * sdlRenderer, SDL_Surface * sdlSurface);
-		void DestroyTexture(CTexture * pTexture);
+		CStaticSprite * CreateStaticSprite(SDL_Surface * sdlSurface, bool bFreeSurface = true) {
+			return new CStaticSprite { sdlSurface, bFreeSurface };
+		}
 
-		CFont * OpenFont(const char * fontFile, int fontSize);
-		void CloseFont(CFont * pFont);
+		CStaticSprite * CreateStaticSprite(SDL_Surface * sdlSurface, const Vec2 & vOffset, bool bFreeSurface = true) {
+			return new CStaticSprite { sdlSurface, vOffset, bFreeSurface };
+		}
+
+		CStaticSprite * CreateStaticSprite(const char * filename) {
+			return new CStaticSprite { filename };
+		}
+
+		void DestroyStaticSprite(CStaticSprite * pSprite) {
+			delete pSprite;
+		}
+
+		CFont * OpenFont(const char * filename, int fontSize) {
+			return new CFont { filename, fontSize };
+		}
+
+		void CloseFont(CFont * pFont) {
+			delete pFont;
+		}
 	};
 }

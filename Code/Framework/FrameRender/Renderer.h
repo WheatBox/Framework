@@ -2,6 +2,8 @@
 
 #include <FrameMath/ColorMath.h>
 
+#include <FrameMath/Vector2.h>
+
 #include <SDL_blendmode.h>
 
 struct SDL_Renderer;
@@ -12,7 +14,7 @@ namespace Frame {
 	class CShapeRenderer;
 	class CTextRenderer;
 
-	struct STexture;
+	class CStaticSprite;
 
 	class CRenderer {
 
@@ -104,7 +106,10 @@ namespace Frame {
 		/* |                 Draw  Texture                 | */
 		/* +-----------------------------------------------+ */
 
-		void DrawTexture(int x, int y, STexture * pTexture);
+		void DrawSprite(const Vec2 & vPos, CStaticSprite * pSprite) {
+			DrawSprite(vPos, pSprite, { 1.f, 1.f }, 0.f);
+		}
+		void DrawSprite(const Vec2 & vPos, CStaticSprite * pSprite, const Vec2 & vScale, float angle);
 
 	};
 

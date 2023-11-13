@@ -1,6 +1,6 @@
 ﻿#pragma once
 
-#include <FrameEntity/CEntity.h>
+#include <FrameEntity/Entity.h>
 #include <FrameEntity/IEntityComponent.h>
 
 #include <unordered_map>

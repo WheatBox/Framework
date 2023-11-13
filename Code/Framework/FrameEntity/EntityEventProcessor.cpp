@@ -1,6 +1,6 @@
 ﻿#include <FrameEntity/EntityEventProcessor.h>
 
-#include <FrameEntity/CEntity.h>
+#include <FrameEntity/Entity.h>
 #include <FrameEntity/IEntityComponent.h>
 
 #include <vector>

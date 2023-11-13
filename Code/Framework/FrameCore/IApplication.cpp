@@ -45,6 +45,8 @@ namespace Frame {
 			MainLoopLast();
 
 			gRenderer->RenderEnd();
+
+			SDL_Delay(16); // TODO - 可设置最大帧数或非锁帧
 		}
 
 	}

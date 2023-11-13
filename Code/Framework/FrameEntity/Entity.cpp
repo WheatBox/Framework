@@ -1,4 +1,4 @@
-﻿#include <FrameEntity/CEntity.h>
+﻿#include <FrameEntity/Entity.h>
 
 #include <FrameCore/Globals.h>
 #include <FrameEntity/EntitySystem.h>

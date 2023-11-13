@@ -53,9 +53,15 @@ namespace Frame {
 	/* |                 Draw  Texture                 | */
 	/* +-----------------------------------------------+ */
 
-	void CRenderer::DrawTexture(int x, int y, STexture * pTexture) {
-		//SDL_RenderCopyEx();
-		x,y,pTexture;
+	void CRenderer::DrawSprite(const Vec2 & vPos, CStaticSprite * pSprite, const Vec2 & vScale, float angle) {
+		SDL_FRect destRect {
+			vPos.x - pSprite->GetXOffset() * vScale.x,
+			vPos.y - pSprite->GetYOffset() * vScale.y,
+			static_cast<float>(pSprite->GetWidth()) * vScale.x,
+			static_cast<float>(pSprite->GetHeight()) * vScale.y
+		};
+		SDL_FPoint rotationOffset { vPos.x, vPos.y };
+		SDL_RenderCopyExF(m_sdlRenderer, pSprite->GetSdlTexture(), NULL, & destRect, angle, & rotationOffset, SDL_RendererFlip::SDL_FLIP_NONE);
 	}
 
 };

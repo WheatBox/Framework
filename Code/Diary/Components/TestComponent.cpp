@@ -1,6 +1,6 @@
 ﻿#include "TestComponent.h"
 
-#include <FrameEntity/CEntity.h>
+#include <FrameEntity/Entity.h>
 
 #include <FrameCore/Globals.h>
 #include <FrameRender/Renderer.h>
@@ -52,7 +52,7 @@ void CTestComponent::ProcessEvent(const Frame::EntityEvent::SEvent & event) {
 	break;
 	}
 }
-
+#include <SDL.h>
 void CTestComponent2::ProcessEvent(const Frame::EntityEvent::SEvent & event) {
 	static bool bInited = false;
 	switch(event.flag) {
@@ -79,6 +79,10 @@ void CTestComponent2::ProcessEvent(const Frame::EntityEvent::SEvent & event) {
 		Frame::gRenderer->m_pTextRenderer->SetAutoWrapLength(140);
 		Frame::gRenderer->m_pTextRenderer->GetFont()->SetHAlign(Frame::CFont::EHAlign::Center);
 		Frame::gRenderer->m_pTextRenderer->DrawText(400, 300, "Hello, world!\n你好，世界，我在这里！", 0xFFFFFF, 255);
+
+		Frame::CStaticSprite * pSprite = Frame::gRenderer->m_pTextRenderer->DrawTextAsSprite("Test\n测试", 0xFFFFFF, 255);
+		Frame::gRenderer->DrawSprite({ 400, 300 }, pSprite);
+		Frame::gAssetsManager->DestroyStaticSprite(pSprite);
 	}
 	break;
 	}

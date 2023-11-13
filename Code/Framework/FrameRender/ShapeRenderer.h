@@ -1,6 +1,7 @@
 ﻿#pragma once
 
 #include <FrameRender/IRenderer.h>
+#include <FrameMath/Vector2.h>
 
 namespace Frame {
 
@@ -15,15 +16,17 @@ namespace Frame {
 		/* |               Draw Basic Shapes               | */
 		/* +-----------------------------------------------+ */
 
-		void DrawPixel(int x, int y);
+		void DrawPixel(const Vec2 & vPos) {
+			DrawPixel(vPos.x, vPos.y);
+		}
 		void DrawPixel(float x, float y);
 
-		void DrawLine(int x1, int y1, int x2, int y2);
+		void DrawLine(const Vec2 & vPos1, const Vec2 & vPos2) {
+			DrawLine(vPos1.x, vPos1.y, vPos2.x, vPos2.y);
+		}
 		void DrawLine(float x1, float y1, float x2, float y2);
 
-		void DrawRectangle(int x1, int y1, int x2, int y2, bool fill = false);
 		void DrawRectangle(float x1, float y1, float x2, float y2, bool fill = false);
-		void DrawRectangleWH(int x, int y, int w, int h, bool fill = false);
 		void DrawRectangleWH(float x, float y, float w, float h, bool fill = false);
 
 	};

@@ -9,6 +9,7 @@ struct _TTF_Font;
 typedef struct _TTF_Font TTF_Font;
 
 namespace Frame {
-	class CTexture;
+	class CStaticSprite;
+	class CAnimatedSprite;
 	class CFont;
 }

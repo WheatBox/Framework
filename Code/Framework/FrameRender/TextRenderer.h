@@ -1,9 +1,12 @@
 ﻿#pragma once
 
+#include <FrameCore/BasicTypes.h>
 #include <FrameRender/IRenderer.h>
-#include <FrameMath/ColorMath.h>
+#include <FrameMath/Vector2.h>
 
 namespace Frame {
+
+	struct ColorRGB;
 
 	class CTextRenderer : public IRenderer {
 
@@ -35,16 +38,20 @@ namespace Frame {
 		/* |                   Draw Text                   | */
 		/* +-----------------------------------------------+ */
 
-		void DrawText(int x, int y, const char * sz) {
-			DrawText(x, y, sz, * m_pColor, * m_pAlpha);
+		void DrawText(const Vec2 & vPos, const char * sz) {
+			DrawText(vPos.x, vPos.y, sz);
 		}
 		void DrawText(float x, float y, const char * sz) {
 			DrawText(x, y, sz, * m_pColor, * m_pAlpha);
 		}
-		void DrawText(int x, int y, const char * sz, const ColorRGB & rgb, Uint8 alpha);
+		void DrawText(const Vec2 & vPos, const char * sz, const ColorRGB & rgb, Uint8 alpha) {
+			DrawText(vPos.x, vPos.y, sz, rgb, alpha);
+		}
 		void DrawText(float x, float y, const char * sz, const ColorRGB & rgb, Uint8 alpha);
 
-		CTexture * DrawTextAsTexture(const char * sz, const ColorRGB & rgb, Uint8 alpha);
+		CStaticSprite * DrawTextAsSprite(const char * sz, const ColorRGB & rgb, Uint8 alpha);
+
+		SDL_Surface * DrawTextAsSdlSurface(const char * sz, const ColorRGB & rgb, Uint8 alpha);
 
 	};
 
