@@ -1,21 +1,13 @@
 ﻿#include "DiaryApplication.h"
 
 #include <SDL_events.h>
-#include <SDL.h>
+#include <SDL_log.h>
 
 #include <FrameCore/Globals.h>
 #include <FrameEntity/EntitySystem.h>
 #include <FrameRender/Renderer.h>
 
 #include "Diary/Components/TestComponent.h"
-
-void CDiaryApplication::ProcessSdlEvent(SDL_Event & sdlEvent) {
-	switch(sdlEvent.type) {
-	case SDL_QUIT:
-		m_quit = true;
-		break;
-	}
-}
 
 void CDiaryApplication::MainLoopPriority() {
 	static bool b = false;

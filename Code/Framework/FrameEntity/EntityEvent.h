@@ -1,17 +1,12 @@
 ﻿#pragma once
 
-#include <FrameCore/BasicTypes.h>
+#include <FrameUtility/BitOperation.h>
 
 namespace Frame {
 
 	namespace EntityEvent {
 
-		typedef __int32 Flags;
-		
-		// 1 << pos
-		constexpr Flags FlagBit(Uint8 pos) {
-			return 1 << pos;
-		}
+		typedef Uint32 Flags;
 
 		enum EFlagIndex : Uint8 {
 			eEFI_Initialize = 0,

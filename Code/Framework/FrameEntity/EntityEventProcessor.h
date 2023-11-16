@@ -10,16 +10,16 @@ namespace Frame {
 
 	struct IEntityComponent;
 
-	class CBaseEntityEventProcessor {
+	struct IEntityEventProcessor {
 	protected:
 		EntityEvent::SEvent m_event;
 
 	public:
-		CBaseEntityEventProcessor() = delete;
-		CBaseEntityEventProcessor(EntityEvent::EFlag flag) {
+		IEntityEventProcessor() = delete;
+		IEntityEventProcessor(EntityEvent::EFlag flag) {
 			m_event.flag = flag;
 		}
-		virtual ~CBaseEntityEventProcessor() = default;
+		virtual ~IEntityEventProcessor() = default;
 
 		void SetEventParam(Uint8 index, EntityEvent::SEvent::UParam param) {
 			m_event.params[index] = param;
@@ -40,13 +40,13 @@ namespace Frame {
 
 	// 没有排序
 	// No sorting
-	class CEntityEventProcessor final : public CBaseEntityEventProcessor {
+	class CEntityEventProcessor final : public IEntityEventProcessor {
 	private:
 		std::unordered_set<IEntityComponent *> m_set;
 
 	public:
 		CEntityEventProcessor(EntityEvent::EFlag flag)
-			: CBaseEntityEventProcessor(flag)
+			: IEntityEventProcessor(flag)
 		{}
 
 		virtual void Process() override;
@@ -56,10 +56,10 @@ namespace Frame {
 
 	// 在 Join() 时，立刻生效
 	// Effective immediately, when Join().
-	class CEntityEventProcessorImmediately final : public CBaseEntityEventProcessor {
+	class CEntityEventProcessorImmediately final : public IEntityEventProcessor {
 	public:
 		CEntityEventProcessorImmediately(EntityEvent::EFlag flag)
-			: CBaseEntityEventProcessor(flag)
+			: IEntityEventProcessor(flag)
 		{}
 
 		virtual void Add(IEntityComponent * pComponent) override;
@@ -71,13 +71,13 @@ namespace Frame {
 
 	// 根据 CEntity::m_zDepth 进行排序
 	// Sort according to CEntity::m_zDepth
-	class CEntityEventProcessorZSort final : public CBaseEntityEventProcessor {
+	class CEntityEventProcessorZSort final : public IEntityEventProcessor {
 	private:
 		std::unordered_set<IEntityComponent *> m_set;
 
 	public:
 		CEntityEventProcessorZSort(EntityEvent::EFlag flag)
-			: CBaseEntityEventProcessor(flag)
+			: IEntityEventProcessor(flag)
 		{}
 
 		virtual void Process() override;

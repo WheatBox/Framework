@@ -7,7 +7,7 @@
 
 namespace Frame {
 
-	class CBaseEntityEventProcessor;
+	struct IEntityEventProcessor;
 
 	typedef std::unordered_map<EntityId, CEntity *> EntitiesMap;
 	
@@ -52,7 +52,7 @@ namespace Frame {
 		void ProcessRenderEvent();
 
 	private:
-		CBaseEntityEventProcessor * m_pEventProcessors[EntityEvent::EFlagIndex::eEFI__END];
+		IEntityEventProcessor * m_pEventProcessors[EntityEvent::EFlagIndex::eEFI__END];
 
 	};
 

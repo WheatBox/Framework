@@ -18,11 +18,11 @@ namespace Frame {
 		SDL_SetRenderDrawBlendMode(m_sdlRenderer, SDL_BLENDMODE_BLEND);
 		SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "1");
 
-		m_pShapeRenderer = new CShapeRenderer {};
-		m_pShapeRenderer->SetSdlRenderer(m_sdlRenderer);
+		pShapeRenderer = new CShapeRenderer {};
+		pShapeRenderer->SetSdlRenderer(m_sdlRenderer);
 
-		m_pTextRenderer = new CTextRenderer { & m_color, & m_alpha };
-		m_pTextRenderer->SetSdlRenderer(m_sdlRenderer);
+		pTextRenderer = new CTextRenderer { & m_color, & m_alpha };
+		pTextRenderer->SetSdlRenderer(m_sdlRenderer);
 	}
 
 	void CRenderer::RenderBegin() {

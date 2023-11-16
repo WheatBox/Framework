@@ -28,8 +28,8 @@ namespace Frame {
 			return m_sdlRenderer;
 		}
 
-		CShapeRenderer * m_pShapeRenderer = nullptr;
-		CTextRenderer * m_pTextRenderer = nullptr;
+		CShapeRenderer * pShapeRenderer = nullptr;
+		CTextRenderer * pTextRenderer = nullptr;
 
 		ColorRGB m_backgroundColor { 0, 0, 0 };
 

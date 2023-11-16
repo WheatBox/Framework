@@ -3,6 +3,7 @@
 #include <FrameRender/Renderer.h>
 #include <FrameEntity/EntitySystem.h>
 #include <FrameEntity/EntityEventProcessor.h>
+#include <FrameInput/InputManager.h>
 
 #include <SDL.h>
 
@@ -31,6 +32,7 @@ namespace Frame {
 			while(SDL_PollEvent(& sdlEvent)) {
 				ProcessSdlEvent(sdlEvent);
 			}
+			gInputManager->pKeyboard->ProcessChanges();
 
 			gRenderer->RenderBegin();
 
@@ -53,8 +55,15 @@ namespace Frame {
 
 	void IApplication::ProcessSdlEvent(SDL_Event & sdlEvent) {
 		switch(sdlEvent.type) {
-		case SDL_QUIT:
+		case SDL_EventType::SDL_QUIT:
 			m_quit = true;
+			break;
+		case SDL_EventType::SDL_KEYDOWN:
+			// SDL_Log("DOWN %d | %s", sdlEvent.key.keysym.sym, SDL_GetKeyName(sdlEvent.key.keysym.sym));
+			gInputManager->pKeyboard->SetInputState(static_cast<EInputKeyId>(sdlEvent.key.keysym.sym), EInputState::eIS_Press);
+			break;
+		case SDL_EventType::SDL_KEYUP:
+			gInputManager->pKeyboard->SetInputState(static_cast<EInputKeyId>(sdlEvent.key.keysym.sym), EInputState::eIS_Release);
 			break;
 		}
 	}

@@ -135,6 +135,7 @@ AddFiles(CODE_FILES
 	Code/Framework/FrameAsset
 	Code/Framework/FrameCore
 	Code/Framework/FrameEntity
+	Code/Framework/FrameInput
 	Code/Framework/FrameMath
 	Code/Framework/FrameReflection
 	Code/Framework/FrameRender
