@@ -59,7 +59,7 @@ namespace Frame {
 			m_quit = true;
 			break;
 		case SDL_EventType::SDL_KEYDOWN:
-			// SDL_Log("DOWN %d | %s", sdlEvent.key.keysym.sym, SDL_GetKeyName(sdlEvent.key.keysym.sym));
+			 SDL_Log("DOWN %d | %s", sdlEvent.key.keysym.sym, SDL_GetKeyName(sdlEvent.key.keysym.sym));
 			gInputManager->pKeyboard->SetInputState(static_cast<EInputKeyId>(sdlEvent.key.keysym.sym), EInputState::eIS_Press);
 			break;
 		case SDL_EventType::SDL_KEYUP:

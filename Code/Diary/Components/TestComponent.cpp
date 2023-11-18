@@ -88,11 +88,13 @@ void CTestComponent2::ProcessEvent(const Frame::EntityEvent::SEvent & event) {
 		if(Frame::gInputManager->pKeyboard->GetInputState(Frame::eIKI_A)
 			| Frame::gInputManager->pKeyboard->GetInputState(Frame::eIKI_S)
 			| Frame::gInputManager->pKeyboard->GetInputState(Frame::eIKI_D)
+			| Frame::gInputManager->pKeyboard->GetInputState(Frame::eIKI_LShift)
 			)
-		SDL_Log("%d %d %d",
+		SDL_Log("%d %d %d %d",
 			Frame::gInputManager->pKeyboard->GetInputState(Frame::eIKI_A),
 			Frame::gInputManager->pKeyboard->GetInputState(Frame::eIKI_S),
-			Frame::gInputManager->pKeyboard->GetInputState(Frame::eIKI_D)
+			Frame::gInputManager->pKeyboard->GetInputState(Frame::eIKI_D),
+			Frame::gInputManager->pKeyboard->GetInputState(Frame::eIKI_LShift)
 		);
 	}
 	break;
