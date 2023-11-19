@@ -48,7 +48,7 @@ namespace Frame {
 		void ComponentAddIntoProcessors(IEntityComponent * pComponent);
 		void ComponentRemoveFromProcessors(IEntityComponent * pComponent);
 
-		void ProcessUpdateEvent();
+		void ProcessUpdateEvent(float frameTime);
 		void ProcessRenderEvent();
 
 	private:

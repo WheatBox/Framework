@@ -5,6 +5,8 @@
 
 #include <FrameMath/Vector2.h>
 
+#include <string>
+
 class CTestComponent final : public Frame::IEntityComponent {
 
 public:
@@ -33,9 +35,12 @@ public:
 	}
 
 	virtual Frame::EntityEvent::Flags GetEventFlags() const override {
-		return Frame::EntityEvent::EFlag::Render;
+		return Frame::EntityEvent::EFlag::Update | Frame::EntityEvent::EFlag::Render;
 	}
 	virtual void ProcessEvent(const Frame::EntityEvent::SEvent & event) override;
+
+private:
+	std::string m_strFrameTime;
 
 };
 

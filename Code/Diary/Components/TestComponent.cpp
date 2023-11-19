@@ -56,12 +56,22 @@ void CTestComponent::ProcessEvent(const Frame::EntityEvent::SEvent & event) {
 #include <SDL.h>
 void CTestComponent2::ProcessEvent(const Frame::EntityEvent::SEvent & event) {
 	static bool bInited = false;
+	static float angle = 0.f;
 	switch(event.flag) {
+	case Frame::EntityEvent::Update:
+	{
+		float frameTime = event.params[0].f;
+
+		m_strFrameTime = "Test\n测试\nFrame time: " + std::to_string(frameTime) + "\nFps: " + std::to_string(int(1 / frameTime));
+		
+		angle += frameTime * 360; // => 360°/s
+	}
+	break;
 	case Frame::EntityEvent::Render:
 	{
 		if(!bInited) {
 			bInited = true;
-			Frame::CFont * pFont = Frame::gAssetsManager->OpenFont("C:/Users/15599/AppData/Local/Microsoft/Windows/Fonts/智勇手书体.ttf", 32);
+			Frame::CFont * pFont = Frame::gAssetsManager->OpenFont("C:/Windows/Fonts/STZHONGS.TTF", 32);
 			Frame::gRenderer->pTextRenderer->SetFont(pFont);
 		}
 
@@ -77,18 +87,22 @@ void CTestComponent2::ProcessEvent(const Frame::EntityEvent::SEvent & event) {
 		Frame::gRenderer->pTextRenderer->GetFont()->SetAlign(Frame::CFont::EHAlign::Right, Frame::CFont::EVAlign::Bottom);
 		Frame::gRenderer->pTextRenderer->DrawText(400, 400, "Hello, world!\n你好，世界，我在这里！");
 
-		Frame::gRenderer->pTextRenderer->SetAutoWrapLength(140);
+		Frame::gRenderer->pTextRenderer->SetAutoWrapLength(160);
 		Frame::gRenderer->pTextRenderer->GetFont()->SetHAlign(Frame::CFont::EHAlign::Center);
 		Frame::gRenderer->pTextRenderer->DrawText(400, 300, "Hello, world!\n你好，世界，我在这里！", 0xFFFFFF, 255);
 
-		Frame::CStaticSprite * pSprite = Frame::gRenderer->pTextRenderer->DrawTextAsSprite("Test\n测试", 0xFFFFFF, 255);
-		Frame::gRenderer->DrawSprite({ 400, 300 }, pSprite);
+		Frame::gRenderer->pTextRenderer->GetFont()->SetHAlign(Frame::CFont::EHAlign::Left);
+		Frame::CStaticSprite * pSprite = Frame::gRenderer->pTextRenderer->DrawTextAsSprite(m_strFrameTime.c_str(), 0xFFFFFF, 255);
+		pSprite->SetOffset({ pSprite->GetWidth() / 2.f, static_cast<float>(pSprite->GetHeight()) });
+		// pSprite->SetAlphaBlend(128);
+		// pSprite->SetColorBlend(0xFF00FF);
+		Frame::gRenderer->DrawSpriteBlended({ 400, 300 }, pSprite, { 0.5f }, angle, 0xFF00FF, 128);
 		Frame::gAssetsManager->DestroyStaticSprite(pSprite);
-
-		if(Frame::gInputManager->pKeyboard->GetInputState(Frame::eIKI_A)
-			| Frame::gInputManager->pKeyboard->GetInputState(Frame::eIKI_S)
-			| Frame::gInputManager->pKeyboard->GetInputState(Frame::eIKI_D)
-			| Frame::gInputManager->pKeyboard->GetInputState(Frame::eIKI_LShift)
+		
+		if( Frame::gInputManager->pKeyboard->GetInputState(Frame::eIKI_A) | 
+			Frame::gInputManager->pKeyboard->GetInputState(Frame::eIKI_S) | 
+			Frame::gInputManager->pKeyboard->GetInputState(Frame::eIKI_D) | 
+			Frame::gInputManager->pKeyboard->GetInputState(Frame::eIKI_LShift)
 			)
 		SDL_Log("%d %d %d %d",
 			Frame::gInputManager->pKeyboard->GetInputState(Frame::eIKI_A),

@@ -40,8 +40,8 @@ namespace Frame {
 
 #undef __ComponentDoSomethingAboutProcessors
 
-	void CEntitySystem::ProcessUpdateEvent() {
-		// TODO - 帧耗时
+	void CEntitySystem::ProcessUpdateEvent(float frameTime) {
+		m_pEventProcessors[EntityEvent::EFlagIndex::eEFI_Update]->SetEventParam(0, frameTime);
 		m_pEventProcessors[EntityEvent::EFlagIndex::eEFI_Update]->Process();
 	}
 

@@ -24,6 +24,20 @@ namespace Frame {
 		SDL_DestroyTexture(m_sdlTexture);
 	}
 
+	void CStaticSprite::SetColorBlend(Uint8 r, Uint8 g, Uint8 b) {
+		SDL_SetTextureColorMod(m_sdlTexture, r, g, b);
+	}
+	void CStaticSprite::SetAlphaBlend(Uint8 alpha) {
+		SDL_SetTextureAlphaMod(m_sdlTexture, alpha);
+	}
+
+	void CStaticSprite::GetColorBlend(Uint8 * destR, Uint8 * destG, Uint8 * destB) const {
+		SDL_GetTextureColorMod(m_sdlTexture, destR, destG, destB);
+	}
+	void CStaticSprite::GetAlphaBlend(Uint8 * destAlpha) const {
+		SDL_GetTextureAlphaMod(m_sdlTexture, destAlpha);
+	}
+
 	CFont::CFont(const char * filename, int fontSize) {
 		m_size = fontSize;
 		m_font = TTF_OpenFont(filename, fontSize);

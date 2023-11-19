@@ -3,6 +3,7 @@
 #include <FrameRender/BasicRenderingTypes.h>
 
 #include <FrameMath/Vector2.h>
+#include <FrameMath/ColorMath.h>
 
 namespace Frame {
 
@@ -41,6 +42,26 @@ namespace Frame {
 		virtual ~CStaticSprite();
 
 		virtual SDL_Texture * GetSdlTexture() const override { return m_sdlTexture; }
+
+		void SetColorBlend(const ColorRGB & rgb) {
+			SetColorBlend(rgb.r, rgb.g, rgb.b);
+		}
+		void SetColorBlend(Uint8 r, Uint8 g, Uint8 b);
+		void SetAlphaBlend(Uint8 alpha);
+
+		ColorRGB GetColorBlend() const {
+			ColorRGB rgb;
+			GetColorBlend(& rgb.r, & rgb.g, & rgb.b);
+			return rgb;
+		}
+		void GetColorBlend(Uint8 * destR, Uint8 * destG, Uint8 * destB) const;
+		Uint8 GetAlphaBlend() const {
+			Uint8 res;
+			GetAlphaBlend(& res);
+			return res;
+		}
+		void GetAlphaBlend(Uint8 * destAlpha) const;
+
 	private:
 		SDL_Texture * m_sdlTexture;
 	};

@@ -5,6 +5,8 @@
 #include <FrameEntity/EntityEventProcessor.h>
 #include <FrameInput/InputManager.h>
 
+#include <thread>
+
 #include <SDL.h>
 
 namespace Frame {
@@ -27,8 +29,18 @@ namespace Frame {
 
 	void IApplication::Run() {
 
+		Initialize();
+
 		SDL_Event sdlEvent;
 		while(!m_quit) {
+			static std::chrono::steady_clock::time_point prevTimePoint = std::chrono::steady_clock::now(), beforeLoopTimePoint;
+			static float frameTime = 0.f;
+
+			beforeLoopTimePoint = std::chrono::steady_clock::now();
+
+			frameTime = std::chrono::duration<float>(beforeLoopTimePoint - prevTimePoint).count();
+			prevTimePoint = beforeLoopTimePoint;
+
 			while(SDL_PollEvent(& sdlEvent)) {
 				ProcessSdlEvent(sdlEvent);
 			}
@@ -39,7 +51,7 @@ namespace Frame {
 			MainLoopPriority();
 			/* ------------- Main Loop ------------- */
 			
-			gEntitySystem->ProcessUpdateEvent();
+			gEntitySystem->ProcessUpdateEvent(frameTime);
 
 			gEntitySystem->ProcessRenderEvent();
 			
@@ -47,8 +59,10 @@ namespace Frame {
 			MainLoopLast();
 
 			gRenderer->RenderEnd();
-
-			SDL_Delay(16); // TODO - 可设置最大帧数或非锁帧
+			
+			if(m_maxFPS != 0) {
+				std::this_thread::sleep_until(beforeLoopTimePoint + m_maxFrameDelay);
+			}
 		}
 
 	}

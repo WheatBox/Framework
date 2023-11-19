@@ -37,4 +37,14 @@ namespace Frame {
 		return static_cast<int>(n) - (n < 0.0);
 	}
 
+	template<typename T>
+	constexpr auto Clamp(T n, T low, T high) {
+		if(n < low) {
+			return low;
+		} else if(n > high) {
+			return high;
+		}
+		return n;
+	}
+
 }

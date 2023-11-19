@@ -54,14 +54,55 @@ namespace Frame {
 	/* +-----------------------------------------------+ */
 
 	void CRenderer::DrawSprite(const Vec2 & vPos, CStaticSprite * pSprite, const Vec2 & vScale, float angle) {
+		Vec2 vOffset = pSprite->GetOffset() * vScale;
 		SDL_FRect destRect {
-			vPos.x - pSprite->GetXOffset() * vScale.x,
-			vPos.y - pSprite->GetYOffset() * vScale.y,
+			vPos.x - vOffset.x,
+			vPos.y - vOffset.y,
 			static_cast<float>(pSprite->GetWidth()) * vScale.x,
 			static_cast<float>(pSprite->GetHeight()) * vScale.y
 		};
-		SDL_FPoint rotationOffset { vPos.x, vPos.y };
+		SDL_FPoint rotationOffset { vOffset.x, vOffset.y };
 		SDL_RenderCopyExF(m_sdlRenderer, pSprite->GetSdlTexture(), NULL, & destRect, angle, & rotationOffset, SDL_RendererFlip::SDL_FLIP_NONE);
 	}
+
+#define Save_sprite_color_and_set_another_one_then_load_the_saved(pSprite, rgb, innerCode) \
+	ColorRGB rgbBefore = pSprite->GetColorBlend(); \
+	pSprite->SetColorBlend(rgb); \
+	innerCode \
+	pSprite->SetColorBlend(rgbBefore);
+
+#define Save_sprite_alpha_and_set_another_one_then_load_the_saved(pSprite, alpha, innerCode) \
+	Uint8 alphaBefore; \
+	pSprite->GetAlphaBlend(& alphaBefore); \
+	pSprite->SetAlphaBlend(alpha); \
+	innerCode \
+	pSprite->SetAlphaBlend(alphaBefore);
+
+	void CRenderer::DrawSpriteColorBlended(const Vec2 & vPos, CStaticSprite * pSprite, const Vec2 & vScale, float angle, const ColorRGB & rgb) {
+		Save_sprite_color_and_set_another_one_then_load_the_saved(
+			pSprite, rgb,
+			DrawSprite(vPos, pSprite, vScale, angle);
+		)
+	}
+
+	void CRenderer::DrawSpriteAlphaBlended(const Vec2 & vPos, CStaticSprite * pSprite, const Vec2 & vScale, float angle, Uint8 alpha) {
+		Save_sprite_alpha_and_set_another_one_then_load_the_saved(
+			pSprite, alpha,
+			DrawSprite(vPos, pSprite, vScale, angle);
+		)
+	}
+
+	void CRenderer::DrawSpriteBlended(const Vec2 & vPos, CStaticSprite * pSprite, const Vec2 & vScale, float angle, const ColorRGB & rgb, Uint8 alpha) {
+		Save_sprite_alpha_and_set_another_one_then_load_the_saved(
+			pSprite, alpha,
+			Save_sprite_color_and_set_another_one_then_load_the_saved(
+				pSprite, rgb,
+				DrawSprite(vPos, pSprite, vScale, angle);
+			)
+		)
+	}
+
+#undef Save_sprite_color_and_set_another_one_then_load_the_saved
+#undef Save_sprite_alpha_and_set_another_one_then_load_the_saved
 
 };

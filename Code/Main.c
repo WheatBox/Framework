@@ -12,7 +12,11 @@ void Rotate(int * pAngle) {
 	(* pAngle)++;
 }
 
-int nothing()/*main(int argc, char ** argv)*/ {
+int
+nothing(int argc, char ** argv)
+//main(int argc, char ** argv)
+{
+	argc, argv;
 
 	SDL_Init(SDL_INIT_VIDEO);
 
@@ -25,7 +29,7 @@ int nothing()/*main(int argc, char ** argv)*/ {
 	SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "1");
 
 	srand((unsigned int)time(0));
-	
+
 	SDL_Point points[100];
 	for(int i = 0; i < 100; i++) {
 		points[i] = (SDL_Point) { .x = rand() % 800, .y = rand() % 600 };
@@ -83,6 +87,8 @@ int nothing()/*main(int argc, char ** argv)*/ {
 
 		/*SDL_RenderCopy(renderer, tex, & texSrcRect, & texDestRect);*/
 		Rotate(& angle);
+		SDL_SetTextureColorMod(tex, 255, 255, 0);
+		SDL_SetTextureAlphaMod(tex, 128);
 		SDL_RenderCopyEx(renderer, tex, NULL, & texDestRect, angle, NULL, SDL_FLIP_NONE);
 
 		SDL_SetRenderDrawColor(renderer, 255, 0, 0, 64);
