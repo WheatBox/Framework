@@ -43,24 +43,24 @@ namespace Frame {
 
 		virtual SDL_Texture * GetSdlTexture() const override { return m_sdlTexture; }
 
-		void SetColorBlend(const ColorRGB & rgb) {
-			SetColorBlend(rgb.r, rgb.g, rgb.b);
+		void SetBlend(const ColorRGB & rgb) {
+			SetBlend(rgb.r, rgb.g, rgb.b);
 		}
-		void SetColorBlend(Uint8 r, Uint8 g, Uint8 b);
-		void SetAlphaBlend(Uint8 alpha);
+		void SetBlend(Uint8 r, Uint8 g, Uint8 b);
+		void SetAlpha(Uint8 alpha);
 
-		ColorRGB GetColorBlend() const {
+		ColorRGB GetBlend() const {
 			ColorRGB rgb;
-			GetColorBlend(& rgb.r, & rgb.g, & rgb.b);
+			GetBlend(& rgb.r, & rgb.g, & rgb.b);
 			return rgb;
 		}
-		void GetColorBlend(Uint8 * destR, Uint8 * destG, Uint8 * destB) const;
-		Uint8 GetAlphaBlend() const {
+		void GetBlend(Uint8 * destR, Uint8 * destG, Uint8 * destB) const;
+		Uint8 GetAlpha() const {
 			Uint8 res;
-			GetAlphaBlend(& res);
+			GetAlpha(& res);
 			return res;
 		}
-		void GetAlphaBlend(Uint8 * destAlpha) const;
+		void GetAlpha(Uint8 * destAlpha) const;
 
 	private:
 		SDL_Texture * m_sdlTexture;

@@ -120,19 +120,25 @@ namespace Frame {
 		}
 		void DrawSprite(const Vec2 & vPos, CStaticSprite * pSprite, const Vec2 & vScale, float angle);
 
-		void DrawSpriteColorBlended(const Vec2 & vPos, CStaticSprite * pSprite, const ColorRGB & rgb) {
-			DrawSpriteColorBlended(vPos, pSprite, { 1.f, 1.f }, 0.f, rgb);
+		// Alpha
+		void DrawSpriteTransparent(const Vec2 & vPos, CStaticSprite * pSprite, Uint8 alpha) {
+			DrawSpriteTransparent(vPos, pSprite, { 1.f, 1.f }, 0.f, alpha);
 		}
-		void DrawSpriteColorBlended(const Vec2 & vPos, CStaticSprite * pSprite, const Vec2 & vScale, float angle, const ColorRGB & rgb);
+		// Alpha
+		void DrawSpriteTransparent(const Vec2 & vPos, CStaticSprite * pSprite, const Vec2 & vScale, float angle, Uint8 alpha);
 
-		void DrawSpriteAlphaBlended(const Vec2 & vPos, CStaticSprite * pSprite, Uint8 alpha) {
-			DrawSpriteAlphaBlended(vPos, pSprite, { 1.f, 1.f }, 0.f, alpha);
+		// Blend
+		void DrawSpriteBlended(const Vec2 & vPos, CStaticSprite * pSprite, const ColorRGB & rgb) {
+			DrawSpriteBlended(vPos, pSprite, { 1.f, 1.f }, 0.f, rgb);
 		}
-		void DrawSpriteAlphaBlended(const Vec2 & vPos, CStaticSprite * pSprite, const Vec2 & vScale, float angle, Uint8 alpha);
+		// Blend
+		void DrawSpriteBlended(const Vec2 & vPos, CStaticSprite * pSprite, const Vec2 & vScale, float angle, const ColorRGB & rgb);
 
+		// Blend & Alpha
 		void DrawSpriteBlended(const Vec2 & vPos, CStaticSprite * pSprite, const ColorRGB & rgb, Uint8 alpha) {
 			DrawSpriteBlended(vPos, pSprite, { 1.f, 1.f }, 0.f, rgb, alpha);
 		}
+		// Blend & Alpha
 		void DrawSpriteBlended(const Vec2 & vPos, CStaticSprite * pSprite, const Vec2 & vScale, float angle, const ColorRGB & rgb, Uint8 alpha);
 
 	};

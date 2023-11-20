@@ -24,17 +24,17 @@ namespace Frame {
 		SDL_DestroyTexture(m_sdlTexture);
 	}
 
-	void CStaticSprite::SetColorBlend(Uint8 r, Uint8 g, Uint8 b) {
+	void CStaticSprite::SetBlend(Uint8 r, Uint8 g, Uint8 b) {
 		SDL_SetTextureColorMod(m_sdlTexture, r, g, b);
 	}
-	void CStaticSprite::SetAlphaBlend(Uint8 alpha) {
+	void CStaticSprite::SetAlpha(Uint8 alpha) {
 		SDL_SetTextureAlphaMod(m_sdlTexture, alpha);
 	}
 
-	void CStaticSprite::GetColorBlend(Uint8 * destR, Uint8 * destG, Uint8 * destB) const {
+	void CStaticSprite::GetBlend(Uint8 * destR, Uint8 * destG, Uint8 * destB) const {
 		SDL_GetTextureColorMod(m_sdlTexture, destR, destG, destB);
 	}
-	void CStaticSprite::GetAlphaBlend(Uint8 * destAlpha) const {
+	void CStaticSprite::GetAlpha(Uint8 * destAlpha) const {
 		SDL_GetTextureAlphaMod(m_sdlTexture, destAlpha);
 	}
 

@@ -66,28 +66,28 @@ namespace Frame {
 	}
 
 #define Save_sprite_color_and_set_another_one_then_load_the_saved(pSprite, rgb, innerCode) \
-	ColorRGB rgbBefore = pSprite->GetColorBlend(); \
-	pSprite->SetColorBlend(rgb); \
+	ColorRGB rgbBefore = pSprite->GetBlend(); \
+	pSprite->SetBlend(rgb); \
 	innerCode \
-	pSprite->SetColorBlend(rgbBefore);
+	pSprite->SetBlend(rgbBefore);
 
 #define Save_sprite_alpha_and_set_another_one_then_load_the_saved(pSprite, alpha, innerCode) \
 	Uint8 alphaBefore; \
-	pSprite->GetAlphaBlend(& alphaBefore); \
-	pSprite->SetAlphaBlend(alpha); \
+	pSprite->GetAlpha(& alphaBefore); \
+	pSprite->SetAlpha(alpha); \
 	innerCode \
-	pSprite->SetAlphaBlend(alphaBefore);
+	pSprite->SetAlpha(alphaBefore);
 
-	void CRenderer::DrawSpriteColorBlended(const Vec2 & vPos, CStaticSprite * pSprite, const Vec2 & vScale, float angle, const ColorRGB & rgb) {
-		Save_sprite_color_and_set_another_one_then_load_the_saved(
-			pSprite, rgb,
+	void CRenderer::DrawSpriteTransparent(const Vec2 & vPos, CStaticSprite * pSprite, const Vec2 & vScale, float angle, Uint8 alpha) {
+		Save_sprite_alpha_and_set_another_one_then_load_the_saved(
+			pSprite, alpha,
 			DrawSprite(vPos, pSprite, vScale, angle);
 		)
 	}
 
-	void CRenderer::DrawSpriteAlphaBlended(const Vec2 & vPos, CStaticSprite * pSprite, const Vec2 & vScale, float angle, Uint8 alpha) {
-		Save_sprite_alpha_and_set_another_one_then_load_the_saved(
-			pSprite, alpha,
+	void CRenderer::DrawSpriteBlended(const Vec2 & vPos, CStaticSprite * pSprite, const Vec2 & vScale, float angle, const ColorRGB & rgb) {
+		Save_sprite_color_and_set_another_one_then_load_the_saved(
+			pSprite, rgb,
 			DrawSprite(vPos, pSprite, vScale, angle);
 		)
 	}
