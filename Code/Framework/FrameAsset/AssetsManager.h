@@ -1,71 +1,10 @@
 ﻿#pragma once
 
-#include <FrameRender/BasicRenderingTypes.h>
-
-#include <FrameMath/Vector2.h>
-#include <FrameMath/ColorMath.h>
+#include <FrameAsset/Sprite.h>
 
 namespace Frame {
 
-	struct ISprite {
-
-		virtual SDL_Texture * GetSdlTexture() const = 0;
-
-		int GetWidth() const { return m_width; }
-		int GetHeight() const { return m_height; }
-
-		const Vec2 & GetOffset() const { return m_vOffset; }
-		float GetXOffset() const { return m_vOffset.x; }
-		float GetYOffset() const { return m_vOffset.y; }
-
-		void SetOffset(const Vec2 & vOffset) { m_vOffset = vOffset; }
-
-	protected:
-		int m_width = 0;
-		int m_height = 0;
-		Vec2 m_vOffset {};
-	};
-
-	class CStaticSprite : public ISprite {
-	public:
-		CStaticSprite() = delete;
-
-		CStaticSprite(SDL_Surface * sdlSurface, bool bFreeSurface)
-			: CStaticSprite(sdlSurface, { 0, 0 }, bFreeSurface)
-		{}
-		CStaticSprite(SDL_Surface * sdlSurface, const Vec2 & vOffset, bool bFreeSurface);
-
-		CStaticSprite(const char * filename); // TODO
-		
-		// TODO - 若无法正常初始化，则将 sdlTexture 设为一张错误提示图片
-
-		virtual ~CStaticSprite();
-
-		virtual SDL_Texture * GetSdlTexture() const override { return m_sdlTexture; }
-
-		void SetBlend(const ColorRGB & rgb) {
-			SetBlend(rgb.r, rgb.g, rgb.b);
-		}
-		void SetBlend(Uint8 r, Uint8 g, Uint8 b);
-		void SetAlpha(Uint8 alpha);
-
-		ColorRGB GetBlend() const {
-			ColorRGB rgb;
-			GetBlend(& rgb.r, & rgb.g, & rgb.b);
-			return rgb;
-		}
-		void GetBlend(Uint8 * destR, Uint8 * destG, Uint8 * destB) const;
-		Uint8 GetAlpha() const {
-			Uint8 res;
-			GetAlpha(& res);
-			return res;
-		}
-		void GetAlpha(Uint8 * destAlpha) const;
-
-	private:
-		SDL_Texture * m_sdlTexture;
-	};
-	
+	/*
 	class CAnimatedSprite : public ISprite {
 	public:
 		CAnimatedSprite() = delete;
@@ -134,18 +73,10 @@ namespace Frame {
 		EVAlign m_vAlign = EVAlign::Top;
 		EWrappedAlign m_wrappedAlign {};
 	};
-
+	*/
 	class CAssetsManager {
 	public:
 		CAssetsManager();
-
-		CStaticSprite * CreateStaticSprite(SDL_Surface * sdlSurface, bool bFreeSurface = true) {
-			return new CStaticSprite { sdlSurface, bFreeSurface };
-		}
-
-		CStaticSprite * CreateStaticSprite(SDL_Surface * sdlSurface, const Vec2 & vOffset, bool bFreeSurface = true) {
-			return new CStaticSprite { sdlSurface, vOffset, bFreeSurface };
-		}
 
 		CStaticSprite * CreateStaticSprite(const char * filename) {
 			return new CStaticSprite { filename };
@@ -154,13 +85,13 @@ namespace Frame {
 		void DestroyStaticSprite(CStaticSprite * pSprite) {
 			delete pSprite;
 		}
-
+		/*
 		CFont * OpenFont(const char * filename, int fontSize) {
 			return new CFont { filename, fontSize };
 		}
 
 		void CloseFont(CFont * pFont) {
 			delete pFont;
-		}
+		}*/
 	};
 }

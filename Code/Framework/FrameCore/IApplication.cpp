@@ -2,37 +2,54 @@
 #include <FrameCore/Globals.h>
 #include <FrameRender/Renderer.h>
 #include <FrameEntity/EntitySystem.h>
-#include <FrameEntity/EntityEventProcessor.h>
-#include <FrameInput/InputManager.h>
+//#include <FrameEntity/EntityEventProcessor.h>
+//#include <FrameInput/InputManager.h>
+
+#include <glad/glad.h>
+#include <GLFW/glfw3.h>
 
 #include <thread>
-
-#include <SDL.h>
 
 namespace Frame {
 
 	bool IApplication::InitializeWindow(const char * title, int windowWidth, int windowHeight) {
 		
-		SDL_InitSubSystem(SDL_INIT_VIDEO);
+		glfwInit();
+		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+		glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+		glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-		m_sdlWindow = SDL_CreateWindow(
-			title,
-			SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
-			windowWidth, windowHeight,
-			SDL_WindowFlags::SDL_WINDOW_RESIZABLE
+#ifdef __APPLE__
+		glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+#endif
+
+		m_pWindow = glfwCreateWindow(windowWidth, windowHeight, title, NULL, NULL);
+		if(!m_pWindow) {
+			// TODO 错误消息
+			return false;
+		}
+		glfwMakeContextCurrent(m_pWindow);
+
+		if(!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
+			// TODO 错误消息
+			return false;
+		}
+
+		gRenderer->Initialize(windowWidth, windowHeight);
+
+		glfwSetFramebufferSizeCallback(m_pWindow,
+			[](GLFWwindow * pWindow, int width, int height) {
+				pWindow;
+				glViewport(0, 0, width, height);
+				gRenderer->FramebufferResizeCallback(width, height);
+			}
 		);
 
-		gRenderer->Initialize(m_sdlWindow);
-
-		return m_sdlWindow != NULL;
+		return true;
 	}
 
 	void IApplication::Run() {
-
-		Initialize();
-
-		SDL_Event sdlEvent;
-		while(!m_quit) {
+		while(!glfwWindowShouldClose(m_pWindow)) {
 			static std::chrono::steady_clock::time_point prevTimePoint = std::chrono::steady_clock::now(), beforeLoopTimePoint;
 			static float frameTime = 0.f;
 
@@ -41,31 +58,41 @@ namespace Frame {
 			frameTime = std::chrono::duration<float>(beforeLoopTimePoint - prevTimePoint).count();
 			prevTimePoint = beforeLoopTimePoint;
 
-			while(SDL_PollEvent(& sdlEvent)) {
-				ProcessSdlEvent(sdlEvent);
-			}
-			gInputManager->pKeyboard->ProcessChanges();
-
 			gRenderer->RenderBegin();
 
 			MainLoopPriority();
 			/* ------------- Main Loop ------------- */
-			
+
 			gEntitySystem->ProcessUpdateEvent(frameTime);
 
 			gEntitySystem->ProcessRenderEvent();
-			
+
 			/* ------------------------------------- */
 			MainLoopLast();
 
 			gRenderer->RenderEnd();
-			
-			if(m_maxFPS != 0) {
+
+			glfwSwapBuffers(m_pWindow);
+			glfwPollEvents();
+
+			if(!m_bVSync && m_maxFPS != 0) {
 				std::this_thread::sleep_until(beforeLoopTimePoint + m_maxFrameDelay);
 			}
 		}
 
+		Terminate();
 	}
+
+	void IApplication::SetVSync(bool bEnable) {
+		m_bVSync = bEnable;
+		glfwSwapInterval(bEnable);
+	}
+
+	void IApplication::Terminate() {
+		glfwTerminate();
+	}
+
+#if 0
 
 	void IApplication::ProcessSdlEvent(SDL_Event & sdlEvent) {
 		switch(sdlEvent.type) {
@@ -81,5 +108,6 @@ namespace Frame {
 			break;
 		}
 	}
+#endif
 
 }

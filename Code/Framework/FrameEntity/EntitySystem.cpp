@@ -16,14 +16,14 @@ namespace Frame {
 	}
 	
 	CEntitySystem::~CEntitySystem() {
-		for(Uint8 i = 0; i < EntityEvent::EFlagIndex::eEFI__END; i++) {
+		for(uint8 i = 0; i < EntityEvent::EFlagIndex::eEFI__END; i++) {
 			delete m_pEventProcessors[i];
 		}
 	}
 
 #define __ComponentDoSomethingAboutProcessors(__doWhat) \
 	EntityEvent::Flags flags = pComponent->GetEventFlags(); \
-	for(Uint8 i = 0; flags && i < EntityEvent::EFlagIndex::eEFI__END; i++) { \
+	for(uint8 i = 0; flags && i < EntityEvent::EFlagIndex::eEFI__END; i++) { \
 		if(flags & 1) { \
 			m_pEventProcessors[i]->__doWhat(pComponent); \
 		} \

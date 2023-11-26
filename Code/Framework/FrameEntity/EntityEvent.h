@@ -6,9 +6,9 @@ namespace Frame {
 
 	namespace EntityEvent {
 
-		typedef Uint32 Flags;
+		typedef uint32 Flags;
 
-		enum EFlagIndex : Uint8 {
+		enum EFlagIndex : uint8 {
 			eEFI_Initialize = 0,
 			eEFI_Update,
 			eEFI_Render,

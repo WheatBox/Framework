@@ -5,8 +5,8 @@
 namespace Frame {
 
 	struct GUID {
-		Uint64 high = 0;
-		Uint64 low = 0;
+		uint64 high = 0;
+		uint64 low = 0;
 
 		GUID() = default;
 		GUID(const char * sz) {
@@ -15,8 +15,8 @@ namespace Frame {
 		virtual ~GUID() = default;
 
 		void Set(const char * guid) {
-			Uint8 val;
-			Uint8 i = 31;
+			uint8 val;
+			uint8 i = 31;
 			for(const char * pCurrentChar = guid; * pCurrentChar && i >= 0; pCurrentChar++) {
 				if(* pCurrentChar >= '0' && * pCurrentChar <= '9') {
 					val = (* pCurrentChar) - '0';
@@ -29,9 +29,9 @@ namespace Frame {
 				}
 
 				if(i >= 16) {
-					high |= static_cast<Uint64>(val) << ((i - 16) * 4);
+					high |= static_cast<uint64>(val) << ((i - 16) * 4);
 				} else {
-					low |= static_cast<Uint64>(val) << (i * 4);
+					low |= static_cast<uint64>(val) << (i * 4);
 				}
 				i--;
 			}
@@ -50,7 +50,7 @@ namespace std {
 	template<>
 	struct hash<Frame::GUID> {
 		size_t operator ()(const Frame::GUID & guid) const noexcept {
-			std::hash<Uint64> hasher {};
+			std::hash<uint64> hasher {};
 			return hasher(guid.high) ^ hasher(guid.low);
 		}
 	};

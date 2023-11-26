@@ -84,4 +84,39 @@ namespace Frame {
 	typedef Vec2_tpl<double> Vec2d;
 	typedef Vec2_tpl<int> Vec2i;
 
+#define __ROTATE2DVECTOR_TEMP(vec) \
+	xTemp = vec.x; \
+	vec.x = xTemp * cosr - vec.y * sinr; \
+	vec.y = vec.y * cosr + xTemp * sinr;
+
+	template<typename T>
+	constexpr void Rotate2DVectorsRadian(float radian, Vec2_tpl<T> & v1, Vec2_tpl<T> & v2) {
+		T cosr = std::cos(radian), sinr = std::sin(radian);
+		T xTemp;
+		__ROTATE2DVECTOR_TEMP(v1);
+		__ROTATE2DVECTOR_TEMP(v2);
+	}
+
+	template<typename T>
+	constexpr void Rotate2DVectorsRadian(float radian, Vec2_tpl<T> & v1, Vec2_tpl<T> & v2, Vec2_tpl<T> & v3, Vec2_tpl<T> & v4) {
+		T cosr = std::cos(radian), sinr = std::sin(radian);
+		T xTemp;
+		__ROTATE2DVECTOR_TEMP(v1);
+		__ROTATE2DVECTOR_TEMP(v2);
+		__ROTATE2DVECTOR_TEMP(v3);
+		__ROTATE2DVECTOR_TEMP(v4);
+	}
+
+	template<typename T>
+	constexpr void Rotate2DVectorsDegree(float degree, Vec2_tpl<T> & v1, Vec2_tpl<T> & v2) {
+		Rotate2DVectorsRadian(DegToRad(degree), v1, v2);
+	}
+
+	template<typename T>
+	constexpr void Rotate2DVectorsDegree(float degree, Vec2_tpl<T> & v1, Vec2_tpl<T> & v2, Vec2_tpl<T> & v3, Vec2_tpl<T> & v4) {
+		Rotate2DVectorsRadian(DegToRad(degree), v1, v2, v3, v4);
+	}
+
+#undef __ROTATE2DVECTOR_TEMP
+
 }

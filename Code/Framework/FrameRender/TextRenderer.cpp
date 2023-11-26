@@ -1,5 +1,7 @@
 ﻿#include <FrameRender/TextRenderer.h>
 
+#if 0
+
 #include <FrameCore/Globals.h>
 #include <FrameAsset/AssetsManager.h>
 #include <FrameMath/ColorMath.h>
@@ -9,7 +11,7 @@
 
 namespace Frame {
 
-	CTextRenderer::CTextRenderer(ColorRGB * pColor, Uint8 * pAlpha) {
+	CTextRenderer::CTextRenderer(ColorRGB * pColor, uint8 * pAlpha) {
 		m_pColor = pColor;
 		m_pAlpha = pAlpha;
 	}
@@ -18,7 +20,7 @@ namespace Frame {
 	/* |                   Draw Text                   | */
 	/* +-----------------------------------------------+ */
 
-	void CTextRenderer::DrawText(float x, float y, const char * sz, const ColorRGB & rgb, Uint8 alpha) {
+	void CTextRenderer::DrawText(float x, float y, const char * sz, const ColorRGB & rgb, uint8 alpha) {
 		SDL_Surface * surface = DrawTextAsSdlSurface(sz, rgb, alpha);
 		if (!surface) {
 			return;
@@ -52,12 +54,14 @@ namespace Frame {
 		
 	}
 
-	CStaticSprite * CTextRenderer::DrawTextAsSprite(const char * sz, const ColorRGB & rgb, Uint8 alpha) {
+	CStaticSprite * CTextRenderer::DrawTextAsSprite(const char * sz, const ColorRGB & rgb, uint8 alpha) {
 		return gAssetsManager->CreateStaticSprite(DrawTextAsSdlSurface(sz, rgb, alpha));
 	}
 
-	SDL_Surface * CTextRenderer::DrawTextAsSdlSurface(const char * sz, const ColorRGB & rgb, Uint8 alpha) {
+	SDL_Surface * CTextRenderer::DrawTextAsSdlSurface(const char * sz, const ColorRGB & rgb, uint8 alpha) {
 		return TTF_RenderUTF8_Blended_Wrapped(m_pFont->GetSdlFont(), sz, { rgb.r, rgb.g, rgb.b, alpha }, m_autoWrapLength);
 	}
 
 }
+
+#endif

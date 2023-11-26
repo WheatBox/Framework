@@ -5,13 +5,13 @@
 namespace Frame {
 
 	// 1u << pos
-	template<typename ResT = Uint32>
-	constexpr ResT FlagBit(Uint8 pos) {
+	template<typename ResT = uint32>
+	constexpr ResT FlagBit(uint8 pos) {
 		return 1u << pos;
 	}
 
 	// 1ull << pos
-	constexpr Uint64 FlagBit64(Uint8 pos) {
+	constexpr uint64 FlagBit64(uint8 pos) {
 		return 1ull << pos;
 	}
 

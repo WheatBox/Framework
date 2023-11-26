@@ -16,10 +16,8 @@ option(Platform "The platform to compile to" "Windows-x64")
 
 message("Platform = " ${Platform})
 
-set(SDL_DIR "")
-set(SDL_LIB_DIR "")
-set(SDLTTF_DIR "")
-set(SDLTTF_LIB_DIR "")
+set(GLFW_DIR "")
+set(GLFW_LIB_DIR "")
 
 set(Windows-x64 NO)
 set(Windows-x86 NO)
@@ -30,17 +28,17 @@ if(Platform STREQUAL "Windows-x64")
 
 	set(OUTPUT_DIR ${CMAKE_SOURCE_DIR}/Bin/Windows-x64/)
 
-	set(SDL_DIR ${CMAKE_SOURCE_DIR}/Third/SDL2-devel-2.28.4-VC/)
-	set(SDL_LIB_DIR ${SDL_DIR}/lib/x64/)
-
-	set(SDLTTF_DIR ${CMAKE_SOURCE_DIR}/Third/SDL2_ttf-devel-2.20.2-VC/)
-	set(SDLTTF_LIB_DIR ${SDLTTF_DIR}/lib/x64/)
+	set(GLFW_DIR ${CMAKE_SOURCE_DIR}/Third/glfw-3.3.8.bin.WIN64/)
+	set(GLFW_LIB_DIR ${GLFW_DIR}/lib-vc2022/)
 
 	if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
 		# 如果有需要的话，在这里设定 gcc/g++ 的编译器路径
 		# Set gcc/g++ compiler path here if you need
 		# set(CMAKE_C_COMPILER "F:/mingw64/bin/gcc")
 		# set(CMAKE_CXX_COMPILER "F:/mingw64/bin/g++")
+
+		# TODO - set(GLFW_LIB_DIR ${GLFW_DIR}/lib-TODO/)
+		message("TODO")
 	endif()
 
 elseif(Platform STREQUAL "Windows-x86")
@@ -49,17 +47,17 @@ elseif(Platform STREQUAL "Windows-x86")
 
 	set(OUTPUT_DIR ${CMAKE_SOURCE_DIR}/Bin/Windows-x86/)
 
-	set(SDL_DIR ${CMAKE_SOURCE_DIR}/Third/SDL2-devel-2.28.4-VC/)
-	set(SDL_LIB_DIR ${SDL_DIR}/lib/x86/)
-
-	set(SDLTTF_DIR ${CMAKE_SOURCE_DIR}/Third/SDL2_ttf-devel-2.20.2-VC/)
-	set(SDLTTF_LIB_DIR ${SDLTTF_DIR}/lib/x86/)
+	# TODO
+	message("TODO")
 
 	if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
 		# 如果有需要的话，在这里设定 gcc/g++ 的编译器路径
 		# Set gcc/g++ compiler path here if you need
 		set(CMAKE_C_COMPILER "F:/mingw32/bin/gcc")
 		set(CMAKE_CXX_COMPILER "F:/mingw32/bin/g++")
+
+		# TODO
+		message("TODO")
 	endif()
 
 else()
@@ -79,22 +77,27 @@ else()
 endif()
 
 message("OUTPUT_DIR = " ${OUTPUT_DIR})
-message("SDL_DIR = " ${SDL_DIR})
-message("SDL_LIB_DIR = " ${SDL_LIB_DIR})
-message("SDLTTF_DIR = " ${SDLTTF_DIR})
-message("SDLTTF_LIB_DIR = " ${SDLTTF_LIB_DIR})
+message("GLFW_DIR = " ${GLFW_DIR})
+message("GLFW_LIB_DIR = " ${GLFW_LIB_DIR})
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG ${OUTPUT_DIR})
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_MINSIZEREL ${OUTPUT_DIR})
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE ${OUTPUT_DIR})
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELWITHDEBINFO ${OUTPUT_DIR})
 
-if(Windows-x64 OR Windows-x86)
-	file(COPY ${SDL_LIB_DIR}/SDL2.dll DESTINATION ${OUTPUT_DIR})
-	file(COPY ${SDLTTF_LIB_DIR}/SDL2_ttf.dll DESTINATION ${OUTPUT_DIR})
+if(Windows-x64)
+	#file(COPY if_we_need.dll DESTINATION ${OUTPUT_DIR})
+elseif(Windows-x86)
 endif()
 
-file(COPY ${CMAKE_SOURCE_DIR}/Assets/ DESTINATION ${OUTPUT_DIR}/Assets/)
+macro(CopyFilesToOutput _folderName)
+
+	file(COPY ${CMAKE_SOURCE_DIR}/${_folderName}/ DESTINATION ${OUTPUT_DIR}/${_folderName}/)
+
+endmacro(CopyFilesToOutput)
+
+CopyFilesToOutput(Assets)
+CopyFilesToOutput(Shaders)
 
 if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
 	message("GNU")
@@ -132,14 +135,17 @@ AddFiles(CODE_FILES
 	Code
 	Code/Diary
 	Code/Diary/Components
+	Code/Framework
 	Code/Framework/FrameAsset
 	Code/Framework/FrameCore
 	Code/Framework/FrameEntity
-	Code/Framework/FrameInput
+	#Code/Framework/FrameInput
 	Code/Framework/FrameMath
-	Code/Framework/FrameReflection
+	#Code/Framework/FrameReflection
 	Code/Framework/FrameRender
-	Code/Framework/FrameUtility
+	#Code/Framework/FrameUtility
+	
+	Third/glad/src
 )
 
 AddFiles(ASSET_FILES
@@ -147,21 +153,25 @@ AddFiles(ASSET_FILES
 	Assets/testfolder
 )
 
+AddFiles(SHADER_FILES
+	Shaders
+)
+
 add_executable(${EXE_NAME}
 	${CODE_FILES}
 	${ASSET_FILES}
+	${SHADER_FILES}
 )
 
 target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE
-	${SDL_DIR}/include/
-	${SDLTTF_DIR}/include/
+	${GLFW_DIR}/include/
 	${CMAKE_SOURCE_DIR}/Code/Framework/
+	${CMAKE_SOURCE_DIR}/Third/glad/include/
+	${CMAKE_SOURCE_DIR}/Third/stb/
 )
 
 target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE
-	${SDL_LIB_DIR}/SDL2main.lib
-	${SDL_LIB_DIR}/SDL2.lib
-	${SDLTTF_LIB_DIR}/SDL2_ttf.lib
+	${GLFW_LIB_DIR}/glfw3.lib
 )
 
 if(MSVC)

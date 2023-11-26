@@ -7,4 +7,6 @@ namespace Frame {
 	extern class CAssetsManager * gAssetsManager;
 	extern class CInputManager * gInputManager;
 
+	extern class Shader * gShaderInUsing;
+
 }

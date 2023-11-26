@@ -57,3 +57,5 @@ namespace Frame {
 	};
 
 }
+
+#include <FrameEntity/ComponentRegister.h>

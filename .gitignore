@@ -1,8 +1,5 @@
 Bin/
 Build/
 
-Third/SDL2_ttf-devel-2.20.2-VC/*
-!Third/SDL2_ttf-devel-2.20.2-VC/__Place_holder_for_git__.txt
-
-Third/SDL2-devel-2.28.4-VC/*
-!Third/SDL2-devel-2.28.4-VC/__Place_holder_for_git__.txt
+Third/glfw-3.3.8.bin.WIN64/*
+!Third/glfw-3.3.8.bin.WIN64/__Place_holder_for_git__.txt

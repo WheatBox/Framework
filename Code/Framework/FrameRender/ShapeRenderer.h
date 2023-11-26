@@ -1,15 +1,21 @@
 ﻿#pragma once
 
-#include <FrameRender/IRenderer.h>
 #include <FrameMath/Vector2.h>
 
 namespace Frame {
 
-	class CShapeRenderer : public IRenderer {
+	class CRenderer;
+
+	class CShapeRenderer {
+
+	private:
+		CRenderer * m_pRenderer;
 
 	public:
 
-		CShapeRenderer() = default;
+		CShapeRenderer(CRenderer * pRenderer)
+			: m_pRenderer { pRenderer }
+		{}
 		virtual ~CShapeRenderer() = default;
 
 		/* +-----------------------------------------------+ */

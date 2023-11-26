@@ -7,7 +7,7 @@
 
 namespace Frame {
 
-	constexpr void ColorRGB2HSV(Uint8 r, Uint8 g, Uint8 b, Uint16 * destH, Uint8 * destS, Uint8 * destV) {
+	constexpr void ColorRGB2HSV(uint8 r, uint8 g, uint8 b, uint16 * destH, uint8 * destS, uint8 * destV) {
 		float r1 = static_cast<float>(r) / 255.0f;
 		float g1 = static_cast<float>(g) / 255.0f;
 		float b1 = static_cast<float>(b) / 255.0f;
@@ -15,19 +15,19 @@ namespace Frame {
 		float v = std::max({ r1, g1, b1 });
 		float v_minus_min = v - std::min({ r1, g1, b1 });
 
-		* destV = static_cast<Uint8>(v);
-		* destS = (v == 0) ? 0 : static_cast<Uint8>(v_minus_min / v);
+		* destV = static_cast<uint8>(v);
+		* destS = (v == 0) ? 0 : static_cast<uint8>(v_minus_min / v);
 
-		Uint16 h = 0;
+		uint16 h = 0;
 		
 		if(v_minus_min == 0) {
 
 		} else if(v == r1) {
-			h = static_cast<Uint16>(60.f * (g1 - b1) / v_minus_min);
+			h = static_cast<uint16>(60.f * (g1 - b1) / v_minus_min);
 		} else if(v == g1) {
-			h = 120 + static_cast<Uint16>(60.f * (b1 - r1) / v_minus_min);
+			h = 120 + static_cast<uint16>(60.f * (b1 - r1) / v_minus_min);
 		} else {
-			h = 240 + static_cast<Uint16>(60.f * (r1 - g1) / v_minus_min);
+			h = 240 + static_cast<uint16>(60.f * (r1 - g1) / v_minus_min);
 		}
 
 		if(h < 0) {
@@ -37,18 +37,18 @@ namespace Frame {
 		* destH = h;
 	}
 
-	constexpr void ColorHSV2RGB(Uint16 h, Uint8 s, Uint8 v, Uint8 * destR, Uint8 * destG, Uint8 * destB) {
+	constexpr void ColorHSV2RGB(uint16 h, uint8 s, uint8 v, uint8 * destR, uint8 * destG, uint8 * destB) {
 		float v1f = static_cast<float>(v) / 100.f;
 		float s1f = static_cast<float>(s) / 100.f;
 
 		float h_div_60 = h / 60.f;
-		Uint8 i = static_cast<Uint8>(Floor(h_div_60));
+		uint8 i = static_cast<uint8>(Floor(h_div_60));
 		float f = h_div_60 - static_cast<float>(i);
 
-		Uint8 resp = static_cast<Uint8>(Floor(v1f * (1.f - s1f) * 255.f));
-		Uint8 resq = static_cast<Uint8>(Floor(v1f * (1.f - f * s1f) * 255.f));
-		Uint8 rest = static_cast<Uint8>(Floor(v1f * (1.f - (1.f - f) * s1f) * 255.f));
-		Uint8 resv = static_cast<Uint8>(Floor(v1f * 255.f));
+		uint8 resp = static_cast<uint8>(Floor(v1f * (1.f - s1f) * 255.f));
+		uint8 resq = static_cast<uint8>(Floor(v1f * (1.f - f * s1f) * 255.f));
+		uint8 rest = static_cast<uint8>(Floor(v1f * (1.f - (1.f - f) * s1f) * 255.f));
+		uint8 resv = static_cast<uint8>(Floor(v1f * 255.f));
 
 		switch(i) {
 		case 0:
@@ -117,8 +117,8 @@ namespace Frame {
 	}
 
 	ColorHSV ColorRGB::ToHSV() const {
-		Uint16 h;
-		Uint8 s, v;
+		uint16 h;
+		uint8 s, v;
 		ColorRGB2HSV(r, g, b, & h, & s, & v);
 		return { h, s, v };
 	}
@@ -152,8 +152,8 @@ namespace Frame {
 	}
 
 	ColorHSV ColorBGR::ToHSV() const {
-		Uint16 h;
-		Uint8 s, v;
+		uint16 h;
+		uint8 s, v;
 		ColorRGB2HSV(r, g, b, & h, & s, & v);
 		return { h, s, v };
 	}
@@ -181,13 +181,13 @@ namespace Frame {
 	}
 
 	ColorRGB ColorHSV::ToRGB() const {
-		Uint8 r, g, b;
+		uint8 r, g, b;
 		ColorHSV2RGB(h, s, v, & r, & g, & b);
 		return { r, g, b };
 	}
 
 	ColorBGR ColorHSV::ToBGR() const {
-		Uint8 r, g, b;
+		uint8 r, g, b;
 		ColorHSV2RGB(h, s, v, & r, & g, & b);
 		return { b, g, r };
 	}

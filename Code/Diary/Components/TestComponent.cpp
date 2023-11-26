@@ -4,10 +4,8 @@
 
 #include <FrameCore/Globals.h>
 #include <FrameRender/Renderer.h>
-#include <FrameRender/ShapeRenderer.h>
-#include <FrameRender/TextRenderer.h>
 #include <FrameAsset/AssetsManager.h>
-#include <FrameInput/InputManager.h>
+//#include <FrameInput/InputManager.h>
 
 REGISTER_ENTITY_COMPONENT(, CTestComponent);
 REGISTER_ENTITY_COMPONENT(, CTestComponent2);
@@ -28,13 +26,13 @@ void CTestComponent::ProcessEvent(const Frame::EntityEvent::SEvent & event) {
 		Frame::Vec2 pos = m_pEntity->GetPosition();
 
 		Frame::gRenderer->SetColor(0x81F377);
-		Frame::gRenderer->pShapeRenderer->DrawRectangle(
+		/*Frame::gRenderer->pShapeRenderer->DrawRectangle(
 			pos.x - m_size.x / 2,
 			pos.y - m_size.y / 2,
 			pos.x + m_size.x / 2,
 			pos.y + m_size.y / 2,
 			true
-		);
+		);*/
 	}
 	break;
 	case Frame::EntityEvent::Render:
@@ -42,21 +40,23 @@ void CTestComponent::ProcessEvent(const Frame::EntityEvent::SEvent & event) {
 		Frame::Vec2 pos = m_pEntity->GetPosition();
 
 		Frame::gRenderer->SetColor(0x8D6B94);
-		Frame::gRenderer->pShapeRenderer->DrawRectangle(
+		/*Frame::gRenderer->pShapeRenderer->DrawRectangle(
 			pos.x - m_size.x / 3,
 			pos.y - m_size.y / 3,
 			pos.x + m_size.x / 3,
 			pos.y + m_size.y / 3,
 			true
-		);
+		);*/
 	}
 	break;
 	}
 }
-#include <SDL.h>
+#include <iostream>
 void CTestComponent2::ProcessEvent(const Frame::EntityEvent::SEvent & event) {
 	static bool bInited = false;
 	static float angle = 0.f;
+	static Frame::CStaticSprite * pSprite = nullptr;
+	
 	switch(event.flag) {
 	case Frame::EntityEvent::Update:
 	{
@@ -64,11 +64,27 @@ void CTestComponent2::ProcessEvent(const Frame::EntityEvent::SEvent & event) {
 
 		m_strFrameTime = "Test\n测试\nFrame time: " + std::to_string(frameTime) + "\nFps: " + std::to_string(int(1 / frameTime));
 		
-		angle += frameTime * 360; // => 360°/s
+		//angle += frameTime * 360; // => 360°/s
+		angle += frameTime * 360 / 5.f;
 	}
 	break;
 	case Frame::EntityEvent::Render:
 	{
+		if(!bInited) {
+			bInited = true;
+			pSprite = new Frame::CStaticSprite { "./Assets/spr_t.bmp" };
+			pSprite->SetOffset({ static_cast<float>(pSprite->GetWidth()) / 2.f, static_cast<float>(pSprite->GetHeight()) / 2.f });
+		}
+
+		Frame::gRenderer->SetAlpha(.5f);
+		Frame::gRenderer->DrawSprite(pSprite, { 340.f , 400.f }, { 0.7f }, angle);
+		Frame::gRenderer->DrawSpriteBlended(pSprite, { 400.f , 300.f },
+			0xFF0000, 1.f, 0x00FF00, 1.f,
+			0x0000FF, 0.f, 0xFFFF00, 0.f,
+			1.2f, -angle
+		);
+		
+		/*
 		if(!bInited) {
 			bInited = true;
 			Frame::CFont * pFont = Frame::gAssetsManager->OpenFont("C:/Windows/Fonts/STZHONGS.TTF", 32);
@@ -104,12 +120,12 @@ void CTestComponent2::ProcessEvent(const Frame::EntityEvent::SEvent & event) {
 			Frame::gInputManager->pKeyboard->GetInputState(Frame::eIKI_D) | 
 			Frame::gInputManager->pKeyboard->GetInputState(Frame::eIKI_LShift)
 			)
-		SDL_Log("%d %d %d %d",
+		printf("%d %d %d %d\n",
 			Frame::gInputManager->pKeyboard->GetInputState(Frame::eIKI_A),
 			Frame::gInputManager->pKeyboard->GetInputState(Frame::eIKI_S),
 			Frame::gInputManager->pKeyboard->GetInputState(Frame::eIKI_D),
 			Frame::gInputManager->pKeyboard->GetInputState(Frame::eIKI_LShift)
-		);
+		);*/
 	}
 	break;
 	}
