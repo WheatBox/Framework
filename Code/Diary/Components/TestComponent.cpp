@@ -84,6 +84,20 @@ void CTestComponent2::ProcessEvent(const Frame::EntityEvent::SEvent & event) {
 			1.2f, -angle
 		);
 		
+		Frame::gRenderer->SetColorAlpha(0xFFFFFF, 1.f);
+		Frame::gRenderer->pShapeRenderer->DrawPixelColorBlended({ 100.f, 100.f }, 0x00FF00, 32.f);
+
+		Frame::gRenderer->pShapeRenderer->DrawLineBlended({ 200.f, 200.f }, { 700.f, 500.f }, 0x00FF00, 1.f, 0x0000FF, 0.f, 16.f);
+		Frame::gRenderer->pShapeRenderer->DrawLineAlphaBlended({ 200.f, 500.f }, { 700.f, 500.f }, 1.f, 0.f, 16.f);
+
+		Frame::gRenderer->pShapeRenderer->DrawQuadrilateralBlended(
+			{ 100.f, 100.f }, { 700.f, 100.f },
+			{ 100.f, 500.f }, { 700.f, 500.f },
+			0xFF0000, 1.f, 0x00FF00, .5f,
+			0x0000FF, .5f, 0xFFFF00, 0.f,
+			0.f
+		);
+		
 		/*
 		if(!bInited) {
 			bInited = true;

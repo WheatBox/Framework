@@ -35,7 +35,9 @@ namespace Frame {
 			return false;
 		}
 
-		gRenderer->Initialize(windowWidth, windowHeight);
+		Shader * _pSpriteShader = new Shader {}, * _pSolidColorShader = new Shader {};
+		InitializeRendererShaders(_pSpriteShader, _pSolidColorShader);
+		gRenderer->Initialize(windowWidth, windowHeight, _pSpriteShader, _pSolidColorShader);
 
 		glfwSetFramebufferSizeCallback(m_pWindow,
 			[](GLFWwindow * pWindow, int width, int height) {
@@ -81,6 +83,54 @@ namespace Frame {
 		}
 
 		Terminate();
+	}
+
+	void IApplication::InitializeRendererShaders(Shader * _pSpriteShader, Shader * _pSolidColorShader) {
+		if(!_pSpriteShader->CompileFiles("./Shaders/Sprite.vert", "./Shaders/Sprite.frag")) {
+			// TODO - 警告信息
+			_pSpriteShader->Compile(
+				"#version 330 core\n"
+				"layout (location = 0) in vec3 aPos;"
+				"layout (location = 1) in vec4 aColor;"
+				"layout (location = 2) in vec2 aTexCoord;"
+				"out vec4 vColor;"
+				"out vec2 vTexCoord;"
+				"void main() {"
+				"	gl_Position = vec4(aPos, 1.f);"
+				"	vColor = aColor;"
+				"	vTexCoord = aTexCoord;"
+				"}"
+				,
+				"#version 330 core\n"
+				"in vec4 vColor;"
+				"in vec2 vTexCoord;"
+				"uniform sampler2D u_BaseTexture;"
+				"void main() {"
+				"	gl_FragColor = texture(u_BaseTexture, vTexCoord) * vColor;"
+				"}"
+			);
+		}
+		_pSpriteShader->SetUniformInt("u_BaseTexture", 0);
+
+		if(!_pSolidColorShader->CompileFiles("./Shaders/SolidColor.vert", "./Shaders/SolidColor.frag")) {
+			// TODO - 警告信息
+			_pSolidColorShader->Compile(
+				"#version 330 core\n"
+				"layout (location = 0) in vec3 aPos;"
+				"layout (location = 1) in vec4 aColor;"
+				"out vec4 vColor;"
+				"void main() {"
+				"	gl_Position = vec4(aPos, 1.f);"
+				"	vColor = aColor;"
+				"}"
+				,
+				"#version 330 core\n"
+				"in vec4 vColor;"
+				"void main() {"
+				"	gl_FragColor = vColor;"
+				"}"
+			);
+		}
 	}
 
 	void IApplication::SetVSync(bool bEnable) {

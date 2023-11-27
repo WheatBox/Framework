@@ -17,14 +17,15 @@ namespace Frame {
 	class CRenderer {
 
 	public:
-		void Initialize(int windowWidth, int windowHeight);
+		void Initialize(int windowWidth, int windowHeight, Shader * _pSpriteShader, Shader * _pSolidColorShader);
 
 		void FramebufferResizeCallback(int width, int height);
 
 		CShapeRenderer * pShapeRenderer = nullptr;
 		//CTextRenderer * pTextRenderer = nullptr;
 		
-		Shader * pDefaultShader = nullptr;
+		Shader * pSpriteShader = nullptr;
+		Shader * pSolidColorShader = nullptr;
 
 	private:
 		int m_windowWidth = 0, m_windowHeight = 0;
@@ -52,10 +53,14 @@ namespace Frame {
 			};
 		}
 
+		void Project(Vec2 * pos) const {
+			pos->x = pos->x * 2.f / m_windowWidth - 1.f;
+			pos->y = -pos->y * 2.f / m_windowHeight + 1.f;
+		}
+
 		void Project(float * _x, float * _y) const {
 			* _x = (* _x) * 2.f / m_windowWidth - 1.f;
-			* _y = (* _y) * 2.f / m_windowHeight - 1.f;
-			* _y = - * _y;
+			* _y = -(* _y) * 2.f / m_windowHeight + 1.f;
 		}
 
 		STextureVertexBuffer & GetTextureVertexBuffer() {

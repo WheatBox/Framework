@@ -99,8 +99,10 @@ namespace Frame {
 	}
 
 	void Shader::Use() {
-		gShaderInUsing = this;
-		glUseProgram(m_glProgramId);
+		if(gShaderInUsing != this) {
+			gShaderInUsing = this;
+			glUseProgram(m_glProgramId);
+		}
 	}
 
 	void Shader::SetUniformInt(const char * szUniformName, int value) {
