@@ -89,7 +89,7 @@ void CTestComponent2::ProcessEvent(const Frame::EntityEvent::SEvent & event) {
 
 		Frame::gRenderer->pShapeRenderer->DrawLineBlended({ 200.f, 200.f }, { 700.f, 500.f }, 0x00FF00, 1.f, 0x0000FF, 0.f, 16.f);
 		Frame::gRenderer->pShapeRenderer->DrawLineAlphaBlended({ 200.f, 500.f }, { 700.f, 500.f }, 1.f, 0.f, 16.f);
-
+		
 		Frame::gRenderer->pShapeRenderer->DrawQuadrilateralBlended(
 			{ 100.f, 100.f }, { 700.f, 100.f },
 			{ 100.f, 500.f }, { 700.f, 500.f },
@@ -97,7 +97,10 @@ void CTestComponent2::ProcessEvent(const Frame::EntityEvent::SEvent & event) {
 			0x0000FF, .5f, 0xFFFF00, 0.f,
 			0.f
 		);
-		
+
+		Frame::gRenderer->pShapeRenderer->DrawTriangle({ 100, 200 }, { 400, 300 }, { 200, 250 });
+		Frame::gRenderer->pShapeRenderer->DrawTriangle({ 100, 400 }, { 200, 450 }, { 400, 500 });
+
 		/*
 		if(!bInited) {
 			bInited = true;

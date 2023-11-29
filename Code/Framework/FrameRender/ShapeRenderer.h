@@ -18,9 +18,13 @@ namespace Frame {
 		const ColorRGB & m_color;
 		const float & m_alpha;
 
-	public:
+		struct SDefault {
+			constexpr static float pixelSize = 1.f;
+			constexpr static float lineWidth = 1.f;
+			constexpr static float outlineWidth = 0.f;
+		};
 
-		constexpr static float s_defaultSize = 1.f;
+	public:
 
 		CShapeRenderer(CRenderer * pRenderer);
 		virtual ~CShapeRenderer() = default;
@@ -31,60 +35,86 @@ namespace Frame {
 
 		void DrawBasicShapes(float * vertexBuffer, uint8 _GL_mode, int count);
 
-		void DrawPixel(const Vec2 & vPos, float _size = s_defaultSize) {
+		void DrawPixel(const Vec2 & vPos, float _size = SDefault::pixelSize) {
 			DrawPixelBlended(vPos, m_color, m_alpha, _size);
 		}
-		void DrawPixelColorBlended(const Vec2 & vPos, const ColorRGB & rgb, float _size = s_defaultSize) {
+		void DrawPixelColorBlended(const Vec2 & vPos, const ColorRGB & rgb, float _size = SDefault::pixelSize) {
 			DrawPixelBlended(vPos, rgb, m_alpha, _size);
 		}
-		void DrawPixelAlphaBlended(const Vec2 & vPos, float alpha, float _size = s_defaultSize) {
+		void DrawPixelAlphaBlended(const Vec2 & vPos, float alpha, float _size = SDefault::pixelSize) {
 			DrawPixelBlended(vPos, m_color, alpha, _size);
 		}
-		void DrawPixelBlended(Vec2 vPos, const ColorRGB & rgb, float alpha, float _size = s_defaultSize);
+		void DrawPixelBlended(Vec2 vPos, const ColorRGB & rgb, float alpha, float _size = SDefault::pixelSize);
 
-		void DrawLine(const Vec2 & vPos1, const Vec2 & vPos2, float width = s_defaultSize) {
+		void DrawLine(const Vec2 & vPos1, const Vec2 & vPos2, float width = SDefault::lineWidth) {
 			DrawLineBlended(vPos1, vPos2, m_color, m_alpha, width);
 		}
 		
-		void DrawLineColorBlended(const Vec2 & vPos1, const Vec2 & vPos2, const ColorRGB & rgb, float width = s_defaultSize) {
+		void DrawLineColorBlended(const Vec2 & vPos1, const Vec2 & vPos2, const ColorRGB & rgb, float width = SDefault::lineWidth) {
 			DrawLineColorBlended(vPos1, vPos2, rgb, rgb, width);
 		}
-		void DrawLineColorBlended(const Vec2 & vPos1, const Vec2 & vPos2, const ColorRGB & rgb1, const ColorRGB & rgb2, float width = s_defaultSize) {
+		void DrawLineColorBlended(const Vec2 & vPos1, const Vec2 & vPos2, const ColorRGB & rgb1, const ColorRGB & rgb2, float width = SDefault::lineWidth) {
 			DrawLineBlended(vPos1, vPos2, rgb1, m_alpha, rgb2, m_alpha, width);
 		}
 
-		void DrawLineAlphaBlended(const Vec2 & vPos1, const Vec2 & vPos2, float alpha, float width = s_defaultSize) {
+		void DrawLineAlphaBlended(const Vec2 & vPos1, const Vec2 & vPos2, float alpha, float width = SDefault::lineWidth) {
 			DrawLineAlphaBlended(vPos1, vPos2, alpha, alpha, width);
 		}
-		void DrawLineAlphaBlended(const Vec2 & vPos1, const Vec2 & vPos2, float alpha1, float alpha2, float width = s_defaultSize) {
+		void DrawLineAlphaBlended(const Vec2 & vPos1, const Vec2 & vPos2, float alpha1, float alpha2, float width = SDefault::lineWidth) {
 			DrawLineBlended(vPos1, vPos2, m_color, alpha1, m_color, alpha2, width);
 		}
 		
-		void DrawLineBlended(const Vec2 & vPos1, const Vec2 & vPos2, const ColorRGB & rgb, float alpha, float width = s_defaultSize) {
+		void DrawLineBlended(const Vec2 & vPos1, const Vec2 & vPos2, const ColorRGB & rgb, float alpha, float width = SDefault::lineWidth) {
 			DrawLineBlended(vPos1, vPos2, rgb, alpha, rgb, alpha, width);
 		}
-		void DrawLineBlended(Vec2 vPos1, Vec2 vPos2, const ColorRGB & rgb1, float alpha1, const ColorRGB & rgb2, float alpha2, float width = s_defaultSize);
+		void DrawLineBlended(Vec2 vPos1, Vec2 vPos2, const ColorRGB & rgb1, float alpha1, const ColorRGB & rgb2, float alpha2, float width = SDefault::lineWidth);
 
-		// outlineWidth : 轮廓线宽度（默认 1.0f），设为 0.0f 则是填充
-		// outlineWidth : Outline width (default 1.0f), set to 0.0f for filling
-		void DrawRectangle(const Vec2 & vPos1, const Vec2 & vPos2, float outlineWidth = s_defaultSize) {
+		// outlineWidth : 轮廓线宽度，设为 0.0f 则是填充
+		// outlineWidth : Outline width, set to 0.0f for filling
+		void DrawRectangle(const Vec2 & vPos1, const Vec2 & vPos2, float outlineWidth = SDefault::outlineWidth) {
 			DrawRectangleBlended(vPos1, vPos2, m_color, m_alpha, outlineWidth);
 		}
 		
-		// TODO - DrawRectangleColorBlended...
-		//        DrawRectangleAlphaBlended...
+		// outlineWidth : 轮廓线宽度，设为 0.0f 则是填充
+		// outlineWidth : Outline width, set to 0.0f for filling
+		void DrawRectangleColorBlended(const Vec2 & vPos1, const Vec2 & vPos2, const ColorRGB & rgb, float outlineWidth = SDefault::outlineWidth) {
+			DrawRectangleBlended(vPos1, vPos2, rgb, m_alpha, outlineWidth);
+		}
+		// outlineWidth : 轮廓线宽度，设为 0.0f 则是填充
+		// outlineWidth : Outline width, set to 0.0f for filling
+		void DrawRectangleColorBlended(const Vec2 & vPos1, const Vec2 & vPos2,
+			const ColorRGB & rgbTL,    const ColorRGB & rgbTR,
+			const ColorRGB & rgbBL,    const ColorRGB & rgbBR,
+			float outlineWidth = SDefault::outlineWidth
+		) {
+			DrawRectangleBlended(vPos1, vPos2, rgbTL, m_alpha, rgbTR, m_alpha, rgbBL, m_alpha, rgbBR, m_alpha, outlineWidth);
+		}
 
-		// outlineWidth : 轮廓线宽度（默认 1.0f），设为 0.0f 则是填充
-		// outlineWidth : Outline width (default 1.0f), set to 0.0f for filling
-		void DrawRectangleBlended(const Vec2 & vPos1, const Vec2 & vPos2, const ColorRGB & rgb, float alpha, float outlineWidth = s_defaultSize) {
+		// outlineWidth : 轮廓线宽度，设为 0.0f 则是填充
+		// outlineWidth : Outline width, set to 0.0f for filling
+		void DrawRectangleAlphaBlended(const Vec2 & vPos1, const Vec2 & vPos2, float alpha, float outlineWidth = SDefault::outlineWidth) {
+			DrawRectangleBlended(vPos1, vPos2, m_color, alpha, outlineWidth);
+		}
+		// outlineWidth : 轮廓线宽度，设为 0.0f 则是填充
+		// outlineWidth : Outline width, set to 0.0f for filling
+		void DrawRectangleAlphaBlended(const Vec2 & vPos1, const Vec2 & vPos2,
+			float alphaTL, float alphaTR, float alphaBL, float alphaBR,
+			float outlineWidth = SDefault::outlineWidth
+		) {
+			DrawRectangleBlended(vPos1, vPos2, m_color, alphaTL, m_color, alphaTR, m_color, alphaBL, m_color, alphaBR, outlineWidth);
+		}
+
+		// outlineWidth : 轮廓线宽度，设为 0.0f 则是填充
+		// outlineWidth : Outline width, set to 0.0f for filling
+		void DrawRectangleBlended(const Vec2 & vPos1, const Vec2 & vPos2, const ColorRGB & rgb, float alpha, float outlineWidth = SDefault::outlineWidth) {
 			DrawRectangleBlended(vPos1, vPos2, rgb, alpha, rgb, alpha, rgb, alpha, rgb, alpha, outlineWidth);
 		}
-		// outlineWidth : 轮廓线宽度（默认 1.0f），设为 0.0f 则是填充
-		// outlineWidth : Outline width (default 1.0f), set to 0.0f for filling
+		// outlineWidth : 轮廓线宽度，设为 0.0f 则是填充
+		// outlineWidth : Outline width, set to 0.0f for filling
 		void DrawRectangleBlended(const Vec2 & vPosTL, const Vec2 & vPosBR,
 			const ColorRGB & rgbTL, float alphaTL,    const ColorRGB & rgbTR, float alphaTR,
 			const ColorRGB & rgbBL, float alphaBL,    const ColorRGB & rgbBR, float alphaBR,
-			float outlineWidth = s_defaultSize
+			float outlineWidth = SDefault::outlineWidth
 		) {
 			DrawQuadrilateralBlended(
 				vPosTL, { vPosBR.x, vPosTL.y }, { vPosTL.x, vPosBR.y }, vPosBR,
@@ -94,17 +124,101 @@ namespace Frame {
 			);
 		}
 
-		// TODO - DrawQuadrilateral...
+		// outlineWidth : 轮廓线宽度，设为 0.0f 则是填充
+		// outlineWidth : Outline width, set to 0.0f for filling
+		void DrawQuadrilateral(const Vec2 & vPosTL, const Vec2 & vPosTR, const Vec2 & vPosBL, const Vec2 & vPosBR, float outlineWidth = SDefault::outlineWidth) {
+			DrawQuadrilateralBlended(vPosTL, vPosTR, vPosBL, vPosBR, m_color, m_alpha, outlineWidth);
+		}
 
-		// outlineWidth : 轮廓线宽度（默认 1.0f），设为 0.0f 则是填充
-		// outlineWidth : Outline width (default 1.0f), set to 0.0f for filling
+		// outlineWidth : 轮廓线宽度，设为 0.0f 则是填充
+		// outlineWidth : Outline width, set to 0.0f for filling
+		void DrawQuadrilateralColorBlended(const Vec2 & vPosTL, const Vec2 & vPosTR, const Vec2 & vPosBL, const Vec2 & vPosBR, const ColorRGB & rgb, float outlineWidth = SDefault::outlineWidth
+		) {
+			DrawQuadrilateralBlended(vPosTL, vPosTR, vPosBL, vPosBR, rgb, m_alpha, outlineWidth);
+		}
+		// outlineWidth : 轮廓线宽度，设为 0.0f 则是填充
+		// outlineWidth : Outline width, set to 0.0f for filling
+		void DrawQuadrilateralColorBlended(const Vec2 & vPosTL, const Vec2 & vPosTR, const Vec2 & vPosBL, const Vec2 & vPosBR,
+			const ColorRGB & rgbTL,    const ColorRGB & rgbTR,
+			const ColorRGB & rgbBL,    const ColorRGB & rgbBR,
+			float outlineWidth = SDefault::outlineWidth
+		) {
+			DrawQuadrilateralBlended(vPosTL, vPosTR, vPosBL, vPosBR, rgbTL, m_alpha, rgbTR, m_alpha, rgbBL, m_alpha, rgbBR, m_alpha, outlineWidth);
+		}
+
+		// outlineWidth : 轮廓线宽度，设为 0.0f 则是填充
+		// outlineWidth : Outline width, set to 0.0f for filling
+		void DrawQuadrilateralAlphaBlended(const Vec2 & vPosTL, const Vec2 & vPosTR, const Vec2 & vPosBL, const Vec2 & vPosBR, float alpha, float outlineWidth = SDefault::outlineWidth) {
+			DrawQuadrilateralBlended(vPosTL, vPosTR, vPosBL, vPosBR, m_color, alpha, outlineWidth);
+		}
+		// outlineWidth : 轮廓线宽度，设为 0.0f 则是填充
+		// outlineWidth : Outline width, set to 0.0f for filling
+		void DrawQuadrilateralAlphaBlended(const Vec2 & vPosTL, const Vec2 & vPosTR, const Vec2 & vPosBL, const Vec2 & vPosBR,
+			float alphaTL,    float alphaTR,
+			float alphaBL,    float alphaBR,
+			float outlineWidth = SDefault::outlineWidth
+		) {
+			DrawQuadrilateralBlended(vPosTL, vPosTR, vPosBL, vPosBR, m_color, alphaTL, m_color, alphaTR, m_color, alphaBL, m_color, alphaBR, outlineWidth);
+		}
+
+		// outlineWidth : 轮廓线宽度，设为 0.0f 则是填充
+		// outlineWidth : Outline width, set to 0.0f for filling
+		void DrawQuadrilateralBlended(const Vec2 & vPosTL, const Vec2 & vPosTR, const Vec2 & vPosBL, const Vec2 & vPosBR, const ColorRGB & rgb, float alpha, float outlineWidth = SDefault::outlineWidth) {
+			DrawQuadrilateralBlended(vPosTL, vPosTR, vPosBL, vPosBR, rgb, alpha, rgb, alpha, rgb, alpha, rgb, alpha, outlineWidth);
+		}
+		// outlineWidth : 轮廓线宽度，设为 0.0f 则是填充
+		// outlineWidth : Outline width, set to 0.0f for filling
 		void DrawQuadrilateralBlended(Vec2 vPosTL, Vec2 vPosTR, Vec2 vPosBL, Vec2 vPosBR,
 			const ColorRGB & rgbTL, float alphaTL,    const ColorRGB & rgbTR, float alphaTR,
 			const ColorRGB & rgbBL, float alphaBL,    const ColorRGB & rgbBR, float alphaBR,
-			float outlineWidth = s_defaultSize
+			float outlineWidth = SDefault::outlineWidth
 		);
 
-		void DrawRectangleWH(float x, float y, float w, float h, bool fill = false);
+		// outlineWidth : 轮廓线宽度，设为 0.0f 则是填充
+		// outlineWidth : Outline width, set to 0.0f for filling
+		void DrawTriangle(const Vec2 & vPos1, const Vec2 & vPos2, const Vec2 & vPos3, float outlineWidth = SDefault::outlineWidth) {
+			DrawTriangleBlended(vPos1, vPos2, vPos3, m_color, m_alpha, outlineWidth);
+		}
+
+		// outlineWidth : 轮廓线宽度，设为 0.0f 则是填充
+		// outlineWidth : Outline width, set to 0.0f for filling
+		void DrawTriangleColorBlended(const Vec2 & vPos1, const Vec2 & vPos2, const Vec2 & vPos3, const ColorRGB & rgb, float outlineWidth = SDefault::outlineWidth) {
+			DrawTriangleBlended(vPos1, vPos2, vPos3, rgb, m_alpha, outlineWidth);
+		}
+		// outlineWidth : 轮廓线宽度，设为 0.0f 则是填充
+		// outlineWidth : Outline width, set to 0.0f for filling
+		void DrawTriangleColorBlended(Vec2 vPos1, Vec2 vPos2, Vec2 vPos3,
+			const ColorRGB & rgb1, const ColorRGB & rgb2, const ColorRGB & rgb3,
+			float outlineWidth = SDefault::outlineWidth
+		) {
+			DrawTriangleBlended(vPos1, vPos2, vPos3, rgb1, m_alpha, rgb2, m_alpha, rgb3, m_alpha, outlineWidth);
+		}
+
+		// outlineWidth : 轮廓线宽度，设为 0.0f 则是填充
+		// outlineWidth : Outline width, set to 0.0f for filling
+		void DrawTriangleAlphaBlended(const Vec2 & vPos1, const Vec2 & vPos2, const Vec2 & vPos3, float alpha, float outlineWidth = SDefault::outlineWidth) {
+			DrawTriangleBlended(vPos1, vPos2, vPos3, m_color, alpha, outlineWidth);
+		}
+		// outlineWidth : 轮廓线宽度，设为 0.0f 则是填充
+		// outlineWidth : Outline width, set to 0.0f for filling
+		void DrawTriangleAlphaBlended(Vec2 vPos1, Vec2 vPos2, Vec2 vPos3,
+			float alpha1, float alpha2, float alpha3,
+			float outlineWidth = SDefault::outlineWidth
+		) {
+			DrawTriangleBlended(vPos1, vPos2, vPos3, m_color, alpha1, m_color, alpha2, m_color, alpha3, outlineWidth);
+		}
+
+		// outlineWidth : 轮廓线宽度，设为 0.0f 则是填充
+		// outlineWidth : Outline width, set to 0.0f for filling
+		void DrawTriangleBlended(const Vec2 & vPos1, const Vec2 & vPos2, const Vec2 & vPos3, const ColorRGB & rgb, float alpha, float outlineWidth = SDefault::outlineWidth) {
+			DrawTriangleBlended(vPos1, vPos2, vPos3, rgb, alpha, rgb, alpha, rgb, alpha, outlineWidth);
+		}
+		// outlineWidth : 轮廓线宽度，设为 0.0f 则是填充
+		// outlineWidth : Outline width, set to 0.0f for filling
+		void DrawTriangleBlended(Vec2 vPos1, Vec2 vPos2, Vec2 vPos3,
+			ColorRGB rgb1, float alpha1, ColorRGB rgb2, float alpha2, const ColorRGB & rgb3, float alpha3,
+			float outlineWidth = SDefault::outlineWidth
+		);
 
 	};
 

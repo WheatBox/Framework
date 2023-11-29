@@ -143,7 +143,7 @@ AddFiles(CODE_FILES
 	Code/Framework/FrameMath
 	#Code/Framework/FrameReflection
 	Code/Framework/FrameRender
-	#Code/Framework/FrameUtility
+	Code/Framework/FrameUtility
 	
 	Third/glad/src
 )

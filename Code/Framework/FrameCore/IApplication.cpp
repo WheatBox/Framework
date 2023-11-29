@@ -35,9 +35,9 @@ namespace Frame {
 			return false;
 		}
 
-		Shader * _pSpriteShader = new Shader {}, * _pSolidColorShader = new Shader {};
-		InitializeRendererShaders(_pSpriteShader, _pSolidColorShader);
-		gRenderer->Initialize(windowWidth, windowHeight, _pSpriteShader, _pSolidColorShader);
+		Shader * _pSpriteShader = new Shader {}, * _pColorShader = new Shader {};
+		InitializeRendererShaders(_pSpriteShader, _pColorShader);
+		gRenderer->Initialize(windowWidth, windowHeight, _pSpriteShader, _pColorShader);
 
 		glfwSetFramebufferSizeCallback(m_pWindow,
 			[](GLFWwindow * pWindow, int width, int height) {
@@ -85,7 +85,7 @@ namespace Frame {
 		Terminate();
 	}
 
-	void IApplication::InitializeRendererShaders(Shader * _pSpriteShader, Shader * _pSolidColorShader) {
+	void IApplication::InitializeRendererShaders(Shader * _pSpriteShader, Shader * _pColorShader) {
 		if(!_pSpriteShader->CompileFiles("./Shaders/Sprite.vert", "./Shaders/Sprite.frag")) {
 			// TODO - 警告信息
 			_pSpriteShader->Compile(
@@ -112,9 +112,9 @@ namespace Frame {
 		}
 		_pSpriteShader->SetUniformInt("u_BaseTexture", 0);
 
-		if(!_pSolidColorShader->CompileFiles("./Shaders/SolidColor.vert", "./Shaders/SolidColor.frag")) {
+		if(!_pColorShader->CompileFiles("./Shaders/SolidColor.vert", "./Shaders/SolidColor.frag")) {
 			// TODO - 警告信息
-			_pSolidColorShader->Compile(
+			_pColorShader->Compile(
 				"#version 330 core\n"
 				"layout (location = 0) in vec3 aPos;"
 				"layout (location = 1) in vec4 aColor;"

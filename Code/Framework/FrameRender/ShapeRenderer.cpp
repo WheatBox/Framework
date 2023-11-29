@@ -5,6 +5,8 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
+#include <algorithm>
+
 namespace Frame {
 
 	CShapeRenderer::CShapeRenderer(CRenderer * pRenderer)
@@ -34,7 +36,7 @@ namespace Frame {
 		glBindVertexArray(m_VAO);
 		glBindBuffer(GL_ARRAY_BUFFER, m_VBO);
 		glBufferData(GL_ARRAY_BUFFER, sizeof(float) * static_cast<size_t>(count * 7), vertexBuffer, GL_DYNAMIC_DRAW);
-		m_pRenderer->pSolidColorShader->Use();
+		m_pRenderer->pColorShader->Use();
 		glDrawArrays(_GL_mode, 0, count);
 	}
 
@@ -85,11 +87,31 @@ namespace Frame {
 		}
 	}
 
-#if 0
+	void CShapeRenderer::DrawTriangleBlended(Vec2 vPos1, Vec2 vPos2, Vec2 vPos3,
+		ColorRGB rgb1, float alpha1, ColorRGB rgb2, float alpha2, const ColorRGB & rgb3, float alpha3,
+		float outlineWidth
+	) {
+		if((vPos2 - vPos1).Cross(vPos3 - vPos1) > 0) {
+			std::swap(vPos1, vPos2);
+			std::swap(rgb1, rgb2);
+			std::swap(alpha1, alpha2);
+		}
 
-	void CShapeRenderer::DrawRectangleWH(float x, float y, float w, float h, bool fill) {
-		SDL_FRect rect { x, y, w, h };
-		(fill ? SDL_RenderFillRectF : SDL_RenderDrawRectF)(m_sdlRenderer, & rect);
+		m_pRenderer->Project(& vPos1);
+		m_pRenderer->Project(& vPos2);
+		m_pRenderer->Project(& vPos3);
+
+		float vertexBuffer[] = {
+			vPos1.x, vPos1.y, 0.f, ONERGB(rgb1), alpha1,
+			vPos2.x, vPos2.y, 0.f, ONERGB(rgb2), alpha2,
+			vPos3.x, vPos3.y, 0.f, ONERGB(rgb3), alpha3
+		};
+		if(outlineWidth) {
+			glLineWidth(outlineWidth);
+			DrawBasicShapes(vertexBuffer, GL_LINE_LOOP, 3);
+		} else {
+			DrawBasicShapes(vertexBuffer, GL_TRIANGLES, 3);
+		}
 	}
-#endif
+
 }

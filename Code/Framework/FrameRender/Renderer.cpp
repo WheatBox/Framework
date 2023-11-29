@@ -9,7 +9,7 @@
 
 namespace Frame {
 
-	void CRenderer::Initialize(int windowWidth, int windowHeight, Shader * _pSpriteShader, Shader * _pSolidColorShader) {
+	void CRenderer::Initialize(int windowWidth, int windowHeight, Shader * _pSpriteShader, Shader * _pColorShader) {
 
 		FramebufferResizeCallback(windowWidth, windowHeight);
 
@@ -48,7 +48,7 @@ namespace Frame {
 		// pTextRenderer = new CTextRenderer { & m_color, & m_alpha };
 
 		pSpriteShader = _pSpriteShader;
-		pSolidColorShader = _pSolidColorShader;
+		pColorShader = _pColorShader;
 
 		pSpriteShader->Use();
 

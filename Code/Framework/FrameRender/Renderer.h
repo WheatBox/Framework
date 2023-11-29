@@ -17,7 +17,7 @@ namespace Frame {
 	class CRenderer {
 
 	public:
-		void Initialize(int windowWidth, int windowHeight, Shader * _pSpriteShader, Shader * _pSolidColorShader);
+		void Initialize(int windowWidth, int windowHeight, Shader * _pSpriteShader, Shader * _pColorShader);
 
 		void FramebufferResizeCallback(int width, int height);
 
@@ -25,7 +25,7 @@ namespace Frame {
 		//CTextRenderer * pTextRenderer = nullptr;
 		
 		Shader * pSpriteShader = nullptr;
-		Shader * pSolidColorShader = nullptr;
+		Shader * pColorShader = nullptr;
 
 	private:
 		int m_windowWidth = 0, m_windowHeight = 0;
@@ -92,7 +92,10 @@ namespace Frame {
 		}
 
 		const ColorRGB & GetColor() const { return m_color; }
-		float GetAlpha() const { return m_alpha; }
+		const float & GetAlpha() const { return m_alpha; }
+		//          ^
+		//      此处的引用是为了给其它子渲染器成员变量使用，例如 pShapeRenderer（参见 CShapeRenderer::m_alpha）
+		//      The reference here is intended for use by other sub renderer member variables such as pShapeRenderer (see also CShapeRenderer::m_alpha)
 
 		void SetBackgroundColor(const ColorRGB & rgb) {
 			m_backgroundColor = rgb;
