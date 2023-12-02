@@ -7,6 +7,7 @@
 namespace Frame {
 
 	class CRenderer;
+	class CShader;
 
 	class CShapeRenderer {
 
@@ -24,10 +25,17 @@ namespace Frame {
 			constexpr static float outlineWidth = 0.f;
 		};
 
+		CShader * const m_pDefaultShader;
+		CShader * m_pShader = nullptr;
+
 	public:
 
 		CShapeRenderer(CRenderer * pRenderer);
-		virtual ~CShapeRenderer() = default;
+		virtual ~CShapeRenderer();
+
+		void ResetShader() { m_pShader = m_pDefaultShader; }
+		void SetShader(CShader * pShader) { m_pShader = pShader; }
+		CShader * GetShader() const { return m_pShader; }
 
 		/* +-----------------------------------------------+ */
 		/* |               Draw Basic Shapes               | */

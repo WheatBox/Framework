@@ -1,5 +1,6 @@
 ﻿#include <FrameRender/ShapeRenderer.h>
 
+#include <FrameRender/DefaultShaders.h>
 #include <FrameRender/Renderer.h>
 
 #include <glad/glad.h>
@@ -13,6 +14,7 @@ namespace Frame {
 		: m_pRenderer { pRenderer }
 		, m_color { pRenderer->GetColor() }
 		, m_alpha { pRenderer->GetAlpha() }
+		, m_pDefaultShader { new CShader {} }
 	{
 		glGenBuffers(1, & m_VBO);
 		glGenVertexArrays(1, & m_VAO);
@@ -26,6 +28,16 @@ namespace Frame {
 		glEnableVertexAttribArray(0);
 		glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, stride, (void *)(3 * sizeof(float)));
 		glEnableVertexAttribArray(1);
+
+		if(!m_pDefaultShader->CompileFiles(DEFAULT_COLOR_SHADER_FILES)) {
+			// TODO - 警告信息
+			m_pDefaultShader->Compile(DEFAULT_COLOR_SHADER);
+		}
+		SetShader(m_pDefaultShader);
+	}
+
+	CShapeRenderer::~CShapeRenderer() {
+		delete m_pDefaultShader;
 	}
 
 	/* +-----------------------------------------------+ */
@@ -36,7 +48,7 @@ namespace Frame {
 		glBindVertexArray(m_VAO);
 		glBindBuffer(GL_ARRAY_BUFFER, m_VBO);
 		glBufferData(GL_ARRAY_BUFFER, sizeof(float) * static_cast<size_t>(count * 7), vertexBuffer, GL_DYNAMIC_DRAW);
-		m_pRenderer->pColorShader->Use();
+		m_pShader->Use();
 		glDrawArrays(_GL_mode, 0, count);
 	}
 

@@ -56,4 +56,24 @@ namespace Frame {
 	private:
 		unsigned int m_textureId = 0;
 	};
+
+#if 0
+	class CAnimatedSprite : public ISprite {
+	public:
+		CAnimatedSprite() = delete;
+		CAnimatedSprite(SDL_Renderer * sdlRenderer, SDL_Surface ** sdlSurfaces, int frameCount, int width, int height, const Vec2 & vOffset);
+		// TODO - sdlSurfaces to m_frames
+		virtual ~CAnimatedSprite() = default;
+
+		virtual SDL_Texture * GetSdlTexture() const override { return m_frames[0]; }
+		SDL_Texture * GetSdlTexture(int frame) const { return m_frames[frame % m_frameCount]; }
+
+		SDL_Texture ** GetFrames() const { return m_frames; }
+		int GetFrameCount() const { return m_frameCount; }
+
+	private:
+		SDL_Texture ** m_frames;
+		int m_frameCount;
+	};
+#endif
 }

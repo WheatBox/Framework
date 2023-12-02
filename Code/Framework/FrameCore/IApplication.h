@@ -6,7 +6,7 @@ struct GLFWwindow;
 
 namespace Frame {
 
-	class Shader;
+	class CShader;
 
 	struct IApplication {
 	protected:
@@ -35,8 +35,6 @@ namespace Frame {
 		void Run();
 
 		virtual void Initialize(int argc, char ** argv) = 0;
-
-		virtual void InitializeRendererShaders(Shader * _pSpriteShader, Shader * _pSolidColorShader);
 
 		virtual void MainLoopPriority() {}
 		virtual void MainLoopLast() {}

@@ -34,7 +34,7 @@ namespace Frame {
 		   xBR, yBR, zBR,        rBR, gBR, bBR, aBR,          1.f, 0.f       // 右下 Bottom Right
 		           // ^
 		           // |      也许哪天用得上
-			       // +----- Maybe one day I'll need them
+		           // +----- Maybe one day I'll need them
 		} {}
 
 		STextureVertexBuffer(

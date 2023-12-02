@@ -3,3 +3,6 @@ Build/
 
 Third/glfw-3.3.8.bin.WIN64/*
 !Third/glfw-3.3.8.bin.WIN64/__Place_holder_for_git__.txt
+
+Third/freetype-windows-binaries-2.13.2/*
+!Third/freetype-windows-binaries-2.13.2/__Place_holder_for_git__.txt

@@ -18,6 +18,8 @@ message("Platform = " ${Platform})
 
 set(GLFW_DIR "")
 set(GLFW_LIB_DIR "")
+set(FREETYPE_DIR "")
+set(FREETYPE_LIB_DIR "")
 
 set(Windows-x64 NO)
 set(Windows-x86 NO)
@@ -30,6 +32,8 @@ if(Platform STREQUAL "Windows-x64")
 
 	set(GLFW_DIR ${CMAKE_SOURCE_DIR}/Third/glfw-3.3.8.bin.WIN64/)
 	set(GLFW_LIB_DIR ${GLFW_DIR}/lib-vc2022/)
+	set(FREETYPE_DIR ${CMAKE_SOURCE_DIR}/Third/freetype-windows-binaries-2.13.2/)
+	set(FREETYPE_LIB_DIR "${FREETYPE_DIR}/release static/vs2015-2022/win64/")
 
 	if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
 		# 如果有需要的话，在这里设定 gcc/g++ 的编译器路径
@@ -165,6 +169,7 @@ add_executable(${EXE_NAME}
 
 target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE
 	${GLFW_DIR}/include/
+	${FREETYPE_DIR}/include/
 	${CMAKE_SOURCE_DIR}/Code/Framework/
 	${CMAKE_SOURCE_DIR}/Third/glad/include/
 	${CMAKE_SOURCE_DIR}/Third/stb/
@@ -172,6 +177,7 @@ target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE
 
 target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE
 	${GLFW_LIB_DIR}/glfw3.lib
+	${FREETYPE_LIB_DIR}/freetype.lib
 )
 
 if(MSVC)

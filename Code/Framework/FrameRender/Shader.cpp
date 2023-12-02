@@ -11,7 +11,7 @@
 
 namespace Frame {
 
-	bool Shader::Compile(const char * szVertexShaderCode, const char * szFragmentShaderCode) {
+	bool CShader::Compile(const char * szVertexShaderCode, const char * szFragmentShaderCode) {
 		int success;
 		char infoLog[512];
 
@@ -61,7 +61,7 @@ namespace Frame {
 		return true;
 	}
 
-	bool Shader::CompileFiles(const char * szVertexShaderPath, const char * szFragmentShaderPath) {
+	bool CShader::CompileFiles(const char * szVertexShaderPath, const char * szFragmentShaderPath) {
 
 		std::string vertexCode;
 		std::string fragmentCode;
@@ -94,42 +94,42 @@ namespace Frame {
 		return Compile(vertexCode.c_str(), fragmentCode.c_str());
 	}
 
-	void Shader::Destroy() {
+	void CShader::Destroy() {
 		glDeleteProgram(m_glProgramId);
 	}
 
-	void Shader::Use() {
+	void CShader::Use() const {
 		if(gShaderInUsing != this) {
-			gShaderInUsing = this;
+			gShaderInUsing = const_cast<CShader *>(this);
 			glUseProgram(m_glProgramId);
 		}
 	}
 
-	void Shader::SetUniformInt(const char * szUniformName, int value) {
+	void CShader::SetUniformInt(const char * szUniformName, int value) {
 		glUniform1i(glGetUniformLocation(m_glProgramId, szUniformName), value);
 	}
 
-	void Shader::SetUniformFloat(const char * szUniformName, float value) {
+	void CShader::SetUniformFloat(const char * szUniformName, float value) {
 		glUniform1f(glGetUniformLocation(m_glProgramId, szUniformName), value);
 	}
 
-	void Shader::SetUniformVec2(const char * szUniformName, float value0, float value1) {
+	void CShader::SetUniformVec2(const char * szUniformName, float value0, float value1) {
 		glUniform2f(glGetUniformLocation(m_glProgramId, szUniformName), value0, value1);
 	}
 
-	void Shader::SetUniformVec3(const char * szUniformName, float value0, float value1, float value2) {
+	void CShader::SetUniformVec3(const char * szUniformName, float value0, float value1, float value2) {
 		glUniform3f(glGetUniformLocation(m_glProgramId, szUniformName), value0, value1, value2);
 	}
 
-	void Shader::SetUniformVec4(const char * szUniformName, float value0, float value1, float value2, float value3) {
+	void CShader::SetUniformVec4(const char * szUniformName, float value0, float value1, float value2, float value3) {
 		glUniform4f(glGetUniformLocation(m_glProgramId, szUniformName), value0, value1, value2, value3);
 	}
 
-	void Shader::SetUniformMat3(const char * szUniformName, const float * values) {
+	void CShader::SetUniformMat3(const char * szUniformName, const float * values) {
 		glUniformMatrix3fv(glGetUniformLocation(m_glProgramId, szUniformName), 1, GL_FALSE, values);
 	}
 
-	void Shader::SetUniformMat4(const char * szUniformName, const float * values) {
+	void CShader::SetUniformMat4(const char * szUniformName, const float * values) {
 		glUniformMatrix4fv(glGetUniformLocation(m_glProgramId, szUniformName), 1, GL_FALSE, values);
 	}
 	

@@ -1,5 +1,7 @@
 ﻿#include <FrameRender/Renderer.h>
 
+#include <FrameRender/DefaultShaders.h>
+
 #include <FrameAsset/Sprite.h>
 #include <FrameRender/Shader.h>
 #include <FrameCore/Globals.h> // for gShaderInUsing
@@ -9,7 +11,15 @@
 
 namespace Frame {
 
-	void CRenderer::Initialize(int windowWidth, int windowHeight, Shader * _pSpriteShader, Shader * _pColorShader) {
+	CRenderer::CRenderer()
+		: m_pDefaultShader { new CShader {} }
+	{}
+
+	CRenderer::~CRenderer() {
+		delete m_pDefaultShader;
+	}
+
+	void CRenderer::Initialize(int windowWidth, int windowHeight) {
 
 		FramebufferResizeCallback(windowWidth, windowHeight);
 
@@ -21,8 +31,7 @@ namespace Frame {
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 		unsigned int indices[] = {
-			2, 1, 0,
-			1, 2, 3
+			1, 0, 3, 2
 		};
 
 		glGenBuffers(1, & m_VBO);
@@ -45,12 +54,14 @@ namespace Frame {
 		glEnableVertexAttribArray(2);
 
 		pShapeRenderer = new CShapeRenderer { this };
-		// pTextRenderer = new CTextRenderer { & m_color, & m_alpha };
+		pTextRenderer = new CTextRenderer { this };
 
-		pSpriteShader = _pSpriteShader;
-		pColorShader = _pColorShader;
-
-		pSpriteShader->Use();
+		if(!m_pDefaultShader->CompileFiles(DEFAULT_SPRITE_SHADER_FILES)) {
+			// TODO - 警告信息
+			m_pDefaultShader->Compile(DEFAULT_SPRITE_SHADER);
+		}
+		m_pDefaultShader->SetUniformInt("u_BaseTexture", 0);
+		SetShader(m_pDefaultShader);
 
 		glActiveTexture(GL_TEXTURE0);
 	}
@@ -80,15 +91,15 @@ namespace Frame {
 	/* |                  Draw Sprite                  | */
 	/* +-----------------------------------------------+ */
 
-	void CRenderer::DrawTexture(unsigned int textureId, const STextureVertexBuffer & textureVertexBuffer) {
+	void CRenderer::DrawTexture(unsigned int textureId, const STextureVertexBuffer & textureVertexBuffer, const CShader * _pShader) {
 		glBindVertexArray(m_VAO);
 
 		glBindBuffer(GL_ARRAY_BUFFER, m_VBO);
 		glBufferData(GL_ARRAY_BUFFER, sizeof(textureVertexBuffer.m_data), textureVertexBuffer.m_data, GL_DYNAMIC_DRAW);
 
 		glBindTexture(GL_TEXTURE_2D, textureId);
-		pSpriteShader->Use();
-		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, NULL);
+		_pShader->Use();
+		glDrawElements(GL_TRIANGLE_STRIP, 4, GL_UNSIGNED_INT, NULL);
 	}
 
 	void CRenderer::DrawSprite(CStaticSprite * pSprite, const Vec2 & vPos, STextureVertexBuffer & textureVertexBuffer) {

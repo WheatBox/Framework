@@ -17,15 +17,16 @@ namespace Frame {
 	class CRenderer {
 
 	public:
-		void Initialize(int windowWidth, int windowHeight, Shader * _pSpriteShader, Shader * _pColorShader);
+
+		CRenderer();
+		virtual ~CRenderer();
+
+		void Initialize(int windowWidth, int windowHeight);
 
 		void FramebufferResizeCallback(int width, int height);
 
 		CShapeRenderer * pShapeRenderer = nullptr;
-		//CTextRenderer * pTextRenderer = nullptr;
-		
-		Shader * pSpriteShader = nullptr;
-		Shader * pColorShader = nullptr;
+		CTextRenderer * pTextRenderer = nullptr;
 
 	private:
 		int m_windowWidth = 0, m_windowHeight = 0;
@@ -33,7 +34,7 @@ namespace Frame {
 		// 顶点缓冲对象(Vertex Buffer Object, VBO)
 		// 顶点数组对象(Vertex Array Object, VAO)
 		// 元素缓冲对象(Element Buffer Object，EBO)，or 索引缓冲对象(Index Buffer Object，IBO)
-		unsigned int m_VBO, m_VAO, m_EBO;
+		unsigned int m_VBO = 0, m_VAO = 0, m_EBO = 0;
 
 		STextureVertexBuffer m_defaultTextureVertexBuffer {};
 
@@ -42,9 +43,16 @@ namespace Frame {
 		ColorRGB m_color { 255, 255, 255 };
 		float m_alpha = 1.f;
 
+		CShader * const m_pDefaultShader;
+		CShader * m_pShader = nullptr;
+
 	public:
 		void RenderBegin();
 		void RenderEnd();
+
+		void ResetShader() { m_pShader = m_pDefaultShader; }
+		void SetShader(CShader * pShader) { m_pShader = pShader; }
+		CShader * GetShader() const { return m_pShader; }
 
 		Vec2 Project(const Vec2 & pos) const {
 			return {
@@ -110,7 +118,10 @@ namespace Frame {
 		/* |                  Draw Sprite                  | */
 		/* +-----------------------------------------------+ */
 
-		void DrawTexture(unsigned int textureId, const STextureVertexBuffer & textureVertexBuffer);
+		void DrawTexture(unsigned int textureId, const STextureVertexBuffer & textureVertexBuffer) {
+			DrawTexture(textureId, textureVertexBuffer, m_pShader);
+		}
+		void DrawTexture(unsigned int textureId, const STextureVertexBuffer & textureVertexBuffer, const CShader * _pShader);
 
 		void DrawSprite(CStaticSprite * pSprite, const Vec2 & vPos, STextureVertexBuffer & textureVertexBuffer);
 		void DrawSprite(CStaticSprite * pSprite, const Vec2 & vPos, const Vec2 & vScale, float angle, STextureVertexBuffer & textureVertexBuffer);

@@ -84,6 +84,22 @@ namespace Frame {
 	typedef Vec2_tpl<double> Vec2d;
 	typedef Vec2_tpl<int> Vec2i;
 
+	template<typename Result_Vec2_ValueType = float, typename ArgsType>
+	inline Vec2_tpl<Result_Vec2_ValueType> Vec2Cast(ArgsType _x, ArgsType _y) {
+		return {
+			Result_Vec2_ValueType(_x),
+			Result_Vec2_ValueType(_y)
+		};
+	}
+
+	template<typename Result_Vec2_ValueType = float, typename Argument_Vec2_ValueType>
+	inline Vec2_tpl<Result_Vec2_ValueType> Vec2Cast(const Vec2_tpl<Argument_Vec2_ValueType> & _vec) {
+		return {
+			static_cast<Result_Vec2_ValueType>(_vec.x),
+			static_cast<Result_Vec2_ValueType>(_vec.y)
+		};
+	}
+
 #define __ROTATE2DVECTOR_TEMP(vec) \
 	xTemp = vec.x; \
 	vec.x = xTemp * cosr - vec.y * sinr; \

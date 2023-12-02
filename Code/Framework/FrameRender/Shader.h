@@ -2,13 +2,13 @@
 
 namespace Frame {
 
-	class Shader {
+	class CShader {
 	private:
 		unsigned int m_glProgramId = 0;
 
 	public:
-		Shader() = default;
-		virtual ~Shader() = default;
+		CShader() = default;
+		virtual ~CShader() = default;
 
 		unsigned int GetGlProgramId() const {
 			return m_glProgramId;
@@ -18,7 +18,7 @@ namespace Frame {
 		bool CompileFiles(const char * szVertexShaderPath, const char * szFragmentShaderPath);
 		void Destroy();
 
-		void Use();
+		void Use() const;
 
 		void SetUniformInt(const char * szUniformName, int value);
 		void SetUniformFloat(const char * szUniformName, float value);
