@@ -13,25 +13,27 @@ typedef FT_FaceRec_ * FT_Face;
 
 namespace Frame {
 
+	class CStaticSprite;
+
 	class CFont {
 
 	public:
 		// Unicode
-		typedef uint16 CharType;
+		typedef UnicodeChar CharType;
 
 		struct SCharacter {
 			SCharacter() = default;
-			SCharacter(unsigned int _textureId, unsigned int _w, unsigned int _h, int _bearingX, int _bearingY, int _advanceX, int _advanceY)
+			SCharacter(unsigned int _textureId, const Vec2 & _size, const Vec2 & _bearing, const Vec2 & _advance)
 				: textureId { _textureId }
-				, size { _w, _h }
-				, bearing { _bearingX, _bearingY }
-				, advance { _advanceX, _advanceY }
+				, size { _size }
+				, bearing { _bearing }
+				, advance { _advance }
 			{}
 
 			unsigned int textureId = 0;
-			Vec2_tpl<unsigned int> size {};
-			Vec2i bearing {};
-			Vec2i advance {};
+			Vec2 size {};
+			Vec2 bearing {};
+			Vec2 advance {};
 		};
 
 	public:
@@ -60,12 +62,17 @@ namespace Frame {
 
 	public:
 		float m_fontSize;
+		float m_lineHeight;
 
 	private:
 		std::unordered_map<CharType, SCharacter *> m_characters {};
 
 		FT_Library m_ftLib = nullptr;
 		FT_Face m_ftFace = nullptr;
+
+		// 对于 m_fontSize 非整数时，SCharacter 内的数据需要有一个缩放，就用这个值
+		// For when m_fontSize is not an integer, the data in SCharacter needs to be scaled, so use this value
+		float m_floatingScale;
 	};
 
 	/*

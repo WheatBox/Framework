@@ -51,7 +51,8 @@ namespace Frame {
 
 		void DrawCharacterTexture(unsigned int textureId, Vec2 vPosTL, Vec2 vPosBR, const ColorRGB & rgb, float alpha);
 
-		void DrawText(const char * szText, Vec2 vPos);
+		void DrawText(UTF8StringView utf8Text, const Vec2 & vPos);
+		void DrawText(UnicodeStringView unicodeText, const Vec2 & vPos);
 
 	};
 }

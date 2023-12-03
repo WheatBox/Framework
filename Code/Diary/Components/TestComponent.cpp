@@ -56,12 +56,15 @@ void CTestComponent::ProcessEvent(const Frame::EntityEvent::SEvent & event) {
 #include <iostream>
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
+#include <FrameUtility/UTF8Utils.h>
 void CTestComponent2::ProcessEvent(const Frame::EntityEvent::SEvent & event) {
 	static bool bInited = false;
 	static float angle = 0.f;
 
 	static Frame::CStaticSprite * pSprite = nullptr;
 	static Frame::CFont * pFont = nullptr;
+	static Frame::CFont * pFont2 = nullptr;
+	static Frame::CFont * pFont3 = nullptr;
 	
 	switch(event.flag) {
 	case Frame::EntityEvent::Update:
@@ -82,6 +85,8 @@ void CTestComponent2::ProcessEvent(const Frame::EntityEvent::SEvent & event) {
 			pSprite->SetOffset({ static_cast<float>(pSprite->GetWidth()) / 2.f, static_cast<float>(pSprite->GetHeight()) / 2.f });
 
 			pFont = new Frame::CFont { "C:/Windows/Fonts/STZHONGS.TTF", 32.f };
+			pFont2 = new Frame::CFont { "C:/Windows/Fonts/STZHONGS.TTF", 32.5f };
+			pFont3 = new Frame::CFont { "C:/Windows/Fonts/STZHONGS.TTF", 33.f };
 			Frame::gRenderer->pTextRenderer->SetFont(pFont);
 		}
 
@@ -97,20 +102,28 @@ void CTestComponent2::ProcessEvent(const Frame::EntityEvent::SEvent & event) {
 			1.2f, -angle
 		);
 
+		Frame::gRenderer->SetColorAlpha(0xFFFFFF, .4f);
+		Frame::gRenderer->pTextRenderer->DrawText("Hello, world! 你好，世界！", { 20, 20 });
+		Frame::gRenderer->pTextRenderer->DrawText("The quick brown fox jumps over the lazy dog.", { 20, 60 });
+		Frame::gRenderer->pTextRenderer->SetFont(pFont);
+		Frame::gRenderer->pTextRenderer->DrawText("月落乌啼霜满天，\n江枫渔火对愁眠。", { 20, 100 });
+		Frame::gRenderer->SetColorAlpha(0xFFFFFF, .7f);
+		Frame::gRenderer->pTextRenderer->SetFont(pFont2);
+		Frame::gRenderer->pTextRenderer->DrawText("月落乌啼霜满天，\n江枫渔火对愁眠。", { 20, 100 });
 		Frame::gRenderer->SetColorAlpha(0xFFFFFF, 1.f);
-		//Frame::gRenderer->pTextRenderer->DrawText("Hello, world! 0", { 20, 20 });
-		//Frame::gRenderer->pTextRenderer->DrawText("The quick brown fox jumps over the lazy dog.", { 20, 52 });
-		Frame::gRenderer->pTextRenderer->DrawText(reinterpret_cast<const char *>(L"月落乌啼霜满天，江枫渔火对愁眠。"), { 20, 20 });
-		
+		Frame::gRenderer->pTextRenderer->SetFont(pFont3);
+		Frame::gRenderer->pTextRenderer->DrawText("月落乌啼霜满天，\n江枫渔火对愁眠。", { 20, 100 });
+		//constexpr UnicodeChar uni = Frame::UTF8Utils::ToUnicodeCharacter("😀");
+
 		Frame::gRenderer->SetColorAlpha(0xFFFFFF, 1.f);
-		Frame::gRenderer->pShapeRenderer->DrawPixelColorBlended({ 100.f, 100.f }, 0x00FF00, 32.f);
+		Frame::gRenderer->pShapeRenderer->DrawPixelColorBlended({ 100.f, 300.f }, 0x00FF00, 32.f);
 
 		Frame::gRenderer->pShapeRenderer->DrawLineBlended({ 200.f, 200.f }, { 700.f, 500.f }, 0x00FF00, 1.f, 0x0000FF, 0.f, 16.f);
 		Frame::gRenderer->pShapeRenderer->DrawLineAlphaBlended({ 200.f, 500.f }, { 700.f, 500.f }, 1.f, 0.f, 16.f);
 		
 		Frame::gRenderer->pShapeRenderer->DrawQuadrilateralBlended(
-			{ 100.f, 100.f }, { 170.f, 80.f },
-			{ 120.f, 200.f }, { 210.f, 160.f },
+			{ 100.f, 300.f }, { 170.f, 280.f },
+			{ 120.f, 400.f }, { 210.f, 360.f },
 			0xFF0000, 1.f, 0x00FF00, .5f,
 			0x0000FF, .5f, 0xFFFF00, 0.f,
 			0.f

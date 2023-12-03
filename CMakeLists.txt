@@ -5,7 +5,7 @@ project(Diary)
 set(EXE_NAME Diary)
 
 set(CMAKE_C_STANDARD 99)
-set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD 17)
 
 option(Platform "The platform to compile to" "Windows-x64")
 #	Platform can only be set to:

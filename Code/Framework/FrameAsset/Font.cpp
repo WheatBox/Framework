@@ -1,5 +1,7 @@
 ﻿#include <FrameAsset/Font.h>
 
+#include <FrameAsset/Sprite.h>
+
 #include <ft2build.h>
 #include <freetype/freetype.h>
 #include <glad/glad.h>
@@ -15,18 +17,27 @@ namespace Frame {
 
 		ftError = FT_Init_FreeType(& m_ftLib);
 		if(ftError) {
-			printf("[ERROR] %d\n", ftError); // TODO
+			printf("[ERROR] %d %d\n", ftError, __LINE__); // TODO
 			return;
 		}
 
 		ftError = FT_New_Face(m_ftLib, filename, 0, & m_ftFace);
 		if(ftError) {
-			printf("[ERROR] %d\n", ftError); // TODO
+			printf("[ERROR] %d %d\n", ftError, __LINE__); // TODO
 			return;
 		}
 
+		FT_F26Dot6 _charSize = static_cast<FT_F26Dot6>(fontSize);
+		if(static_cast<float>(static_cast<int>(fontSize)) != fontSize) {
+			_charSize += 1;
+		}
+		_charSize <<= 6;
+		m_floatingScale = static_cast<float>(static_cast<int>(fontSize)) / fontSize;
+
 		// TODO - 支持设定后两个参数的值
-		FT_Set_Char_Size(m_ftFace, 0, static_cast<FT_F26Dot6>(fontSize * 64.f), 72, 72);
+		FT_Set_Char_Size(m_ftFace, 0, _charSize, 72, 72);
+
+		m_lineHeight = static_cast<float>(m_ftFace->size->metrics.height) / 64.f * m_floatingScale;
 
 		for(CharType i = 0; i < 128; i++) {
 			InitializeCharacter(i);
@@ -46,7 +57,7 @@ namespace Frame {
 		
 		FT_Error ftError = FT_Load_Char(m_ftFace, _character, FT_LOAD_RENDER);
 		if(ftError) {
-			printf("[ERROR] %d\n", ftError); // TODO
+			printf("[ERROR] %d %d\n", ftError, __LINE__); // TODO
 			return nullptr;
 		}
 
@@ -67,12 +78,12 @@ namespace Frame {
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
+		
 		return m_characters[_character] = new SCharacter {
 			texture,
-			m_ftFace->glyph->bitmap.width, m_ftFace->glyph->bitmap.rows,
-			m_ftFace->glyph->bitmap_left, m_ftFace->glyph->bitmap_top,
-			m_ftFace->glyph->advance.x, m_ftFace->glyph->advance.y
+			Vec2Cast(m_ftFace->glyph->bitmap.width, m_ftFace->glyph->bitmap.rows) * m_floatingScale,
+			Vec2Cast(m_ftFace->glyph->bitmap_left, m_ftFace->glyph->bitmap_top) * m_floatingScale,
+			Vec2Cast(m_ftFace->glyph->advance.x, m_ftFace->glyph->advance.y) / 64.f * m_floatingScale
 		};
 	}
 

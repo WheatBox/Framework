@@ -95,8 +95,8 @@ namespace Frame {
 	template<typename Result_Vec2_ValueType = float, typename Argument_Vec2_ValueType>
 	inline Vec2_tpl<Result_Vec2_ValueType> Vec2Cast(const Vec2_tpl<Argument_Vec2_ValueType> & _vec) {
 		return {
-			static_cast<Result_Vec2_ValueType>(_vec.x),
-			static_cast<Result_Vec2_ValueType>(_vec.y)
+			Result_Vec2_ValueType(_vec.x),
+			Result_Vec2_ValueType(_vec.y)
 		};
 	}
 

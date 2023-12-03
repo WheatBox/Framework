@@ -3,6 +3,8 @@
 #include <FrameRender/DefaultShaders.h>
 #include <FrameRender/Renderer.h>
 
+#include <FrameUtility/UTF8Utils.h>
+
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
@@ -60,27 +62,34 @@ namespace Frame {
 		glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 	}
 
-	void CTextRenderer::DrawText(const char * szText, Vec2 vPos) {
+	void CTextRenderer::DrawText(UTF8StringView utf8Text, const Vec2 & vPos) {
+		DrawText(UTF8Utils::ToUnicode(utf8Text), vPos);
+	}
+
+	void CTextRenderer::DrawText(UnicodeStringView unicodeText, const Vec2 & vPos) {
 		if(!m_pFont) {
 			// TODO - 错误信息
 			return;
 		}
-
-		Vec2 vCurrPos = vPos;
-
-		for(size_t i = 0; szText[i] && szText[i + 1]; i += 2) {
-			// TODO - 这里仅仅只是临时测试用，后续会重写，且需要支持 UTF-8
-			CFont::CharType character = (static_cast<CFont::CharType>(static_cast<unsigned char>(szText[i + 1])) << 8)
-			                          + (static_cast<CFont::CharType>(static_cast<unsigned char>(szText[i])));
+		
+		Vec2 vBasePos = vPos;
+		Vec2 vCurrPos = vBasePos;
+		
+		for(CFont::CharType character : unicodeText) {
 
 			CFont::SCharacter * pCharacter = m_pFont->GetOrInitCharacter(character);
+			if(character == '\n') {
+				vBasePos.y += m_pFont->m_lineHeight;
+				vCurrPos.x = vBasePos.x;
+				continue;
+			}
 
-			vCurrPos.y = vPos.y - static_cast<float>(pCharacter->bearing.y) + m_pFont->m_fontSize;
+			vCurrPos.y = vBasePos.y - static_cast<float>(pCharacter->bearing.y) + m_pFont->m_fontSize;
 			DrawCharacterTexture(pCharacter->textureId,
-				vCurrPos, vCurrPos + Vec2Cast(pCharacter->size),
+				vCurrPos, vCurrPos + pCharacter->size,
 				m_color, m_alpha
 			);
-			vCurrPos.x += static_cast<float>(pCharacter->advance.x >> 6);
+			vCurrPos.x += pCharacter->advance.x;
 		}
 	}
 
