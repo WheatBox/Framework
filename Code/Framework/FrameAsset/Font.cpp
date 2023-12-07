@@ -10,9 +10,37 @@
 
 namespace Frame {
 
-	CFont::CFont(const char * filename, float fontSize)
-		: m_fontSize { fontSize }
+	CFont::SCharacter::SCharacter(unsigned int _textureId, const Vec2 & _size, const Vec2 & _bearing, const Vec2 & _advance)
+		: textureId { _textureId }
+		, size { _size }
+		, bearing { _bearing }
+		, advance { _advance }
+		, vertexBuffer {
+			_size.x, 0.f, 0.f, 1.f, 0.f,
+			0.f, 0.f, 0.f, 0.f, 0.f,
+			_size.x, _size.y, 0.f, 1.f, 1.f,
+			0.f, _size.y, 0.f, 0.f, 1.f
+		}
 	{
+		glGenVertexArrays(1, & m_VAO);
+		glGenBuffers(1, & m_VBO);
+
+		glBindVertexArray(m_VAO);
+
+		glBindBuffer(GL_ARRAY_BUFFER, m_VBO);
+
+		GLsizei stride = (3 + 2) * (GLsizei)sizeof(float);
+		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, stride, (void *)0);
+		glEnableVertexAttribArray(0);
+		glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, stride, (void *)(3 * sizeof(float)));
+		glEnableVertexAttribArray(1);
+
+		glBufferData(GL_ARRAY_BUFFER, sizeof(vertexBuffer), vertexBuffer, GL_STATIC_DRAW);
+
+		glBindVertexArray(0);
+	}
+
+	CFont::CFont(const char * filename, float fontSize) {
 		FT_Error ftError = 0;
 
 		ftError = FT_Init_FreeType(& m_ftLib);
@@ -27,17 +55,7 @@ namespace Frame {
 			return;
 		}
 
-		FT_F26Dot6 _charSize = static_cast<FT_F26Dot6>(fontSize);
-		if(static_cast<float>(static_cast<int>(fontSize)) != fontSize) {
-			_charSize += 1;
-		}
-		_charSize <<= 6;
-		m_floatingScale = static_cast<float>(static_cast<int>(fontSize)) / fontSize;
-
-		// TODO - 支持设定后两个参数的值
-		FT_Set_Char_Size(m_ftFace, 0, _charSize, 72, 72);
-
-		m_lineHeight = static_cast<float>(m_ftFace->size->metrics.height) / 64.f * m_floatingScale;
+		SetFontSize(fontSize);
 
 		for(CharType i = 0; i < 128; i++) {
 			InitializeCharacter(i);
@@ -45,9 +63,7 @@ namespace Frame {
 	}
 
 	CFont::~CFont() {
-		for(auto & i : m_characters) {
-			DestroyCharacter(i.first);
-		}
+		DestroyAllCharacters();
 		FT_Done_Face(m_ftFace);
 		FT_Done_FreeType(m_ftLib);
 	}
@@ -95,6 +111,36 @@ namespace Frame {
 		glDeleteTextures(1, & it->second->textureId);
 		delete it->second;
 		m_characters.erase(it);
+	}
+
+	void CFont::DestroyAllCharacters() {
+		for(auto & i : m_characters) {
+			glDeleteTextures(1, & i.second->textureId);
+			delete i.second;
+		}
+		m_characters.clear();
+	}
+
+	void CFont::SetFontSize(float fontSize) {
+		if(fontSize == m_fontSize) {
+			return;
+		}
+
+		DestroyAllCharacters();
+
+		m_fontSize = fontSize;
+		m_floatingScale = static_cast<float>(static_cast<int>(fontSize)) / fontSize;
+
+		FT_F26Dot6 _charSize = static_cast<FT_F26Dot6>(fontSize);
+		if(static_cast<float>(static_cast<int>(fontSize)) != fontSize) {
+			_charSize += 1;
+		}
+		_charSize <<= 6;
+
+		// TODO - 支持设定后两个参数的值
+		FT_Set_Char_Size(m_ftFace, 0, _charSize, 0, 0);
+
+		m_lineHeight = static_cast<float>(m_ftFace->size->metrics.height) / 64.f * m_floatingScale;
 	}
 
 }

@@ -12,8 +12,6 @@ namespace Frame {
 
 	CShapeRenderer::CShapeRenderer(CRenderer * pRenderer)
 		: m_pRenderer { pRenderer }
-		, m_color { pRenderer->GetColor() }
-		, m_alpha { pRenderer->GetAlpha() }
 		, m_pDefaultShader { new CShader {} }
 	{
 		glGenBuffers(1, & m_VBO);

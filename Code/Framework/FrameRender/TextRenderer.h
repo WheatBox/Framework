@@ -1,28 +1,24 @@
 ﻿#pragma once
 
+#include <FrameRender/RendererBaseClass.h>
+
 #include <FrameCore/BasicTypes.h>
 #include <FrameMath/ColorMath.h>
 #include <FrameMath/Vector2.h>
 
 #include <FrameAsset/Font.h>
 
+#include <FrameUtility/UTF8Utils.h>
+
 namespace Frame {
 
 	class CRenderer;
 	class CShader;
 
-	class CTextRenderer {
+	class CTextRenderer : public RendererBaseClass::IColorAlpha {
 
 	private:
 		CRenderer * m_pRenderer;
-
-		unsigned int m_VBO, m_VAO;
-
-		const ColorRGB & m_color;
-		const float & m_alpha;
-
-		struct SDefault {
-		};
 
 		CShader * const m_pDefaultShader;
 		CShader * m_pShader = nullptr;
@@ -49,71 +45,54 @@ namespace Frame {
 		/* |                   Draw Text                   | */
 		/* +-----------------------------------------------+ */
 
-		void DrawCharacterTexture(unsigned int textureId, Vec2 vPosTL, Vec2 vPosBR, const ColorRGB & rgb, float alpha);
+		void DrawCharacterTexture(CFont::SCharacter * pCharacter, Vec2 vPos);
 
-		void DrawText(UTF8StringView utf8Text, const Vec2 & vPos);
-		void DrawText(UnicodeStringView unicodeText, const Vec2 & vPos);
+		/* ----- No Wrap ----- */
 
-	};
-}
+		void DrawTextNoWrap(UTF8StringView utf8Text, const Vec2 & vPos) {
+			DrawTextNoWrap(UTF8Utils::ToUnicode(utf8Text), vPos);
+		}
+		void DrawTextNoWrap(UnicodeStringView unicodeText, const Vec2 & vPos);
 
-#if 0
+		/* ----- \n Wrap ----- */
 
-#include <FrameCore/BasicTypes.h>
-#include <FrameRender/IRenderer.h>
-#include <FrameMath/Vector2.h>
+		void DrawText(UTF8StringView utf8Text, const Vec2 & vPos) {
+			DrawText(UTF8Utils::ToUnicode(utf8Text), vPos);
+		}
+		void DrawText(UnicodeStringView unicodeText, const Vec2 & vPos) {
+			DrawTextBlended(unicodeText, vPos, m_color, m_alpha);
+		}
+		
+		void DrawTextColorBlended(UTF8StringView utf8Text, const Vec2 & vPos, const ColorRGB & rgb) {
+			DrawTextBlended(UTF8Utils::ToUnicode(utf8Text), vPos, rgb, m_alpha);
+		}
+		void DrawTextColorBlended(UnicodeStringView unicodeText, const Vec2 & vPos, const ColorRGB & rgb) {
+			DrawTextBlended(unicodeText, vPos, rgb, m_alpha);
+		}
 
-namespace Frame {
+		void DrawTextAlphaBlended(UTF8StringView utf8Text, const Vec2 & vPos, float alpha) {
+			DrawTextBlended(UTF8Utils::ToUnicode(utf8Text), vPos, m_color, alpha);
+		}
+		void DrawTextAlphaBlended(UnicodeStringView unicodeText, const Vec2 & vPos, float alpha) {
+			DrawTextBlended(unicodeText, vPos, m_color, alpha);
+		}
 
-	struct ColorRGB;
+		void DrawTextBlended(UTF8StringView utf8Text, const Vec2 & vPos, const ColorRGB & rgb, float alpha) {
+			DrawTextBlended(UTF8Utils::ToUnicode(utf8Text), vPos, rgb, alpha);
+		}
+		void DrawTextBlended(UnicodeStringView unicodeText, const Vec2 & vPos, const ColorRGB & rgb, float alpha);
 
-	class CTextRenderer : public IRenderer {
+		/* ----- Auto Wrap ----- */
 
-	public:
+		void DrawTextAutoWrap(UTF8StringView utf8Text, const Vec2 & vPos, float _maxLineWidth) {
+			DrawTextAutoWrap(UTF8Utils::ToUnicode(utf8Text), vPos, _maxLineWidth);
+		}
+		void DrawTextAutoWrap(UnicodeStringView unicodeText, const Vec2 & vPos, float _maxLineWidth);
 
-		CTextRenderer() = delete;
-		CTextRenderer(ColorRGB * pColor, uint8 * pAlpha);
-		virtual ~CTextRenderer() = default;
+		/* --------------------- */
 
 	private:
-		ColorRGB * m_pColor = nullptr;
-		uint8 * m_pAlpha = nullptr;
-
-		CFont * m_pFont = nullptr;
-
-		int m_autoWrapLength = 0;
-
-	public:
-
-		void SetFont(CFont * pFont) { m_pFont = pFont; }
-
-		CFont * GetFont() const { return m_pFont; }
-
-		void SetAutoWrapLength(int autoWrapLength) { m_autoWrapLength = autoWrapLength; }
-
-		int GetAutoWrapLength() const { return m_autoWrapLength; }
-
-		/* +-----------------------------------------------+ */
-		/* |                   Draw Text                   | */
-		/* +-----------------------------------------------+ */
-
-		void DrawText(const Vec2 & vPos, const char * sz) {
-			DrawText(vPos.x, vPos.y, sz);
-		}
-		void DrawText(float x, float y, const char * sz) {
-			DrawText(x, y, sz, * m_pColor, * m_pAlpha);
-		}
-		void DrawText(const Vec2 & vPos, const char * sz, const ColorRGB & rgb, uint8 alpha) {
-			DrawText(vPos.x, vPos.y, sz, rgb, alpha);
-		}
-		void DrawText(float x, float y, const char * sz, const ColorRGB & rgb, uint8 alpha);
-
-		CStaticSprite * DrawTextAsSprite(const char * sz, const ColorRGB & rgb, uint8 alpha);
-
-		SDL_Surface * DrawTextAsSdlSurface(const char * sz, const ColorRGB & rgb, uint8 alpha);
+		void UseMyShader(const ColorRGB & rgb, float alpha);
 
 	};
-
 }
-
-#endif

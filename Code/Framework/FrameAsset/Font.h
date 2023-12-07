@@ -23,17 +23,15 @@ namespace Frame {
 
 		struct SCharacter {
 			SCharacter() = default;
-			SCharacter(unsigned int _textureId, const Vec2 & _size, const Vec2 & _bearing, const Vec2 & _advance)
-				: textureId { _textureId }
-				, size { _size }
-				, bearing { _bearing }
-				, advance { _advance }
-			{}
+			SCharacter(unsigned int _textureId, const Vec2 & _size, const Vec2 & _bearing, const Vec2 & _advance);
 
 			unsigned int textureId = 0;
+			unsigned int m_VAO, m_VBO;
 			Vec2 size {};
 			Vec2 bearing {};
 			Vec2 advance {};
+
+			float vertexBuffer[20];
 		};
 
 	public:
@@ -45,6 +43,8 @@ namespace Frame {
 		SCharacter * InitializeCharacter(CharType _character);
 		
 		void DestroyCharacter(CharType _character);
+
+		void DestroyAllCharacters();
 
 		SCharacter * GetCharacter(CharType _character) const {
 			if(m_characters.find(_character) != m_characters.end()) {
@@ -60,9 +60,15 @@ namespace Frame {
 			return m_characters.find(_character)->second;
 		}
 
+		// 若新的字体大小和旧的字体大小一样，则会跳过执行，什么也不会发生
+		// 该函数运行成功后会清空所有的已生成过的字体数据
+		// If the new font size is the same as the old font size, execution will be skipped and nothing will happen
+		// After the function runs successfully, it will clear all generated font data
+		void SetFontSize(float fontSize);
+
 	public:
-		float m_fontSize;
-		float m_lineHeight;
+		float m_fontSize {};
+		float m_lineHeight {};
 
 	private:
 		std::unordered_map<CharType, SCharacter *> m_characters {};
@@ -72,7 +78,7 @@ namespace Frame {
 
 		// 对于 m_fontSize 非整数时，SCharacter 内的数据需要有一个缩放，就用这个值
 		// For when m_fontSize is not an integer, the data in SCharacter needs to be scaled, so use this value
-		float m_floatingScale;
+		float m_floatingScale {};
 	};
 
 	/*

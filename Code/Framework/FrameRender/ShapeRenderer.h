@@ -1,5 +1,7 @@
 ﻿#pragma once
 
+#include <FrameRender/RendererBaseClass.h>
+
 #include <FrameCore/BasicTypes.h>
 #include <FrameMath/ColorMath.h>
 #include <FrameMath/Vector2.h>
@@ -9,15 +11,12 @@ namespace Frame {
 	class CRenderer;
 	class CShader;
 
-	class CShapeRenderer {
+	class CShapeRenderer : public RendererBaseClass::IColorAlpha {
 
 	private:
 		CRenderer * m_pRenderer;
 
 		unsigned int m_VBO, m_VAO;
-
-		const ColorRGB & m_color;
-		const float & m_alpha;
 
 		struct SDefault {
 			constexpr static float pixelSize = 1.f;

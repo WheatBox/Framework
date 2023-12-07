@@ -1,6 +1,6 @@
 ﻿#pragma once
 
-#include <FrameRender/BasicRenderingTypes.h>
+#include <FrameRender/RendererBaseClass.h>
 
 #include <FrameRender/TextureVertexBuffer.h>
 #include <FrameRender/ShapeRenderer.h>
@@ -14,7 +14,26 @@ struct GLFWwindow;
 
 namespace Frame {
 
-	class CRenderer {
+	class CRenderer : public RendererBaseClass::IColorAlpha {
+
+	public:
+		/* +------- RendererBaseClass::IColorAlpha --------+ */
+
+		void SetColor(const ColorRGB & rgb) {
+			m_color = rgb;
+			m_defaultTextureVertexBuffer.SetColorBlends(m_color);
+		}
+		void SetAlpha(float alpha) {
+			m_alpha = alpha;
+			m_defaultTextureVertexBuffer.SetAlphaBlends(alpha);
+		}
+		void SetColorAlpha(const ColorRGB & rgb, float alpha) {
+			m_color = rgb;
+			m_alpha = alpha;
+			m_defaultTextureVertexBuffer.SetBlends(m_color, alpha);
+		}
+
+		/* +------ ~RendererBaseClass::IColorAlpha --------+ */
 
 	public:
 
@@ -39,9 +58,6 @@ namespace Frame {
 		STextureVertexBuffer m_defaultTextureVertexBuffer {};
 
 		ColorRGB m_backgroundColor { 0, 0, 0 };
-
-		ColorRGB m_color { 255, 255, 255 };
-		float m_alpha = 1.f;
 
 		CShader * const m_pDefaultShader;
 		CShader * m_pShader = nullptr;
@@ -71,6 +87,13 @@ namespace Frame {
 			* _y = -(* _y) * 2.f / m_windowHeight + 1.f;
 		}
 
+		int GetWindowWidth() const {
+			return m_windowWidth;
+		}
+		int GetWindowHeight() const {
+			return m_windowHeight;
+		}
+
 		STextureVertexBuffer & GetTextureVertexBuffer() {
 			return m_defaultTextureVertexBuffer;
 		}
@@ -78,32 +101,6 @@ namespace Frame {
 		/* +-----------------------------------------------+ */
 		/* |                Set Draw Params                | */
 		/* +-----------------------------------------------+ */
-
-		void SetColor(const ColorRGB & rgb) {
-			m_color = rgb;
-			m_defaultTextureVertexBuffer.SetColorBlends(m_color);
-		}
-		void SetColor(uint8 r, uint8 g, uint8 b) {
-			SetColor({ r, g, b });
-		}
-		void SetAlpha(float alpha) {
-			m_alpha = alpha;
-			m_defaultTextureVertexBuffer.SetAlphaBlends(alpha);
-		}
-		void SetColorAlpha(const ColorRGB & rgb, float alpha) {
-			m_color = rgb;
-			m_alpha = alpha;
-			m_defaultTextureVertexBuffer.SetBlends(m_color, alpha);
-		}
-		void SetColorAlpha(uint8 r, uint8 g, uint8 b, float alpha) {
-			SetColorAlpha({ r, g, b }, alpha);
-		}
-
-		const ColorRGB & GetColor() const { return m_color; }
-		const float & GetAlpha() const { return m_alpha; }
-		//          ^
-		//      此处的引用是为了给其它子渲染器成员变量使用，例如 pShapeRenderer（参见 CShapeRenderer::m_alpha）
-		//      The reference here is intended for use by other sub renderer member variables such as pShapeRenderer (see also CShapeRenderer::m_alpha)
 
 		void SetBackgroundColor(const ColorRGB & rgb) {
 			m_backgroundColor = rgb;

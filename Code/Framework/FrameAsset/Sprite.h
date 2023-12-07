@@ -1,7 +1,5 @@
 ﻿#pragma once
 
-#include <FrameRender/BasicRenderingTypes.h>
-
 #include <FrameMath/Vector2.h>
 #include <FrameMath/ColorMath.h>
 
