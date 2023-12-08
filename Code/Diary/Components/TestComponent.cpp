@@ -111,7 +111,7 @@ void CTestComponent2::ProcessEvent(const Frame::EntityEvent::SEvent & event) {
 		//Frame::gRenderer->pTextRenderer->DrawText("月落乌啼霜满天，\n江枫渔火对愁眠。", { 20, 100 });
 		//constexpr UnicodeChar uni = Frame::UTF8Utils::ToUnicodeCharacter("😀");
 
-		Frame::gRenderer->pTextRenderer->DrawTextAutoWrap(
+		/*Frame::gRenderer->pTextRenderer->DrawTextAutoWrap(
 			"先帝创 业未半  而中道崩\n殂，今天\n\n下三分，益州疲弊，此诚危急存亡之秋也。然侍卫之臣不懈于内，忠志之士忘身于外者，盖追先帝之殊遇，欲报之于陛下也。诚宜开张圣听，以光先帝遗德，恢弘志士之气，不宜妄自菲薄，引喻失义，以塞忠谏之路也。\n"
 			"宫中府中，俱为一体，陟罚臧否，不宜异同。若有作奸犯科及为忠善者，宜付有司论其刑赏，以昭陛下平明之理，不宜偏私，使内外异法也。\n"
 			"侍中、侍郎郭攸之、费祎、董允等，此皆良实，志虑忠纯，是以先帝简拔以遗陛下。愚以为宫中之事，事无大小，悉以咨之，然后施行，必能裨补阙漏，有所广益。\n"
@@ -126,15 +126,19 @@ void CTestComponent2::ProcessEvent(const Frame::EntityEvent::SEvent & event) {
 			"The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog."
 			,
 			{ 0.f }, 400.f
-		);
+		);*/
 		Frame::gRenderer->pTextRenderer->DrawTextAutoWrap(
-			"先帝创 业未半  而中道崩\n殂，今天\n\n下三分，"
-			"The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog."
-			"The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog."
-			"The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog."
-			,
-			{ 500.f, 0.f }, 1.f
+			"先帝\n创业未 半  \n 而中道崩殂。"
+			"The qui\nck\nbrown \nfox\n jumps over the lazy dog.",
+			{ 450.f, 0.f }, 80.f
 		);
+		//std::cout << pFont->TextWidth(Frame::UTF8Utils::ToUnicode("先帝\n创业未 半  \n 而中道崩殂。"), 80.f) << std::endl;
+		//std::cout << pFont->TextHeight(Frame::UTF8Utils::ToUnicode("先帝\n创业未 半  \n 而中道崩殂。"), 80.f) << std::endl;
+		auto [w, h] = pFont->TextSize(Frame::UTF8Utils::ToUnicode("先帝\n创业未 半  \n 而中道崩殂。"), 80.f);
+		std::cout << w << "x" << h << std::endl;
+		//pFont->TextAutoWrapBase(Frame::UTF8Utils::ToUnicode("先帝\n创业未 半  \n 而中道崩殂。"), 1.f, [](size_t h, size_t t, const Frame::Vec2 &, float n) { std::cout << "1." << h << "~" << t << " : " << n << std::endl; });
+		//pFont->TextAutoWrapBase(Frame::UTF8Utils::ToUnicode("先帝\n创业未 半  \n 而中道崩殂。"), 80.f, [](size_t h, size_t t, const Frame::Vec2 &, float n) { std::cout << "2." << h << "~" << t << " : " << n << std::endl; });
+		std::cout << "----" << std::endl;
 
 		Frame::gRenderer->pShapeRenderer->DrawPixelColorBlended({ 100.f, 300.f }, 0x00FF00, 32.f);
 

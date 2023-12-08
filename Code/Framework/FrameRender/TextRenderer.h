@@ -9,11 +9,28 @@
 #include <FrameAsset/Font.h>
 
 #include <FrameUtility/UTF8Utils.h>
+#include <FrameUtility/BitOperation.h>
 
 namespace Frame {
 
 	class CRenderer;
 	class CShader;
+
+	// 文本横向对齐
+	// Text Horizontal Align
+	enum class ETextHAlign : uint8 {
+		Left,
+		Center,
+		Right,
+	};
+
+	// 文本纵向对齐
+	// Text Vertical Align
+	enum class ETextVAlign : uint8 {
+		Top,
+		Middle,
+		Bottom,
+	};
 
 	class CTextRenderer : public RendererBaseClass::IColorAlpha {
 
@@ -24,6 +41,9 @@ namespace Frame {
 		CShader * m_pShader = nullptr;
 
 		CFont * m_pFont = nullptr;
+
+		ETextHAlign m_halign = ETextHAlign::Left;
+		ETextVAlign m_valign = ETextVAlign::Top;
 
 	public:
 
@@ -39,6 +59,30 @@ namespace Frame {
 		}
 		CFont * GetFont() const {
 			return m_pFont;
+		}
+
+		void SetAlign(std::pair<ETextHAlign, ETextVAlign> align) {
+			SetAlign(align.first, align.second);
+		}
+		void SetAlign(ETextHAlign halign, ETextVAlign valign) {
+			m_halign = halign;
+			m_valign = valign;
+		}
+		void SetHAlign(ETextHAlign halign) {
+			m_halign = halign;
+		}
+		void SetVAlign(ETextVAlign valign) {
+			m_valign = valign;
+		}
+
+		std::pair<ETextHAlign, ETextVAlign> GetAlign() const {
+			return { m_halign, m_valign };
+		}
+		ETextHAlign GetHAlign() const {
+			return m_halign;
+		}
+		ETextVAlign GetVAlign() const {
+			return m_valign;
 		}
 
 		/* +-----------------------------------------------+ */
@@ -89,7 +133,11 @@ namespace Frame {
 		}
 		void DrawTextAutoWrap(UnicodeStringView unicodeText, const Vec2 & vPos, float _maxLineWidth);
 
-		/* --------------------- */
+		/* +-----------------------------------------------+ */
+		/* |                Draw Text Align                | */
+		/* +-----------------------------------------------+ */
+
+		void DrawTextAlign(UnicodeStringView unicodeText, const Vec2 & vPos, ETextHAlign halign, ETextVAlign valign);
 
 	private:
 		void UseMyShader(const ColorRGB & rgb, float alpha);

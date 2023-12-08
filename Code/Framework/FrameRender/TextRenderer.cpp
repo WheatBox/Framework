@@ -35,7 +35,7 @@ namespace Frame {
 	}
 
 #define __DRAWTEXT_NEXTLINE \
-	vBasePos.y += m_pFont->m_lineHeight; \
+	vBasePos.y += m_pFont->GetLineHeight(); \
 	vCurrPos.x = vBasePos.x;
 
 	void CTextRenderer::DrawTextNoWrap(UnicodeStringView unicodeText, const Vec2 & vPos) {
@@ -51,7 +51,7 @@ namespace Frame {
 		for(CFont::CharType character : unicodeText) {
 			CFont::SCharacter * pCharacter = m_pFont->GetOrInitCharacter(character);
 
-			vCurrPos.y = vPos.y - pCharacter->bearing.y + m_pFont->m_fontSize;
+			vCurrPos.y = vPos.y - pCharacter->bearing.y + m_pFont->GetFontSize();
 			DrawCharacterTexture(pCharacter, vCurrPos);
 			vCurrPos.x += pCharacter->advance.x;
 		}
@@ -76,7 +76,7 @@ namespace Frame {
 				continue;
 			}
 			
-			vCurrPos.y = vBasePos.y - pCharacter->bearing.y + m_pFont->m_fontSize;
+			vCurrPos.y = vBasePos.y - pCharacter->bearing.y + m_pFont->GetFontSize();
 			DrawCharacterTexture(pCharacter, vCurrPos);
 			vCurrPos.x += pCharacter->advance.x;
 			
@@ -104,77 +104,41 @@ namespace Frame {
 
 		if(_maxLineWidth <= 0.f) {
 			DrawText(unicodeText, vPos);
+			return;
 		}
-
-		constexpr size_t iInvalid = static_cast<size_t>(-1);
-		size_t iLineHead = 0, iLineTail = 0, iPrevNotWordChar = iInvalid;
-
-		Vec2 vBasePos = vPos;
-		Vec2 vCurrPos = vBasePos;
-
-		for(size_t i = 0, len = unicodeText.length(); i < len; i++) {
-			CFont::CharType character = unicodeText[i];
-
-#define __DRAWTEXTAUTOWRAP_DRAW_AND_NEXTLINE(_pos, _set_iLineTail_code) \
-	_set_iLineTail_code \
-	DrawTextNoWrap(unicodeText.substr(iLineHead, iLineTail - iLineHead), _pos); \
-	__DRAWTEXT_NEXTLINE; \
-	iLineHead = iLineTail; \
-	iPrevNotWordChar = iInvalid;
-
-			if(character == '\n') {
-				__DRAWTEXTAUTOWRAP_DRAW_AND_NEXTLINE(vBasePos,
-					iLineTail = i + 1;
-				);
-				continue;
+		
+		m_pFont->TextAutoWrapBase(unicodeText, _maxLineWidth,
+			[this, & unicodeText, & vPos](size_t _iLineHead, size_t _iLineTail, const Vec2 & _vOffset, float) {
+				DrawTextNoWrap(unicodeText.substr(_iLineHead, _iLineTail - _iLineHead + 1), vPos + _vOffset);
 			}
+		);
+	}
 
-			CFont::SCharacter * pCharacter = m_pFont->GetOrInitCharacter(character);
-			vCurrPos.y = vBasePos.y - pCharacter->bearing.y + m_pFont->m_fontSize;
-
-			bool bCurrentIsNotWordChar = !__IsWordChar(character);
-			if(bCurrentIsNotWordChar) {
-				iPrevNotWordChar = i;
-			}
-
-			if(vCurrPos.x > vBasePos.x + _maxLineWidth) {
-				if(bCurrentIsNotWordChar) {
-					__DRAWTEXTAUTOWRAP_DRAW_AND_NEXTLINE(vBasePos,
-						if(iLineTail == iLineHead) {
-							iLineTail = (character == ' ' ? i + 1 : i);
-						}
-						i = iLineTail - 1;
-					);
-				} else {
-					if(iPrevNotWordChar != iInvalid && !__IsWordChar(unicodeText[iPrevNotWordChar])) {
-						__DRAWTEXTAUTOWRAP_DRAW_AND_NEXTLINE(vBasePos,
-							iLineTail = iPrevNotWordChar + 1;
-							i = iPrevNotWordChar;
-						);
-					}
-					vCurrPos.x += pCharacter->advance.x;
-				}
-			} else {
-				if(bCurrentIsNotWordChar) {
-					if(character == ' ') {
-						iLineTail = i + 1;
-						iPrevNotWordChar = iInvalid;
-					} else {
-						iLineTail = i;
-					}
-				}
-				vCurrPos.x += pCharacter->advance.x;
-			}
-
-#undef __DRAWTEXTAUTOWRAP_DRAW_AND_NEXTLINE
+	void CTextRenderer::DrawTextAlign(UnicodeStringView unicodeText, const Vec2 & vPos, ETextHAlign halign, ETextVAlign valign) {
+		if(halign == ETextHAlign::Left && valign == ETextVAlign::Top) {
+			DrawText(unicodeText, vPos);
+			return;
 		}
-		DrawTextNoWrap(unicodeText.substr(iLineHead), vBasePos);
+		// TODO
 	}
 
 	void CTextRenderer::UseMyShader(const ColorRGB & rgb, float alpha) {
 		m_pShader->Use();
-		m_pShader->SetUniformVec4("u_vColor", ONERGB(rgb), alpha);
-		m_pShader->SetUniformVec2("u_vWindowSize", static_cast<float>(m_pRenderer->GetWindowWidth()), static_cast<float>(m_pRenderer->GetWindowHeight()));
+
+		static ColorRGB __colorPrev = (m_pShader->SetUniformVec4("u_vColor", ONERGB(rgb), alpha), rgb);
+		static float __alphaPrev = alpha;
+		if(__colorPrev != rgb || __alphaPrev != alpha) {
+			m_pShader->SetUniformVec4("u_vColor", ONERGB(rgb), alpha);
+			__colorPrev = rgb;
+			__alphaPrev = alpha;
+		}
+
+		static int __windowWidthPrev = -1, __windowHeightPrev = -1;
+		if(__windowWidthPrev != m_pRenderer->GetWindowWidth() || __windowHeightPrev != m_pRenderer->GetWindowHeight()) {
+			__windowWidthPrev = m_pRenderer->GetWindowWidth();
+			__windowHeightPrev = m_pRenderer->GetWindowHeight();
+			m_pShader->SetUniformVec2("u_vWindowSize", static_cast<float>(__windowWidthPrev), static_cast<float>(__windowHeightPrev));
+		}
 	}
 
 #undef __DRAWTEXT_NEXTLINE

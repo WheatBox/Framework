@@ -2,6 +2,8 @@
 
 #include <FrameMath/ColorMath.h>
 
+#include <tuple>
+
 namespace Frame::RendererBaseClass {
 	
 	struct IColorAlpha {
@@ -25,6 +27,9 @@ namespace Frame::RendererBaseClass {
 
 		const ColorRGB & GetColor() const { return m_color; }
 		float GetAlpha() const { return m_alpha; }
+		std::pair<ColorRGB, float> GetColorAlpha() const {
+			return { m_color, m_alpha };
+		}
 
 	protected:
 		ColorRGB m_color { 255, 255, 255 };

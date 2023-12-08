@@ -93,6 +93,9 @@ namespace Frame {
 		int GetWindowHeight() const {
 			return m_windowHeight;
 		}
+		std::pair<int, int> GetWindowSize() const {
+			return { m_windowWidth, m_windowHeight };
+		}
 
 		STextureVertexBuffer & GetTextureVertexBuffer() {
 			return m_defaultTextureVertexBuffer;

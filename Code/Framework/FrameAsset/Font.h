@@ -4,6 +4,8 @@
 #include <FrameMath/Vector2.h>
 
 #include <unordered_map>
+#include <unordered_set>
+#include <functional>
 
 struct FT_LibraryRec_;
 typedef FT_LibraryRec_ * FT_Library;
@@ -66,11 +68,18 @@ namespace Frame {
 		// After the function runs successfully, it will clear all generated font data
 		void SetFontSize(float fontSize);
 
-	public:
+		float GetFontSize() const {
+			return m_fontSize;
+		}
+
+		float GetLineHeight() const {
+			return m_lineHeight;
+		}
+
+	private:
 		float m_fontSize {};
 		float m_lineHeight {};
 
-	private:
 		std::unordered_map<CharType, SCharacter *> m_characters {};
 
 		FT_Library m_ftLib = nullptr;
@@ -79,59 +88,29 @@ namespace Frame {
 		// 对于 m_fontSize 非整数时，SCharacter 内的数据需要有一个缩放，就用这个值
 		// For when m_fontSize is not an integer, the data in SCharacter needs to be scaled, so use this value
 		float m_floatingScale {};
-	};
 
-	/*
-
-	class CFont {
 	public:
-		CFont() = delete;
-		CFont(const char * filename, int fontSize);
-		virtual ~CFont();
-
-		enum class EHAlign {
-			Left = 0,
-			Center = 1,
-			Right = 2
-		};
-		enum class EVAlign {
-			Top = 0,
-			Middle = 1,
-			Bottom = 2
-		};
-
-		typedef EHAlign EWrappedAlign;
-
-		TTF_Font * GetSdlFont() const { return m_font; }
-
-		void SetSize(int size);
-		int GetSize() const { return m_size; }
-
-		void SetWrappedAlign(EWrappedAlign wrappedAlign);
-
-		EWrappedAlign GetWrappedAlign() const { return m_wrappedAlign; }
-
-		void SetAlign(EHAlign hAlign, EVAlign vAlign, bool bAlsoSetWrappedAlign = true) {
-			SetHAlign(hAlign, bAlsoSetWrappedAlign);
-			SetVAlign(vAlign);
+		inline static bool __IsWordChar(CharType character) {
+			static std::unordered_set<CharType> __wordCharSet {
+				'0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
+				'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z',
+				'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z',
+				'~', '`', '!', '@', '#', '$', '%', '^', '&', '_', '=',
+				'+', /* '-',*/ '*', '/', '<', '>', ',', '.', '?', '\'', '\"', '\\', '|',
+				'(', ')', '[', ']', '{', '}'
+			};
+			static auto __end = __wordCharSet.end();
+			return __wordCharSet.find(character) != __end;
 		}
-		void SetHAlign(EHAlign hAlign, bool bAlsoSetWrappedAlign = true) {
-			m_hAlign = hAlign;
-			if(bAlsoSetWrappedAlign) {
-				SetWrappedAlign(hAlign);
-			}
-		}
-		void SetVAlign(EVAlign vAlign) { m_vAlign = vAlign; }
 
-		EHAlign GetHAlign() const { return m_hAlign; }
-		EVAlign GetVAlign() const { return m_vAlign; }
+		// Sample of What_need_to_do_when_wrap:
+		// [](size_t lineHeadIndex, size_t lineTailIndex, const Vec2 & vOffset_TopLeft_of_this_line, float width_of_this_line) { ... }
+		void TextAutoWrapBase(UnicodeStringView unicodeText, float _maxLineWidth, const std::function<void (size_t, size_t, const Vec2 &, float)> & What_need_to_do_when_wrap);
 
-	private:
-		TTF_Font * m_font = nullptr;
-		int m_size = 0;
-		EHAlign m_hAlign = EHAlign::Left;
-		EVAlign m_vAlign = EVAlign::Top;
-		EWrappedAlign m_wrappedAlign {};
+		float TextWidth(UnicodeStringView unicodeText, float _maxLineWidth);
+		float TextHeight(UnicodeStringView unicodeText, float _maxLineWidth);
+		std::pair<float, float> TextSize(UnicodeStringView unicodeText, float _maxLineWidth);
+
 	};
-	*/
+
 }
