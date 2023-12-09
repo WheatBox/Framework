@@ -31,17 +31,11 @@ namespace Frame {
 		glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 	}
 
-#define __DRAWTEXT_NEXTLINE \
-	vBasePos.y += m_pFont->GetLineHeight(); \
-	vCurrPos.x = vBasePos.x;
-
-	void CTextRenderer::DrawTextSingleLine(UnicodeStringView unicodeText, const Vec2 & vPos) {
+	void CTextRenderer::DrawTextSingleLine__DontUseMyShader(UnicodeStringView unicodeText, const Vec2 & vPos) {
 		if(!m_pFont) {
 			/* TODO - 错误信息 */
 			return;
 		}
-
-		UseMyShader(m_color, m_alpha);
 
 		Vec2 vCurrPos = vPos;
 
@@ -53,6 +47,10 @@ namespace Frame {
 			vCurrPos.x += pCharacter->advance.x;
 		}
 	}
+
+#define __DRAWTEXT_NEXTLINE \
+	vBasePos.y += m_pFont->GetLineHeight(); \
+	vCurrPos.x = vBasePos.x;
 
 	void CTextRenderer::DrawTextBlended(UnicodeStringView unicodeText, const Vec2 & vPos, const ColorRGB & rgb, float alpha) {
 		if(!m_pFont) {
@@ -108,12 +106,15 @@ namespace Frame {
 		
 		m_pFont->TextAutoWrapBase(unicodeText, _maxLineWidth,
 			[this, & unicodeText, & vPos](size_t _iLineHead, size_t _iLineTail, const Vec2 & _vOffset, float) {
-				DrawTextSingleLine(unicodeText.substr(_iLineHead, _iLineTail - _iLineHead + 1), vPos + _vOffset);
+				DrawTextSingleLine__DontUseMyShader(unicodeText.substr(_iLineHead, _iLineTail - _iLineHead + 1), vPos + _vOffset);
 			}
 		);
 	}
 
 	void CTextRenderer::DrawTextAlignAutoWrap(UnicodeStringView unicodeText, const Vec2 & vPos, ETextHAlign halign, ETextVAlign valign, float _maxLineWidth) {
+
+		UseMyShader(m_color, m_alpha);
+
 		std::vector<CFont::STextAutoWrapLineData> lines = m_pFont->TextAutoWrapLineDataIntoVector(unicodeText, _maxLineWidth);
 		
 		float xOffsetRatio = 0.f;
@@ -138,7 +139,7 @@ namespace Frame {
 		}
 
 		for(const auto & current : lines) {
-			DrawTextSingleLine(unicodeText.substr(current.headIndex, current.tailIndex - current.headIndex + 1),
+			DrawTextSingleLine__DontUseMyShader(unicodeText.substr(current.headIndex, current.tailIndex - current.headIndex + 1),
 				vPos + current.vOffset + Vec2 {
 					static_cast<float>(static_cast<int>(current.width * xOffsetRatio)),
 					passageYOffset

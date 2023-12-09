@@ -56,10 +56,6 @@ namespace Frame {
 		}
 
 		SetFontSize(fontSize);
-
-		for(CharType i = 0; i < 128; i++) {
-			InitializeCharacter(i);
-		}
 	}
 
 	CFont::~CFont() {

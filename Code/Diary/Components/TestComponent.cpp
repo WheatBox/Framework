@@ -84,9 +84,9 @@ void CTestComponent2::ProcessEvent(const Frame::EntityEvent::SEvent & event) {
 			pSprite->SetOffset({ static_cast<float>(pSprite->GetWidth()) / 2.f, static_cast<float>(pSprite->GetHeight()) / 2.f });
 
 			//pFont = new Frame::CFont { "C:/Windows/Fonts/STZHONGS.TTF", 32.f };
-			//pFont = new Frame::CFont { "C:/Windows/Fonts/simkai.ttf", 32.f };
+			pFont = new Frame::CFont { "C:/Windows/Fonts/simkai.ttf", 32.f };
 			//pFont = new Frame::CFont { "C:/Windows/Fonts/SIMLI.TTF", 32.f };
-			pFont = new Frame::CFont { "C:/Windows/Fonts/STXINGKA.TTF", 32.f };
+			//pFont = new Frame::CFont { "C:/Windows/Fonts/STXINGKA.TTF", 32.f };
 			//pFont = new Frame::CFont { "C:/Users/15599/AppData/Local/Microsoft/Windows/Fonts/onryou.ttf", 32.f };
 			//pFont = new Frame::CFont { "C:/Users/15599/AppData/Local/Microsoft/Windows/Fonts/YaoSuiXinShouXieTi-2.ttf", 32.f };
 			Frame::gRenderer->pTextRenderer->SetFont(pFont);
@@ -118,8 +118,7 @@ void CTestComponent2::ProcessEvent(const Frame::EntityEvent::SEvent & event) {
 
 		Frame::gRenderer->pTextRenderer->SetColorAlpha(0xFFFFFF, 1.f);
 
-		/*
-		Frame::gRenderer->pTextRenderer->DrawTextAlignAutoWrap(
+		Frame::gRenderer->pTextRenderer->DrawTextAutoWrapBlended(
 			"先帝创 业未半  而中道崩\n殂，今天\n\n下三分，益州疲弊，此诚危急存亡之秋也。然侍卫之臣不懈于内，忠志之士忘身于外者，盖追先帝之殊遇，欲报之于陛下也。诚宜开张圣听，以光先帝遗德，恢弘志士之气，不宜妄自菲薄，引喻失义，以塞忠谏之路也。\n"
 			"宫中府中，俱为一体，陟罚臧否，不宜异同。若有作奸犯科及为忠善者，宜付有司论其刑赏，以昭陛下平明之理，不宜偏私，使内外异法也。\n"
 			"侍中、侍郎郭攸之、费祎、董允等，此皆良实，志虑忠纯，是以先帝简拔以遗陛下。愚以为宫中之事，事无大小，悉以咨之，然后施行，必能裨补阙漏，有所广益。\n"
@@ -133,9 +132,9 @@ void CTestComponent2::ProcessEvent(const Frame::EntityEvent::SEvent & event) {
 			"The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog."
 			"The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog."
 			,
-			{ 800.f, 800.f }, Frame::ETextHAlign::Center, Frame::ETextVAlign::Bottom, 600.f
+			{ 0.f }, 500.f, 0xFFFF00, 0.5f
 		);
-		*/
+		
 		Frame::gRenderer->pTextRenderer->DrawTextAlign(
 			"《出师表》\n"
 			"诸葛亮\n"
@@ -187,11 +186,11 @@ void CTestComponent2::ProcessEvent(const Frame::EntityEvent::SEvent & event) {
 		std::cout << w << "x" << h << std::endl;
 		//pFont->TextAutoWrapBase("先帝\n创业未 半  \n 而中道崩殂。", 1.f, [](size_t h, size_t t, const Frame::Vec2 &, float n) { std::cout << "1." << h << "~" << t << " : " << n << std::endl; });
 		//pFont->TextAutoWrapBase("先帝\n创业未 半  \n 而中道崩殂。", 80.f, [](size_t h, size_t t, const Frame::Vec2 &, float n) { std::cout << "2." << h << "~" << t << " : " << n << std::endl; });
-		pFont->TextAutoWrapBase("The quick brown fox jumps over the lazy dog.", 80.f,
-			[](size_t h, size_t t, const Frame::Vec2 &, float n) {
-				std::cout << "2." << std::string("The quick brown fox jumps over the lazy dog.").substr(h, t - h + 1) << " : " << h << "~" << t << " : " << n << std::endl;
-			}
-		);
+		//pFont->TextAutoWrapBase("The quick brown fox jumps over the lazy dog.", 80.f,
+		//	[](size_t h, size_t t, const Frame::Vec2 &, float n) {
+		//		std::cout << "2." << std::string("The quick brown fox jumps over the lazy dog.").substr(h, t - h + 1) << " : " << h << "~" << t << " : " << n << std::endl;
+		//	}
+		//);
 		std::cout << "----" << std::endl;
 
 		Frame::gRenderer->pShapeRenderer->DrawPixelColorBlended({ 100.f, 300.f }, 0x00FF00, 32.f);

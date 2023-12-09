@@ -65,10 +65,27 @@ namespace Frame {
 
 		/* ----- No Wrap ----- */
 
-		void DrawTextSingleLine(UTF8StringView utf8Text, const Vec2 & vPos) {
-			DrawTextSingleLine(UTF8Utils::ToUnicode(utf8Text), vPos);
+	private:
+		void DrawTextSingleLine__DontUseMyShader(UTF8StringView utf8Text, const Vec2 & vPos) {
+			DrawTextSingleLine__DontUseMyShader(UTF8Utils::ToUnicode(utf8Text), vPos);
 		}
-		void DrawTextSingleLine(UnicodeStringView unicodeText, const Vec2 & vPos);
+		void DrawTextSingleLine__DontUseMyShader(UnicodeStringView unicodeText, const Vec2 & vPos);
+	public:
+
+		void DrawTextSingleLine(UTF8StringView utf8Text, const Vec2 & vPos) {
+			DrawTextSingleLineBlended(UTF8Utils::ToUnicode(utf8Text), vPos, m_color, m_alpha);
+		}
+		void DrawTextSingleLine(UnicodeStringView unicodeText, const Vec2 & vPos) {
+			DrawTextSingleLineBlended(unicodeText, vPos, m_color, m_alpha);
+		}
+		
+		void DrawTextSingleLineBlended(UTF8StringView utf8Text, const Vec2 & vPos, const ColorRGB & rgb, float alpha) {
+			DrawTextSingleLineBlended(UTF8Utils::ToUnicode(utf8Text), vPos, rgb, alpha);
+		}
+		void DrawTextSingleLineBlended(UnicodeStringView unicodeText, const Vec2 & vPos, const ColorRGB & rgb, float alpha) {
+			UseMyShader(rgb, alpha);
+			DrawTextSingleLine__DontUseMyShader(unicodeText, vPos);
+		}
 
 		/* ----- \n Wrap ----- */
 
