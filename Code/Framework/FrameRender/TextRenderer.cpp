@@ -6,9 +6,6 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
-#include <unordered_set>
-#include <iostream>
-
 namespace Frame {
 
 	CTextRenderer::CTextRenderer(CRenderer * pRenderer)
@@ -38,7 +35,7 @@ namespace Frame {
 	vBasePos.y += m_pFont->GetLineHeight(); \
 	vCurrPos.x = vBasePos.x;
 
-	void CTextRenderer::DrawTextNoWrap(UnicodeStringView unicodeText, const Vec2 & vPos) {
+	void CTextRenderer::DrawTextSingleLine(UnicodeStringView unicodeText, const Vec2 & vPos) {
 		if(!m_pFont) {
 			/* TODO - 错误信息 */
 			return;
@@ -96,30 +93,58 @@ namespace Frame {
 		return __wordCharSet.find(character) != __end;
 	}
 
-	void CTextRenderer::DrawTextAutoWrap(UnicodeStringView unicodeText, const Vec2 & vPos, float _maxLineWidth) {
+	void CTextRenderer::DrawTextAutoWrapBlended(UnicodeStringView unicodeText, const Vec2 & vPos, float _maxLineWidth, const ColorRGB & rgb, float alpha) {
 		if(!m_pFont) {
 			/* TODO - 错误信息 */
 			return;
 		}
 
 		if(_maxLineWidth <= 0.f) {
-			DrawText(unicodeText, vPos);
+			DrawTextBlended(unicodeText, vPos, rgb, alpha);
 			return;
 		}
+
+		UseMyShader(rgb, alpha);
 		
 		m_pFont->TextAutoWrapBase(unicodeText, _maxLineWidth,
 			[this, & unicodeText, & vPos](size_t _iLineHead, size_t _iLineTail, const Vec2 & _vOffset, float) {
-				DrawTextNoWrap(unicodeText.substr(_iLineHead, _iLineTail - _iLineHead + 1), vPos + _vOffset);
+				DrawTextSingleLine(unicodeText.substr(_iLineHead, _iLineTail - _iLineHead + 1), vPos + _vOffset);
 			}
 		);
 	}
 
-	void CTextRenderer::DrawTextAlign(UnicodeStringView unicodeText, const Vec2 & vPos, ETextHAlign halign, ETextVAlign valign) {
-		if(halign == ETextHAlign::Left && valign == ETextVAlign::Top) {
-			DrawText(unicodeText, vPos);
-			return;
+	void CTextRenderer::DrawTextAlignAutoWrap(UnicodeStringView unicodeText, const Vec2 & vPos, ETextHAlign halign, ETextVAlign valign, float _maxLineWidth) {
+		std::vector<CFont::STextAutoWrapLineData> lines = m_pFont->TextAutoWrapLineDataIntoVector(unicodeText, _maxLineWidth);
+		
+		float xOffsetRatio = 0.f;
+		float passageYOffset = 0.f;
+
+		switch(valign) {
+		case ETextVAlign::Middle:
+			passageYOffset = -(lines.back().vOffset.y + m_pFont->GetLineHeight()) * 0.5f;
+			break;
+		case ETextVAlign::Bottom:
+			passageYOffset = -(lines.back().vOffset.y + m_pFont->GetLineHeight());
+			break;
 		}
-		// TODO
+
+		switch(halign) {
+		case ETextHAlign::Center:
+			xOffsetRatio = -0.5f;
+			break;
+		case ETextHAlign::Right:
+			xOffsetRatio = -1.f;
+			break;
+		}
+
+		for(const auto & current : lines) {
+			DrawTextSingleLine(unicodeText.substr(current.headIndex, current.tailIndex - current.headIndex + 1),
+				vPos + current.vOffset + Vec2 {
+					static_cast<float>(static_cast<int>(current.width * xOffsetRatio)),
+					passageYOffset
+				}
+			);
+		}
 	}
 
 	void CTextRenderer::UseMyShader(const ColorRGB & rgb, float alpha) {

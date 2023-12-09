@@ -153,24 +153,29 @@ namespace Frame {
 		constexpr size_t iInvalid = SIZE_MAX; size_t iLineHead = 0, iLineTail = iInvalid;
 
 		Vec2 vLineOff { 0.f };
-		float currLineWidth = 0.f;
+
+		// currLineWidth: 每个遍历到的字符的宽度都会计入
+		// currLineWidthApplied: 表示每行最终得出的实际宽度
+		// currLineWidth: The width of each traversed character will be included in the calculation
+		// currLineWidthApplied: represents the actual width ultimately obtained for each row
+		float currLineWidth = 0.f, currLineWidthApplied = 0.f;
 
 		bool bThisLineIsAlreadyHaveANotWordChar = false;
 
 #define __TEXTAUTOWRAPBASE_NEXTLINE \
-	What_need_to_do_when_wrap(iLineHead, iLineTail, vLineOff, currLineWidth); \
+	What_need_to_do_when_wrap(iLineHead, iLineTail, vLineOff, currLineWidthApplied); \
 	vLineOff.y += m_lineHeight; \
-	currLineWidth = 0.f; \
-	i = iLineTail; \
-	iLineHead = i + 1;
+	currLineWidth = 0.f;
 
 		size_t len = unicodeText.length();
 		for(size_t i = 0; i < len; i++) {
 			CFont::CharType character = unicodeText[i];
 
 			if(character == '\n') {
-				iLineTail = i;
+				iLineTail = i - 1;
+				currLineWidthApplied = currLineWidth;
 				__TEXTAUTOWRAPBASE_NEXTLINE;
+				iLineHead = i + 1;
 				continue;
 			}
 
@@ -182,6 +187,7 @@ namespace Frame {
 			if(currLineWidth <= _maxLineWidth) {
 				if(bCurrentIsNotWordChar) {
 					iLineTail = i;
+					currLineWidthApplied = currLineWidth;
 					bThisLineIsAlreadyHaveANotWordChar = true;
 				}
 			} else {
@@ -190,15 +196,19 @@ namespace Frame {
 
 					if(iLineTail < iLineHead || iLineTail == iInvalid) {
 						iLineTail = i;
+						currLineWidthApplied = currLineWidth;
 					}
 					else if(character == ' ') {
 						iLineTail = i;
 						currLineWidth -= pCharacter->advance.x;
+						currLineWidthApplied = currLineWidth;
 					} else {
 						currLineWidth -= pCharacter->advance.x;
 					}
 
 					__TEXTAUTOWRAPBASE_NEXTLINE;
+					i = iLineTail;
+					iLineHead = i + 1;
 
 					bThisLineIsAlreadyHaveANotWordChar = false;
 				}
@@ -234,7 +244,7 @@ namespace Frame {
 		return result + m_lineHeight;
 	}
 
-	std::pair<float, float> CFont::TextSize(UnicodeStringView unicodeText, float _maxLineWidth) {
+	Vec2 CFont::TextSize(UnicodeStringView unicodeText, float _maxLineWidth) {
 		float resultWidth = 0.f, resultHeight = 0.f;
 		TextAutoWrapBase(unicodeText, _maxLineWidth,
 			[& resultWidth, & resultHeight](size_t, size_t, const Vec2 & _vOffset, float _width) {
@@ -245,6 +255,18 @@ namespace Frame {
 			}
 		);
 		return { resultWidth, resultHeight + m_lineHeight };
+	}
+
+	std::vector<CFont::STextAutoWrapLineData> CFont::TextAutoWrapLineDataIntoVector(UnicodeStringView unicodeText, float _maxLineWidth) {
+		std::vector<STextAutoWrapLineData> result {};
+
+		TextAutoWrapBase(unicodeText, _maxLineWidth,
+			[& result](auto a, auto b, auto c, auto d) {
+				result.push_back({ a, b, c, d });
+			}
+		);
+
+		return result;
 	}
 	
 }

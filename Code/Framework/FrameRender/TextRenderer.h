@@ -8,7 +8,6 @@
 
 #include <FrameAsset/Font.h>
 
-#include <FrameUtility/UTF8Utils.h>
 #include <FrameUtility/BitOperation.h>
 
 namespace Frame {
@@ -42,9 +41,6 @@ namespace Frame {
 
 		CFont * m_pFont = nullptr;
 
-		ETextHAlign m_halign = ETextHAlign::Left;
-		ETextVAlign m_valign = ETextVAlign::Top;
-
 	public:
 
 		CTextRenderer(CRenderer * pRenderer);
@@ -61,30 +57,6 @@ namespace Frame {
 			return m_pFont;
 		}
 
-		void SetAlign(std::pair<ETextHAlign, ETextVAlign> align) {
-			SetAlign(align.first, align.second);
-		}
-		void SetAlign(ETextHAlign halign, ETextVAlign valign) {
-			m_halign = halign;
-			m_valign = valign;
-		}
-		void SetHAlign(ETextHAlign halign) {
-			m_halign = halign;
-		}
-		void SetVAlign(ETextVAlign valign) {
-			m_valign = valign;
-		}
-
-		std::pair<ETextHAlign, ETextVAlign> GetAlign() const {
-			return { m_halign, m_valign };
-		}
-		ETextHAlign GetHAlign() const {
-			return m_halign;
-		}
-		ETextVAlign GetVAlign() const {
-			return m_valign;
-		}
-
 		/* +-----------------------------------------------+ */
 		/* |                   Draw Text                   | */
 		/* +-----------------------------------------------+ */
@@ -93,15 +65,15 @@ namespace Frame {
 
 		/* ----- No Wrap ----- */
 
-		void DrawTextNoWrap(UTF8StringView utf8Text, const Vec2 & vPos) {
-			DrawTextNoWrap(UTF8Utils::ToUnicode(utf8Text), vPos);
+		void DrawTextSingleLine(UTF8StringView utf8Text, const Vec2 & vPos) {
+			DrawTextSingleLine(UTF8Utils::ToUnicode(utf8Text), vPos);
 		}
-		void DrawTextNoWrap(UnicodeStringView unicodeText, const Vec2 & vPos);
+		void DrawTextSingleLine(UnicodeStringView unicodeText, const Vec2 & vPos);
 
 		/* ----- \n Wrap ----- */
 
 		void DrawText(UTF8StringView utf8Text, const Vec2 & vPos) {
-			DrawText(UTF8Utils::ToUnicode(utf8Text), vPos);
+			DrawTextBlended(UTF8Utils::ToUnicode(utf8Text), vPos, m_color, m_alpha);
 		}
 		void DrawText(UnicodeStringView unicodeText, const Vec2 & vPos) {
 			DrawTextBlended(unicodeText, vPos, m_color, m_alpha);
@@ -129,15 +101,46 @@ namespace Frame {
 		/* ----- Auto Wrap ----- */
 
 		void DrawTextAutoWrap(UTF8StringView utf8Text, const Vec2 & vPos, float _maxLineWidth) {
-			DrawTextAutoWrap(UTF8Utils::ToUnicode(utf8Text), vPos, _maxLineWidth);
+			DrawTextAutoWrapBlended(UTF8Utils::ToUnicode(utf8Text), vPos, _maxLineWidth, m_color, m_alpha);
 		}
-		void DrawTextAutoWrap(UnicodeStringView unicodeText, const Vec2 & vPos, float _maxLineWidth);
+		void DrawTextAutoWrap(UnicodeStringView unicodeText, const Vec2 & vPos, float _maxLineWidth) {
+			DrawTextAutoWrapBlended(unicodeText, vPos, _maxLineWidth, m_color, m_alpha);
+		}
+
+		void DrawTextAutoWrapColorBlended(UTF8StringView utf8Text, const Vec2 & vPos, float _maxLineWidth, const ColorRGB & rgb) {
+			DrawTextAutoWrapBlended(UTF8Utils::ToUnicode(utf8Text), vPos, _maxLineWidth, rgb, m_alpha);
+		}
+		void DrawTextAutoWrapColorBlended(UnicodeStringView unicodeText, const Vec2 & vPos, float _maxLineWidth, const ColorRGB & rgb) {
+			DrawTextAutoWrapBlended(unicodeText, vPos, _maxLineWidth, rgb, m_alpha);
+		}
+
+		void DrawTextAutoWrapAlphaBlended(UTF8StringView utf8Text, const Vec2 & vPos, float _maxLineWidth, float alpha) {
+			DrawTextAutoWrapBlended(UTF8Utils::ToUnicode(utf8Text), vPos, _maxLineWidth, m_color, alpha);
+		}
+		void DrawTextAutoWrapAlphaBlended(UnicodeStringView unicodeText, const Vec2 & vPos, float _maxLineWidth, float alpha) {
+			DrawTextAutoWrapBlended(unicodeText, vPos, _maxLineWidth, m_color, alpha);
+		}
+
+		void DrawTextAutoWrapBlended(UTF8StringView utf8Text, const Vec2 & vPos, float _maxLineWidth, const ColorRGB & rgb, float alpha) {
+			DrawTextAutoWrapBlended(UTF8Utils::ToUnicode(utf8Text), vPos, _maxLineWidth, rgb, alpha);
+		}
+		void DrawTextAutoWrapBlended(UnicodeStringView unicodeText, const Vec2 & vPos, float _maxLineWidth, const ColorRGB & rgb, float alpha);
 
 		/* +-----------------------------------------------+ */
 		/* |                Draw Text Align                | */
 		/* +-----------------------------------------------+ */
 
-		void DrawTextAlign(UnicodeStringView unicodeText, const Vec2 & vPos, ETextHAlign halign, ETextVAlign valign);
+		void DrawTextAlign(UTF8StringView utf8Text, const Vec2 & vPos, ETextHAlign halign, ETextVAlign valign) {
+			DrawTextAlignAutoWrap(UTF8Utils::ToUnicode(utf8Text), vPos, halign, valign, 0.f);
+		}
+		void DrawTextAlign(UnicodeStringView unicodeText, const Vec2 & vPos, ETextHAlign halign, ETextVAlign valign) {
+			DrawTextAlignAutoWrap(unicodeText, vPos, halign, valign, 0.f);
+		}
+		
+		void DrawTextAlignAutoWrap(UTF8StringView utf8Text, const Vec2 & vPos, ETextHAlign halign, ETextVAlign valign, float _maxLineWidth) {
+			DrawTextAlignAutoWrap(UTF8Utils::ToUnicode(utf8Text), vPos, halign, valign, _maxLineWidth);
+		}
+		void DrawTextAlignAutoWrap(UnicodeStringView unicodeText, const Vec2 & vPos, ETextHAlign halign, ETextVAlign valign, float _maxLineWidth);
 
 	private:
 		void UseMyShader(const ColorRGB & rgb, float alpha);

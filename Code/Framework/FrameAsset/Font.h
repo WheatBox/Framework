@@ -3,9 +3,12 @@
 #include <FrameCore/BasicTypes.h>
 #include <FrameMath/Vector2.h>
 
+#include <FrameUtility/UTF8Utils.h>
+
 #include <unordered_map>
 #include <unordered_set>
 #include <functional>
+#include <vector>
 
 struct FT_LibraryRec_;
 typedef FT_LibraryRec_ * FT_Library;
@@ -105,11 +108,35 @@ namespace Frame {
 
 		// Sample of What_need_to_do_when_wrap:
 		// [](size_t lineHeadIndex, size_t lineTailIndex, const Vec2 & vOffset_TopLeft_of_this_line, float width_of_this_line) { ... }
+		void TextAutoWrapBase(UTF8StringView utf8Text, float _maxLineWidth, const std::function<void (size_t, size_t, const Vec2 &, float)> & What_need_to_do_when_wrap) {
+			TextAutoWrapBase(UTF8Utils::ToUnicode(utf8Text), _maxLineWidth, What_need_to_do_when_wrap);
+		}
 		void TextAutoWrapBase(UnicodeStringView unicodeText, float _maxLineWidth, const std::function<void (size_t, size_t, const Vec2 &, float)> & What_need_to_do_when_wrap);
+
+		float TextWidth(UTF8StringView utf8Text, float _maxLineWidth) {
+			return TextWidth(UTF8Utils::ToUnicode(utf8Text), _maxLineWidth);
+		}
+		float TextHeight(UTF8StringView utf8Text, float _maxLineWidth) {
+			return TextHeight(UTF8Utils::ToUnicode(utf8Text), _maxLineWidth);
+		}
+		Vec2 TextSize(UTF8StringView utf8Text, float _maxLineWidth) {
+			return TextSize(UTF8Utils::ToUnicode(utf8Text), _maxLineWidth);
+		}
 
 		float TextWidth(UnicodeStringView unicodeText, float _maxLineWidth);
 		float TextHeight(UnicodeStringView unicodeText, float _maxLineWidth);
-		std::pair<float, float> TextSize(UnicodeStringView unicodeText, float _maxLineWidth);
+		Vec2 TextSize(UnicodeStringView unicodeText, float _maxLineWidth);
+
+		struct STextAutoWrapLineData {
+			size_t headIndex;
+			size_t tailIndex;
+			Vec2 vOffset;
+			float width;
+		};
+		std::vector<STextAutoWrapLineData> TextAutoWrapLineDataIntoVector(UTF8StringView utf8Text, float _maxLineWidth) {
+			return TextAutoWrapLineDataIntoVector(UTF8Utils::ToUnicode(utf8Text), _maxLineWidth);
+		}
+		std::vector<STextAutoWrapLineData> TextAutoWrapLineDataIntoVector(UnicodeStringView unicodeText, float _maxLineWidth);
 
 	};
 
