@@ -127,16 +127,16 @@ namespace Frame {
 		float TextHeight(UnicodeStringView unicodeText, float _maxLineWidth);
 		Vec2 TextSize(UnicodeStringView unicodeText, float _maxLineWidth);
 
-		struct STextAutoWrapLineData {
+		struct STextAutoWrapLineFormat {
 			size_t headIndex;
 			size_t tailIndex;
 			Vec2 vOffset;
 			float width;
 		};
-		std::vector<STextAutoWrapLineData> TextAutoWrapLineDataIntoVector(UTF8StringView utf8Text, float _maxLineWidth) {
-			return TextAutoWrapLineDataIntoVector(UTF8Utils::ToUnicode(utf8Text), _maxLineWidth);
+		std::vector<STextAutoWrapLineFormat> TextAutoWrapLineFormats(UTF8StringView utf8Text, float _maxLineWidth) {
+			return TextAutoWrapLineFormats(UTF8Utils::ToUnicode(utf8Text), _maxLineWidth);
 		}
-		std::vector<STextAutoWrapLineData> TextAutoWrapLineDataIntoVector(UnicodeStringView unicodeText, float _maxLineWidth);
+		std::vector<STextAutoWrapLineFormat> TextAutoWrapLineFormats(UnicodeStringView unicodeText, float _maxLineWidth);
 
 	};
 

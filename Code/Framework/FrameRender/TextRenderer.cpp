@@ -111,21 +111,18 @@ namespace Frame {
 		);
 	}
 
-	void CTextRenderer::DrawTextAlignAutoWrap(UnicodeStringView unicodeText, const Vec2 & vPos, ETextHAlign halign, ETextVAlign valign, float _maxLineWidth) {
+	void CTextRenderer::DrawTextAutoWrapLineFormatsAlignBlended(UnicodeStringView unicodeText, const Vec2 & vPos, const std::vector<CFont::STextAutoWrapLineFormat> & textAutoWrapLineFormats, ETextHAlign halign, ETextVAlign valign, const ColorRGB & rgb, float alpha) {
+		UseMyShader(rgb, alpha);
 
-		UseMyShader(m_color, m_alpha);
-
-		std::vector<CFont::STextAutoWrapLineData> lines = m_pFont->TextAutoWrapLineDataIntoVector(unicodeText, _maxLineWidth);
-		
 		float xOffsetRatio = 0.f;
 		float passageYOffset = 0.f;
 
 		switch(valign) {
 		case ETextVAlign::Middle:
-			passageYOffset = -(lines.back().vOffset.y + m_pFont->GetLineHeight()) * 0.5f;
+			passageYOffset = -(textAutoWrapLineFormats.back().vOffset.y + m_pFont->GetLineHeight()) * 0.5f;
 			break;
 		case ETextVAlign::Bottom:
-			passageYOffset = -(lines.back().vOffset.y + m_pFont->GetLineHeight());
+			passageYOffset = -(textAutoWrapLineFormats.back().vOffset.y + m_pFont->GetLineHeight());
 			break;
 		}
 
@@ -138,7 +135,7 @@ namespace Frame {
 			break;
 		}
 
-		for(const auto & current : lines) {
+		for(const auto & current : textAutoWrapLineFormats) {
 			DrawTextSingleLine__DontUseMyShader(unicodeText.substr(current.headIndex, current.tailIndex - current.headIndex + 1),
 				vPos + current.vOffset + Vec2 {
 					static_cast<float>(static_cast<int>(current.width * xOffsetRatio)),

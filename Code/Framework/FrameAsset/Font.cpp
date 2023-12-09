@@ -253,8 +253,8 @@ namespace Frame {
 		return { resultWidth, resultHeight + m_lineHeight };
 	}
 
-	std::vector<CFont::STextAutoWrapLineData> CFont::TextAutoWrapLineDataIntoVector(UnicodeStringView unicodeText, float _maxLineWidth) {
-		std::vector<STextAutoWrapLineData> result {};
+	std::vector<CFont::STextAutoWrapLineFormat> CFont::TextAutoWrapLineFormats(UnicodeStringView unicodeText, float _maxLineWidth) {
+		std::vector<STextAutoWrapLineFormat> result {};
 
 		TextAutoWrapBase(unicodeText, _maxLineWidth,
 			[& result](auto a, auto b, auto c, auto d) {
@@ -266,32 +266,3 @@ namespace Frame {
 	}
 	
 }
-
-#if 0
-#include <SDL_render.h>
-#include <SDL_ttf.h>
-
-namespace Frame {
-
-	CFont::CFont(const char * filename, int fontSize) {
-		m_size = fontSize;
-		m_font = TTF_OpenFont(filename, fontSize);
-
-		SetWrappedAlign(EWrappedAlign::Left);
-	}
-
-	CFont::~CFont() {
-		TTF_CloseFont(m_font);
-	}
-
-	void CFont::SetSize(int size) {
-		m_size = size;
-		TTF_SetFontSize(m_font, size);
-	}
-
-	void CFont::SetWrappedAlign(EWrappedAlign wrappedAlign) {
-		TTF_SetFontWrappedAlign(m_font, static_cast<int>(wrappedAlign));
-	}
-
-}
-#endif
