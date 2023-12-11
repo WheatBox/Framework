@@ -6,10 +6,10 @@ namespace Frame {
 
 	CEntitySystem::CEntitySystem() {
 		using namespace EntityEvent;
-		m_pEventProcessors[eEFI_Initialize]    = new CEntityEventProcessorImmediately { Initialize };
+		//m_pEventProcessors[eEFI_Initialize]    = new CEntityEventProcessorImmediately { Initialize };
 		m_pEventProcessors[eEFI_Update]        = new CEntityEventProcessor            { Update };
 		m_pEventProcessors[eEFI_Render]        = new CEntityEventProcessorZSort       { Render };
-		m_pEventProcessors[eEFI_Remove]        = new CEntityEventProcessorImmediately { Remove };
+		//m_pEventProcessors[eEFI_Remove]        = new CEntityEventProcessorImmediately { Remove };
 		m_pEventProcessors[eEFI_EnteredView]   = new CEntityEventProcessor            { EnteredView };
 		m_pEventProcessors[eEFI_LeftView]      = new CEntityEventProcessor            { LeftView };
 		m_pEventProcessors[eEFI_WindowResized] = new CEntityEventProcessor            { WindowResized };

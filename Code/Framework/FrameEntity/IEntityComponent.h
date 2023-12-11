@@ -14,12 +14,18 @@ namespace Frame {
 		void Construct(CEntity * pEntity) {
 			m_pEntity = pEntity;
 		}
+		
+		// After construction
+		virtual void Initialize() {}
+
+		// Before destruction
+		virtual void OnShutDown() {}
 
 		// Example:
 		//	virtual EntityEvent::Flags GetEventFlags() const override {
 		//		return EntityEvent::EFlag::Nothing
-		//			| EntityEvent::EFlag::Initialize
 		//			| EntityEvent::EFlag::Update
+		//			| EntityEvent::EFlag::Render
 		//			...;
 		//	}
 		virtual EntityEvent::Flags GetEventFlags() const = 0;

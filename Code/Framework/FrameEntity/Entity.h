@@ -1,6 +1,5 @@
 ﻿#pragma once
 
-#include <FrameCore/Globals.h>
 #include <FrameMath/Vector2.h>
 #include <FrameUtility/GUID.h>
 
@@ -20,7 +19,9 @@ namespace Frame {
 		CEntity(EntityId id)
 			: m_id(id)
 		{}
-		virtual ~CEntity() = default;
+		virtual ~CEntity() {
+			RemoveAllComponents();
+		}
 
 	private:
 
@@ -67,8 +68,7 @@ namespace Frame {
 		template<typename ComponentType>
 		ComponentType * CreateComponent() {
 			ComponentType * pComponent = new ComponentType {};
-			InitializeComponent(pComponent);
-			ComponentAddIntoProcessors(pComponent);
+			InitializeComponent_And_AddIntoProcessors(pComponent);
 
 			m_components.insert(std::pair<GUID, IEntityComponent *> { SComponentType<ComponentType>::GetGUID(), pComponent });
 			
@@ -94,19 +94,20 @@ namespace Frame {
 
 		template<typename ComponentType>
 		void RemoveComponent() {
-			auto it = m_components.find(SComponentType<ComponentType>::GetGUID());
-			if(it != m_components.end()) {
-				gEntitySystem->ComponentRemoveFromProcessors(it->second);
-				delete static_cast<ComponentType *>(it->second);
+			if(auto it = m_components.find(SComponentType<ComponentType>::GetGUID()); it != m_components.end()) {
+				RemoveComponent_And_RemoveFromProcessors(it->second);
+				delete it->second;
 				m_components.erase(it);
 			}
 		}
 
+		void RemoveAllComponents();
+
 	private:
 		std::unordered_map<GUID, IEntityComponent *> m_components;
 		
-		void InitializeComponent(IEntityComponent * pComponent);
-		void ComponentAddIntoProcessors(IEntityComponent * pComponent);
+		void InitializeComponent_And_AddIntoProcessors(IEntityComponent * pComponent);
+		void RemoveComponent_And_RemoveFromProcessors(IEntityComponent * pComponent);
 
 	};
 
