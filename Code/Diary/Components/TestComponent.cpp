@@ -4,7 +4,7 @@
 
 #include <FrameCore/Globals.h>
 #include <FrameRender/Renderer.h>
-//#include <FrameInput/InputManager.h>
+#include <FrameInput/Input.h>
 
 REGISTER_ENTITY_COMPONENT(, CTestComponent);
 REGISTER_ENTITY_COMPONENT(, CTestComponent2);
@@ -87,6 +87,18 @@ void CTestComponent2::ProcessEvent(const Frame::EntityEvent::SEvent & event) {
 		
 		//m_angle += frameTime * 360; // => 360°/s
 		m_angle += frameTime * 360 / 5.f;
+
+		if( Frame::gInput->pKeyboard->GetInputState(Frame::eIKI_A) | 
+			Frame::gInput->pKeyboard->GetInputState(Frame::eIKI_S) | 
+			Frame::gInput->pKeyboard->GetInputState(Frame::eIKI_D) | 
+			Frame::gInput->pKeyboard->GetInputState(Frame::eIKI_LShift)
+		)
+		printf("%d %d %d %d\n",
+			Frame::gInput->pKeyboard->GetInputState(Frame::eIKI_A),
+			Frame::gInput->pKeyboard->GetInputState(Frame::eIKI_S),
+			Frame::gInput->pKeyboard->GetInputState(Frame::eIKI_D),
+			Frame::gInput->pKeyboard->GetInputState(Frame::eIKI_LShift)
+		);
 	}
 	break;
 	case Frame::EntityEvent::Render:
@@ -94,7 +106,7 @@ void CTestComponent2::ProcessEvent(const Frame::EntityEvent::SEvent & event) {
 #if 1
 		//Frame::gRenderer->pSpriteShader->Use();
 		//Frame::gRenderer->pSpriteShader->SetUniformInt("u_BaseTexture", 0);
-
+		
 		Frame::gRenderer->DrawSprite(m_pSprite, { 340.f , 400.f }, { 0.7f }, m_angle);
 		Frame::gRenderer->DrawSpriteBlended(m_pSprite, { 400.f , 300.f },
 			0xFF0000, 1.f, 0x00FF00, 1.f,
@@ -149,8 +161,8 @@ void CTestComponent2::ProcessEvent(const Frame::EntityEvent::SEvent & event) {
 		);
 		//std::cout << pFont->TextWidth("先帝\n创业未 半  \n 而中道崩殂。", 80.f) << std::endl;
 		//std::cout << pFont->TextHeight("先帝\n创业未 半  \n 而中道崩殂。", 80.f) << std::endl;
-		auto [w, h] = m_pFont->TextSize("先帝\n创业未 半  \n 而中道崩殂。", 80.f);
-		std::cout << w << "x" << h << std::endl;
+		//auto [w, h] = m_pFont->TextSize("先帝\n创业未 半  \n 而中道崩殂。", 80.f);
+		//std::cout << w << "x" << h << std::endl;
 		//pFont->TextAutoWrapBase("先帝\n创业未 半  \n 而中道崩殂。", 1.f, [](size_t h, size_t t, const Frame::Vec2 &, float n) { std::cout << "1." << h << "~" << t << " : " << n << std::endl; });
 		//pFont->TextAutoWrapBase("先帝\n创业未 半  \n 而中道崩殂。", 80.f, [](size_t h, size_t t, const Frame::Vec2 &, float n) { std::cout << "2." << h << "~" << t << " : " << n << std::endl; });
 		//pFont->TextAutoWrapBase("The quick brown fox jumps over the lazy dog.", 80.f,
@@ -158,7 +170,6 @@ void CTestComponent2::ProcessEvent(const Frame::EntityEvent::SEvent & event) {
 		//		std::cout << "2." << std::string("The quick brown fox jumps over the lazy dog.").substr(h, t - h + 1) << " : " << h << "~" << t << " : " << n << std::endl;
 		//	}
 		//);
-		std::cout << "----" << std::endl;
 
 		Frame::gRenderer->pShapeRenderer->DrawPixelColorBlended({ 100.f, 300.f }, 0x00FF00, 32.f);
 
@@ -185,19 +196,6 @@ void CTestComponent2::ProcessEvent(const Frame::EntityEvent::SEvent & event) {
 		Frame::gRenderer->pTextRenderer->DrawTextAutoWrapAlignBlended("Hello, world!\n你好，世界，我在这里！", { 400, 400 }, 160, Frame::ETextHAlign::Left, Frame::ETextVAlign::Top, 0xFFFFFF, .7f);
 		Frame::gRenderer->pTextRenderer->DrawTextAutoWrapAlignBlended("Hello, world!\n你好，世界，我在这里！", { 400, 400 }, 160, Frame::ETextHAlign::Right, Frame::ETextVAlign::Bottom, 0xFFFFFF, 1.f);
 		Frame::gRenderer->pTextRenderer->DrawTextAutoWrapAlignBlended("Hello, world!\n你好，世界，我在这里！", { 400, 300 }, 160, Frame::ETextHAlign::Center, Frame::ETextVAlign::Bottom, 0xFFFFFF, 1.f);
-
-		/*
-		if( Frame::gInputManager->pKeyboard->GetInputState(Frame::eIKI_A) | 
-			Frame::gInputManager->pKeyboard->GetInputState(Frame::eIKI_S) | 
-			Frame::gInputManager->pKeyboard->GetInputState(Frame::eIKI_D) | 
-			Frame::gInputManager->pKeyboard->GetInputState(Frame::eIKI_LShift)
-			)
-		printf("%d %d %d %d\n",
-			Frame::gInputManager->pKeyboard->GetInputState(Frame::eIKI_A),
-			Frame::gInputManager->pKeyboard->GetInputState(Frame::eIKI_S),
-			Frame::gInputManager->pKeyboard->GetInputState(Frame::eIKI_D),
-			Frame::gInputManager->pKeyboard->GetInputState(Frame::eIKI_LShift)
-		);*/
 	}
 	break;
 	}

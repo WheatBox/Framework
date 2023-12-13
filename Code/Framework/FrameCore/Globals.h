@@ -4,7 +4,7 @@ namespace Frame {
 
 	extern class CRenderer * gRenderer;
 	extern class CEntitySystem * gEntitySystem;
-	extern class CInputManager * gInputManager;
+	extern class CInput * gInput;
 
 	extern class CShader * gShaderInUsing;
 

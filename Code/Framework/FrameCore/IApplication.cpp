@@ -2,8 +2,7 @@
 #include <FrameCore/Globals.h>
 #include <FrameRender/Renderer.h>
 #include <FrameEntity/EntitySystem.h>
-//#include <FrameEntity/EntityEventProcessor.h>
-//#include <FrameInput/InputManager.h>
+#include <FrameInput/Input.h>
 
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
@@ -44,6 +43,8 @@ namespace Frame {
 			}
 		);
 
+		gInput->Initialize(m_pWindow);
+
 		return true;
 	}
 
@@ -56,6 +57,8 @@ namespace Frame {
 
 			frameTime = std::chrono::duration<float>(beforeLoopTimePoint - prevTimePoint).count();
 			prevTimePoint = beforeLoopTimePoint;
+
+			gInput->Process();
 
 			gRenderer->RenderBegin();
 
