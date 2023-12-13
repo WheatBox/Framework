@@ -21,12 +21,12 @@ namespace Frame {
 		}
 		virtual ~IEntityEventProcessor() = default;
 
-		void SetEventParam(Uint8 index, EntityEvent::SEvent::UParam param) {
+		void SetEventParam(uint8 index, EntityEvent::SEvent::UParam param) {
 			m_event.params[index] = param;
 		}
 
 		void SetEventParams(std::initializer_list<EntityEvent::SEvent::UParam> params) {
-			Uint8 i = 0;
+			uint8 i = 0;
 			for(auto & param : params) {
 				m_event.params[i++] = param;
 			}

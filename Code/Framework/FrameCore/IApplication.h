@@ -2,34 +2,45 @@
 
 #include <chrono> // for m_maxFrameDelay
 
-struct SDL_Window;
-union SDL_Event;
+struct GLFWwindow;
 
 namespace Frame {
 
+	class CShader;
+
 	struct IApplication {
 	protected:
-		SDL_Window * m_sdlWindow = nullptr;
+		GLFWwindow * m_pWindow = nullptr;
 
 	public:
-		virtual int EntryPoint(int argc, char ** argv) {
-			argc, argv;
-			InitializeWindow("Framework", 800, 600);
+		int EntryPoint(int argc, char ** argv) {
+			if(!InitializeWindow("Framework", 800, 600)) {
+				// TODO
+				Terminate();
+				return -1;
+			}
+			
+			SetVSync(true);
+
+			Initialize(argc, argv);
 			Run();
 			return 0;
 		}
+
+		void Terminate();
 
 	protected:
 
 		bool InitializeWindow(const char * title, int windowWidth, int windowHeight);
 		void Run();
 
-		virtual void Initialize() {}
-
-		virtual void ProcessSdlEvent(SDL_Event & sdlEvent);
+		virtual void Initialize(int argc, char ** argv) = 0;
 
 		virtual void MainLoopPriority() {}
 		virtual void MainLoopLast() {}
+
+		bool GetVSync() const { return m_bVSync; }
+		void SetVSync(bool bEnable);
 
 		int GetMaxFPS() const { return m_maxFPS; }
 		// 0 = 无限大 | Infinite
@@ -46,6 +57,7 @@ namespace Frame {
 		bool m_quit = false;
 
 	private:
+		bool m_bVSync = true;
 		std::chrono::microseconds m_maxFrameDelay { 0 };
 
 	};

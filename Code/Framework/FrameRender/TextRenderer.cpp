@@ -1,63 +1,169 @@
 ﻿#include <FrameRender/TextRenderer.h>
 
-#include <FrameCore/Globals.h>
-#include <FrameAsset/AssetsManager.h>
-#include <FrameMath/ColorMath.h>
+#include <FrameRender/DefaultShaders.h>
+#include <FrameRender/Renderer.h>
 
-#include <SDL_render.h>
-#include <SDL_ttf.h>
+#include <glad/glad.h>
+#include <GLFW/glfw3.h>
 
 namespace Frame {
 
-	CTextRenderer::CTextRenderer(ColorRGB * pColor, Uint8 * pAlpha) {
-		m_pColor = pColor;
-		m_pAlpha = pAlpha;
+	CTextRenderer::CTextRenderer(CRenderer * pRenderer)
+		: m_pRenderer { pRenderer }
+		, m_pDefaultShader { new CShader {} }
+	{
+		if(!m_pDefaultShader->CompileFiles(DEFAULT_TEXT_SHADER_FILES)) {
+			// TODO - 警告信息
+			m_pDefaultShader->Compile(DEFAULT_TEXT_SHADER);
+		}
+		m_pDefaultShader->SetUniformInt("u_BaseTexture", 0);
+		SetShader(m_pDefaultShader);
 	}
 
-	/* +-----------------------------------------------+ */
-	/* |                   Draw Text                   | */
-	/* +-----------------------------------------------+ */
+	CTextRenderer::~CTextRenderer() {
+		delete m_pDefaultShader;
+	}
 
-	void CTextRenderer::DrawText(float x, float y, const char * sz, const ColorRGB & rgb, Uint8 alpha) {
-		SDL_Surface * surface = DrawTextAsSdlSurface(sz, rgb, alpha);
-		if (!surface) {
+	void CTextRenderer::DrawCharacterTexture(CFont::SCharacter * pCharacter, Vec2 vPos) {
+		m_pShader->SetUniformVec2("u_vPos", vPos.x, vPos.y);
+		glBindVertexArray(pCharacter->m_VAO);
+		glBindTexture(GL_TEXTURE_2D, pCharacter->textureId);
+		glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+	}
+
+	void CTextRenderer::DrawTextSingleLine__DontUseMyShader(UnicodeStringView unicodeText, const Vec2 & vPos) {
+		if(!m_pFont) {
+			/* TODO - 错误信息 */
 			return;
 		}
 
-		SDL_Texture * texture = SDL_CreateTextureFromSurface(m_sdlRenderer, surface);
-		if(!texture) {
-			SDL_FreeSurface(surface);
+		Vec2 vCurrPos = vPos;
+
+		for(CFont::CharType character : unicodeText) {
+			CFont::SCharacter * pCharacter = m_pFont->GetOrInitCharacter(character);
+
+			vCurrPos.y = vPos.y - pCharacter->bearing.y + m_pFont->GetFontSize();
+			DrawCharacterTexture(pCharacter, vCurrPos);
+			vCurrPos.x += pCharacter->advance.x;
+		}
+	}
+
+#define __DRAWTEXT_NEXTLINE \
+	vBasePos.y += m_pFont->GetLineHeight(); \
+	vCurrPos.x = vBasePos.x;
+
+	void CTextRenderer::DrawTextBlended(UnicodeStringView unicodeText, const Vec2 & vPos, const ColorRGB & rgb, float alpha) {
+		if(!m_pFont) {
+			/* TODO - 错误信息 */
 			return;
 		}
 
-		SDL_FRect destRect {};
-		destRect.w = static_cast<float>(surface->w);
-		destRect.h = static_cast<float>(surface->h);
-
-		switch (m_pFont->GetHAlign()) {
-		case CFont::EHAlign::Left:   destRect.x = x; break;
-		case CFont::EHAlign::Center: destRect.x = x - destRect.w / 2; break;
-		case CFont::EHAlign::Right:  destRect.x = x - destRect.w; break;
-		}
-		switch (m_pFont->GetVAlign()) {
-		case CFont::EVAlign::Top:    destRect.y = y; break;
-		case CFont::EVAlign::Middle: destRect.y = y - destRect.h / 2; break;
-		case CFont::EVAlign::Bottom: destRect.y = y - destRect.h; break;
-		}
-
-		SDL_RenderCopyF(m_sdlRenderer, texture, 0, & destRect);
-
-		SDL_FreeSurface(surface);
-		SDL_DestroyTexture(texture);
+		UseMyShader(rgb, alpha);
 		
+		Vec2 vBasePos = vPos;
+		Vec2 vCurrPos = vBasePos;
+		
+		for(CFont::CharType character : unicodeText) {
+
+			CFont::SCharacter * pCharacter = m_pFont->GetOrInitCharacter(character);
+			if(character == '\n') {
+				__DRAWTEXT_NEXTLINE
+				continue;
+			}
+			
+			vCurrPos.y = vBasePos.y - pCharacter->bearing.y + m_pFont->GetFontSize();
+			DrawCharacterTexture(pCharacter, vCurrPos);
+			vCurrPos.x += pCharacter->advance.x;
+			
+		}
 	}
 
-	CStaticSprite * CTextRenderer::DrawTextAsSprite(const char * sz, const ColorRGB & rgb, Uint8 alpha) {
-		return gAssetsManager->CreateStaticSprite(DrawTextAsSdlSurface(sz, rgb, alpha));
+	inline static bool __IsWordChar(CFont::CharType character) {
+		static std::unordered_set<UnicodeChar> __wordCharSet {
+			'0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
+			'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z',
+			'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z',
+			'~', '`', '!', '@', '#', '$', '%', '^', '&', '_', '=',
+			'+', /* '-',*/ '*', '/', '<', '>', ',', '.', '?', '\'', '\"', '\\', '|',
+			'(', ')', '[', ']', '{', '}'
+		};
+		static auto __end = __wordCharSet.end();
+		return __wordCharSet.find(character) != __end;
 	}
 
-	SDL_Surface * CTextRenderer::DrawTextAsSdlSurface(const char * sz, const ColorRGB & rgb, Uint8 alpha) {
-		return TTF_RenderUTF8_Blended_Wrapped(m_pFont->GetSdlFont(), sz, { rgb.r, rgb.g, rgb.b, alpha }, m_autoWrapLength);
+	void CTextRenderer::DrawTextAutoWrapBlended(UnicodeStringView unicodeText, const Vec2 & vPos, float _maxLineWidth, const ColorRGB & rgb, float alpha) {
+		if(!m_pFont) {
+			/* TODO - 错误信息 */
+			return;
+		}
+
+		if(_maxLineWidth <= 0.f) {
+			DrawTextBlended(unicodeText, vPos, rgb, alpha);
+			return;
+		}
+
+		UseMyShader(rgb, alpha);
+		
+		m_pFont->TextAutoWrapBase(unicodeText, _maxLineWidth,
+			[this, & unicodeText, & vPos](size_t _iLineHead, size_t _iLineTail, const Vec2 & _vOffset, float) {
+				DrawTextSingleLine__DontUseMyShader(unicodeText.substr(_iLineHead, _iLineTail - _iLineHead + 1), vPos + _vOffset);
+			}
+		);
 	}
+
+	void CTextRenderer::DrawTextAutoWrapLineFormatsAlignBlended(UnicodeStringView unicodeText, const Vec2 & vPos, const std::vector<CFont::STextAutoWrapLineFormat> & textAutoWrapLineFormats, ETextHAlign halign, ETextVAlign valign, const ColorRGB & rgb, float alpha) {
+		UseMyShader(rgb, alpha);
+
+		float xOffsetRatio = 0.f;
+		float passageYOffset = 0.f;
+
+		switch(valign) {
+		case ETextVAlign::Middle:
+			passageYOffset = -(textAutoWrapLineFormats.back().vOffset.y + m_pFont->GetLineHeight()) * 0.5f;
+			break;
+		case ETextVAlign::Bottom:
+			passageYOffset = -(textAutoWrapLineFormats.back().vOffset.y + m_pFont->GetLineHeight());
+			break;
+		}
+
+		switch(halign) {
+		case ETextHAlign::Center:
+			xOffsetRatio = -0.5f;
+			break;
+		case ETextHAlign::Right:
+			xOffsetRatio = -1.f;
+			break;
+		}
+
+		for(const auto & current : textAutoWrapLineFormats) {
+			DrawTextSingleLine__DontUseMyShader(unicodeText.substr(current.headIndex, current.tailIndex - current.headIndex + 1),
+				vPos + current.vOffset + Vec2 {
+					static_cast<float>(static_cast<int>(current.width * xOffsetRatio)),
+					passageYOffset
+				}
+			);
+		}
+	}
+
+	void CTextRenderer::UseMyShader(const ColorRGB & rgb, float alpha) {
+		m_pShader->Use();
+
+		static ColorRGB __colorPrev = (m_pShader->SetUniformVec4("u_vColor", ONERGB(rgb), alpha), rgb);
+		static float __alphaPrev = alpha;
+		if(__colorPrev != rgb || __alphaPrev != alpha) {
+			m_pShader->SetUniformVec4("u_vColor", ONERGB(rgb), alpha);
+			__colorPrev = rgb;
+			__alphaPrev = alpha;
+		}
+
+		static int __windowWidthPrev = -1, __windowHeightPrev = -1;
+		if(__windowWidthPrev != m_pRenderer->GetWindowWidth() || __windowHeightPrev != m_pRenderer->GetWindowHeight()) {
+			__windowWidthPrev = m_pRenderer->GetWindowWidth();
+			__windowHeightPrev = m_pRenderer->GetWindowHeight();
+			m_pShader->SetUniformVec2("u_vWindowSize", static_cast<float>(__windowWidthPrev), static_cast<float>(__windowHeightPrev));
+		}
+	}
+
+#undef __DRAWTEXT_NEXTLINE
 
 }

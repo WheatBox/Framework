@@ -1,146 +1,228 @@
 ﻿#pragma once
 
-#include <FrameMath/ColorMath.h>
+#include <FrameRender/RendererBaseClass.h>
 
+#include <FrameRender/TextureVertexBuffer.h>
+#include <FrameRender/ShapeRenderer.h>
+#include <FrameRender/TextRenderer.h>
+#include <FrameRender/Shader.h>
+
+#include <FrameMath/ColorMath.h>
 #include <FrameMath/Vector2.h>
 
-#include <SDL_blendmode.h>
-
-struct SDL_Renderer;
-struct SDL_Window;
+struct GLFWwindow;
 
 namespace Frame {
 
-	class CShapeRenderer;
-	class CTextRenderer;
-
-	class CStaticSprite;
-
-	class CRenderer {
+	class CRenderer : public RendererBaseClass::IColorAlpha {
 
 	public:
-		CRenderer() = default;
-		virtual ~CRenderer() = default;
+		/* +------- RendererBaseClass::IColorAlpha --------+ */
 
-		void Initialize(SDL_Window * sdlWindow);
-
-		SDL_Renderer * GetSdlRenderer() const {
-			return m_sdlRenderer;
+		void SetColor(const ColorRGB & rgb) {
+			m_color = rgb;
+			m_defaultTextureVertexBuffer.SetColorBlends(m_color);
 		}
+		void SetAlpha(float alpha) {
+			m_alpha = alpha;
+			m_defaultTextureVertexBuffer.SetAlphaBlends(alpha);
+		}
+		void SetColorAlpha(const ColorRGB & rgb, float alpha) {
+			m_color = rgb;
+			m_alpha = alpha;
+			m_defaultTextureVertexBuffer.SetBlends(m_color, alpha);
+		}
+
+		/* +------ ~RendererBaseClass::IColorAlpha --------+ */
+
+	public:
+
+		CRenderer();
+		virtual ~CRenderer();
+
+		void Initialize(int windowWidth, int windowHeight);
+
+		void FramebufferResizeCallback(int width, int height);
 
 		CShapeRenderer * pShapeRenderer = nullptr;
 		CTextRenderer * pTextRenderer = nullptr;
 
-		enum class EBlendMode {
-
-			// 从 SDL_blendmode.h 里面复制过来的（包括注释）
-			// Copied from SDL_blendmode.h (including comments)
-
-			// no blending
-			// dstRGBA = srcRGBA
-			None = SDL_BLENDMODE_NONE,
-
-			// alpha blending
-			// dstRGB = (srcRGB * srcA) + (dstRGB * (1-srcA))
-			// dstA = srcA + (dstA * (1-srcA))
-			Blend = SDL_BLENDMODE_BLEND,
-
-			// additive blending
-			// dstRGB = (srcRGB * srcA) + dstRGB
-			// dstA = dstA
-			Add = SDL_BLENDMODE_ADD,
-			
-			// color modulate
-			// dstRGB = srcRGB * dstRGB
-			// dstA = dstA
-			Mod = SDL_BLENDMODE_MOD,
-
-			// color multiply
-			// dstRGB = (srcRGB * dstRGB) + (dstRGB * (1-srcA))
-			// dstA = dstA
-			Multi = SDL_BLENDMODE_MUL,
-			
-			Invalid = SDL_BLENDMODE_INVALID
-		};
-
 	private:
-		SDL_Renderer * m_sdlRenderer = nullptr;
+		int m_windowWidth = 0, m_windowHeight = 0;
+
+		// 顶点缓冲对象(Vertex Buffer Object, VBO)
+		// 顶点数组对象(Vertex Array Object, VAO)
+		// 元素缓冲对象(Element Buffer Object，EBO)，or 索引缓冲对象(Index Buffer Object，IBO)
+		unsigned int m_VBO = 0, m_VAO = 0, m_EBO = 0;
+
+		STextureVertexBuffer m_defaultTextureVertexBuffer {};
 
 		ColorRGB m_backgroundColor { 0, 0, 0 };
 
-		ColorRGB m_color { 255, 255, 255 };
-		Uint8 m_alpha = 255;
-		EBlendMode m_blendMode {};
+		CShader * const m_pDefaultShader;
+		CShader * m_pShader = nullptr;
 
 	public:
-
 		void RenderBegin();
 		void RenderEnd();
+
+		void ResetShader() { m_pShader = m_pDefaultShader; }
+		void SetShader(CShader * pShader) { m_pShader = pShader; }
+		CShader * GetShader() const { return m_pShader; }
+
+		Vec2 Project(const Vec2 & pos) const {
+			return {
+				pos.x * 2.f / m_windowWidth - 1.f,
+				-pos.y * 2.f / m_windowHeight + 1.f,
+			};
+		}
+
+		void Project(Vec2 * pos) const {
+			pos->x = pos->x * 2.f / m_windowWidth - 1.f;
+			pos->y = -pos->y * 2.f / m_windowHeight + 1.f;
+		}
+
+		void Project(float * _x, float * _y) const {
+			* _x = (* _x) * 2.f / m_windowWidth - 1.f;
+			* _y = -(* _y) * 2.f / m_windowHeight + 1.f;
+		}
+
+		int GetWindowWidth() const {
+			return m_windowWidth;
+		}
+		int GetWindowHeight() const {
+			return m_windowHeight;
+		}
+		std::pair<int, int> GetWindowSize() const {
+			return { m_windowWidth, m_windowHeight };
+		}
+
+		STextureVertexBuffer & GetTextureVertexBuffer() {
+			return m_defaultTextureVertexBuffer;
+		}
 
 		/* +-----------------------------------------------+ */
 		/* |                Set Draw Params                | */
 		/* +-----------------------------------------------+ */
 
-		void SetColor(const ColorRGB & rgb) {
-			SetColorAlpha(rgb.r, rgb.g, rgb.b, m_alpha);
-		}
-		void SetColor(Uint8 r, Uint8 g, Uint8 b) {
-			SetColorAlpha(r, g, b, m_alpha);
-		}
-		void SetAlpha(Uint8 alpha) {
-			SetColorAlpha(m_color.r, m_color.g, m_color.b, alpha);
-		}
-		void SetColorAlpha(const ColorRGB & rgb, Uint8 alpha) {
-			SetColorAlpha(rgb.r, rgb.g, rgb.b, alpha);
-		}
-		void SetColorAlpha(Uint8 r, Uint8 g, Uint8 b, Uint8 alpha);
-
-		const ColorRGB & GetColor() const { return m_color; }
-		Uint8 GetAlpha() const { return m_alpha; }
-
 		void SetBackgroundColor(const ColorRGB & rgb) {
 			m_backgroundColor = rgb;
 		}
-		void SetBackgroundColor(Uint8 r, Uint8 g, Uint8 b) {
+		void SetBackgroundColor(uint8 r, uint8 g, uint8 b) {
 			m_backgroundColor.Set(r, g, b);
 		}
 
 		const ColorRGB & GetBackgroundColor() const { return m_backgroundColor; }
 
-		void SetBlendMode(EBlendMode blendMode);
-
-		EBlendMode GetBlendMode() const { return m_blendMode; }
-
 		/* +-----------------------------------------------+ */
 		/* |                  Draw Sprite                  | */
 		/* +-----------------------------------------------+ */
 
-		void DrawSprite(const Vec2 & vPos, CStaticSprite * pSprite) {
-			DrawSprite(vPos, pSprite, { 1.f, 1.f }, 0.f);
+		void DrawTexture(unsigned int textureId, const STextureVertexBuffer & textureVertexBuffer) {
+			DrawTexture(textureId, textureVertexBuffer, m_pShader);
 		}
-		void DrawSprite(const Vec2 & vPos, CStaticSprite * pSprite, const Vec2 & vScale, float angle);
+		void DrawTexture(unsigned int textureId, const STextureVertexBuffer & textureVertexBuffer, const CShader * _pShader);
 
-		// Alpha
-		void DrawSpriteTransparent(const Vec2 & vPos, CStaticSprite * pSprite, Uint8 alpha) {
-			DrawSpriteTransparent(vPos, pSprite, { 1.f, 1.f }, 0.f, alpha);
+		void DrawSprite(CStaticSprite * pSprite, const Vec2 & vPos, STextureVertexBuffer & textureVertexBuffer);
+		void DrawSprite(CStaticSprite * pSprite, const Vec2 & vPos, const Vec2 & vScale, float angle, STextureVertexBuffer & textureVertexBuffer);
+		void DrawSprite(CStaticSprite * pSprite, const Vec2 & vPos, STextureVertexBuffer && textureVertexBuffer) {
+			DrawSprite(pSprite, vPos, static_cast<STextureVertexBuffer &>(textureVertexBuffer));
 		}
-		// Alpha
-		void DrawSpriteTransparent(const Vec2 & vPos, CStaticSprite * pSprite, const Vec2 & vScale, float angle, Uint8 alpha);
+		void DrawSprite(CStaticSprite * pSprite, const Vec2 & vPos, const Vec2 & vScale, float angle, STextureVertexBuffer && textureVertexBuffer) {
+			DrawSprite(pSprite, vPos, vScale, angle, static_cast<STextureVertexBuffer &>(textureVertexBuffer));
+		}
 
-		// Blend
-		void DrawSpriteBlended(const Vec2 & vPos, CStaticSprite * pSprite, const ColorRGB & rgb) {
-			DrawSpriteBlended(vPos, pSprite, { 1.f, 1.f }, 0.f, rgb);
+		void DrawSprite(CStaticSprite * pSprite, const Vec2 & vPos) {
+			DrawSprite(pSprite, vPos, m_defaultTextureVertexBuffer);
 		}
-		// Blend
-		void DrawSpriteBlended(const Vec2 & vPos, CStaticSprite * pSprite, const Vec2 & vScale, float angle, const ColorRGB & rgb);
+		void DrawSprite(CStaticSprite * pSprite, const Vec2 & vPos, const Vec2 & vScale, float angle) {
+			DrawSprite(pSprite, vPos, vScale, angle, m_defaultTextureVertexBuffer);
+		}
 
-		// Blend & Alpha
-		void DrawSpriteBlended(const Vec2 & vPos, CStaticSprite * pSprite, const ColorRGB & rgb, Uint8 alpha) {
-			DrawSpriteBlended(vPos, pSprite, { 1.f, 1.f }, 0.f, rgb, alpha);
+		void DrawSpriteColorBlended(CStaticSprite * pSprite, const Vec2 & vPos, const ColorRGB & rgb) {
+			STextureVertexBuffer textureVertexBuffer = m_defaultTextureVertexBuffer;
+			textureVertexBuffer.SetColorBlends(rgb);
+			DrawSprite(pSprite, vPos, textureVertexBuffer);
 		}
-		// Blend & Alpha
-		void DrawSpriteBlended(const Vec2 & vPos, CStaticSprite * pSprite, const Vec2 & vScale, float angle, const ColorRGB & rgb, Uint8 alpha);
+		void DrawSpriteColorBlended(CStaticSprite * pSprite, const Vec2 & vPos, const ColorRGB & rgb, const Vec2 & vScale, float angle) {
+			STextureVertexBuffer textureVertexBuffer = m_defaultTextureVertexBuffer;
+			textureVertexBuffer.SetColorBlends(rgb);
+			DrawSprite(pSprite, vPos, vScale, angle, textureVertexBuffer);
+		}
+		void DrawSpriteColorBlended(CStaticSprite * pSprite, const Vec2 & vPos,
+			const ColorRGB & rgbTL,    const ColorRGB & rgbTR,
+			const ColorRGB & rgbBL,    const ColorRGB & rgbBR
+		) {
+			STextureVertexBuffer textureVertexBuffer = m_defaultTextureVertexBuffer;
+			textureVertexBuffer.SetColorBlends(rgbTL, rgbTR, rgbBL, rgbBR);
+			DrawSprite(pSprite, vPos, textureVertexBuffer);
+		}
+		void DrawSpriteColorBlended(CStaticSprite * pSprite, const Vec2 & vPos,
+			const ColorRGB & rgbTL,    const ColorRGB & rgbTR,
+			const ColorRGB & rgbBL,    const ColorRGB & rgbBR,
+			const Vec2 & vScale, float angle
+		) {
+			STextureVertexBuffer textureVertexBuffer = m_defaultTextureVertexBuffer;
+			textureVertexBuffer.SetColorBlends(rgbTL, rgbTR, rgbBL, rgbBR);
+			DrawSprite(pSprite, vPos, vScale, angle, textureVertexBuffer);
+		}
+		
+		void DrawSpriteAlphaBlended(CStaticSprite * pSprite, const Vec2 & vPos, float alpha) {
+			STextureVertexBuffer textureVertexBuffer = m_defaultTextureVertexBuffer;
+			textureVertexBuffer.SetAlphaBlends(alpha);
+			DrawSprite(pSprite, vPos, textureVertexBuffer);
+		}
+		void DrawSpriteAlphaBlended(CStaticSprite * pSprite, const Vec2 & vPos, float alpha, const Vec2 & vScale, float angle) {
+			STextureVertexBuffer textureVertexBuffer = m_defaultTextureVertexBuffer;
+			textureVertexBuffer.SetAlphaBlends(alpha);
+			DrawSprite(pSprite, vPos, vScale, angle, textureVertexBuffer);
+		}
+		void DrawSpriteAlphaBlended(CStaticSprite * pSprite, const Vec2 & vPos,
+			float aTL,    float aTR,
+			float aBL,    float aBR
+		) {
+			STextureVertexBuffer textureVertexBuffer = m_defaultTextureVertexBuffer;
+			textureVertexBuffer.SetAlphaBlends(aTL, aTR, aBL, aBR);
+			DrawSprite(pSprite, vPos, textureVertexBuffer);
+		}
+		void DrawSpriteAlphaBlended(CStaticSprite * pSprite, const Vec2 & vPos,
+			float aTL,    float aTR,
+			float aBL,    float aBR,
+			const Vec2 & vScale, float angle
+		) {
+			STextureVertexBuffer textureVertexBuffer = m_defaultTextureVertexBuffer;
+			textureVertexBuffer.SetAlphaBlends(aTL, aTR, aBL, aBR);
+			DrawSprite(pSprite, vPos, vScale, angle, textureVertexBuffer);
+		}
+		
+		void DrawSpriteBlended(CStaticSprite * pSprite, const Vec2 & vPos, const ColorRGB & rgb, float alpha) {
+			DrawSprite(pSprite, vPos, { {}, {},
+				rgb, alpha, rgb, alpha, rgb, alpha, rgb, alpha
+			});
+		}
+		void DrawSpriteBlended(CStaticSprite * pSprite, const Vec2 & vPos, const ColorRGB & rgb, float alpha, const Vec2 & vScale, float angle) {
+			DrawSprite(pSprite, vPos, vScale, angle, { {}, {},
+				rgb, alpha, rgb, alpha, rgb, alpha, rgb, alpha
+			});
+		}
+		void DrawSpriteBlended(CStaticSprite * pSprite, const Vec2 & vPos,
+			const ColorRGB & rgbTL, float aTL,    const ColorRGB & rgbTR, float aTR,
+			const ColorRGB & rgbBL, float aBL,    const ColorRGB & rgbBR, float aBR
+		) {;
+			DrawSprite(pSprite, vPos, { {}, {},
+				rgbTL, aTL, rgbTR, aTR, rgbBL, aBL, rgbBR, aBR
+			});
+		}
+		void DrawSpriteBlended(CStaticSprite * pSprite, const Vec2 & vPos,
+			const ColorRGB & rgbTL, float aTL,    const ColorRGB & rgbTR, float aTR,
+			const ColorRGB & rgbBL, float aBL,    const ColorRGB & rgbBR, float aBR,
+			const Vec2 & vScale, float angle
+		) {
+			DrawSprite(pSprite, vPos, vScale, angle, { {}, {},
+				rgbTL, aTL, rgbTR, aTR, rgbBL, aBL, rgbBR, aBR
+			});
+		}
 
 	};
 
-};
+}

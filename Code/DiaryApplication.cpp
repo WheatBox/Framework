@@ -1,5 +1,38 @@
 ﻿#include "DiaryApplication.h"
 
+#include <FrameCore/Globals.h>
+#include <FrameEntity/EntitySystem.h>
+#include <FrameRender/Renderer.h>
+
+#include "Diary/Components/TestComponent.h"
+
+#include <iostream>
+
+void CDiaryApplication::Initialize(int argc, char ** argv) {
+	argc, argv;
+
+	if(Frame::CEntity * pEntity = Frame::gEntitySystem->SpawnEntity()) {
+		pEntity->SetPosition({ 400, 300 });
+
+		printf("%lld\n", Frame::SComponentType<CTestComponent>::GetGUID().high);
+		printf("%lld\n", Frame::SComponentType<CTestComponent2>::GetGUID().high);
+		printf("%lld\n", Frame::SComponentType<CTestComponent3>::GetGUID().high);
+
+		printf("\n---------------------------------\n");
+		auto show = [pEntity]() { printf("%p %p %p\n", pEntity->GetComponent<CTestComponent>(), pEntity->GetComponent<CTestComponent2>(), pEntity->GetComponent<CTestComponent3>()); };
+		show();
+		pEntity->CreateComponent<CTestComponent>()->SetSize({ 200, 150 });
+		pEntity->CreateComponent<CTestComponent2>();
+		show();
+		pEntity->RemoveComponent<CTestComponent>();
+		show();
+	}
+
+	Frame::gRenderer->SetBackgroundColor(0x00004F);
+	//Frame::gRenderer->SetBackgroundColor(0xFFFFFF);
+}
+
+/*
 #include <SDL_events.h>
 #include <SDL_log.h>
 
@@ -33,3 +66,4 @@ void CDiaryApplication::Initialize() {
 	Frame::gRenderer->SetBackgroundColor(0x00004F);
 
 }
+*/

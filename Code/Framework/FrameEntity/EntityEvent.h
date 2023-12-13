@@ -6,13 +6,11 @@ namespace Frame {
 
 	namespace EntityEvent {
 
-		typedef Uint32 Flags;
+		typedef uint32 Flags;
 
-		enum EFlagIndex : Uint8 {
-			eEFI_Initialize = 0,
-			eEFI_Update,
+		enum EFlagIndex : uint8 {
+			eEFI_Update = 0,
 			eEFI_Render,
-			eEFI_Remove,
 			eEFI_EnteredView,
 			eEFI_LeftView,
 			eEFI_WindowResized,
@@ -22,10 +20,6 @@ namespace Frame {
 		enum EFlag : Flags {
 		
 			Nothing = 0,
-
-			// 在日记上初始化（日记初始化时，或编辑模式放置实体后调用）
-			// Initialize on the diary (called during diary initialization or place the entity in edit mode)
-			Initialize = FlagBit(EFlagIndex::eEFI_Initialize),
 		
 			// 更新（每次游戏循环都会调用）
 			// params[0].f = 这一帧的执行耗时
@@ -40,10 +34,6 @@ namespace Frame {
 			// Under this event, each entity object will be sorted by m_zDepth before execution
 			// About m_zDepth, please refer to CEntity for details, located at <FrameEntity/CEntity.h>
 			Render = FlagBit(EFlagIndex::eEFI_Render),
-
-			// 从日记上移除
-			// Remove from the diary
-			Remove = FlagBit(EFlagIndex::eEFI_Remove),
 		
 			// 进入视图
 			// Entered the view

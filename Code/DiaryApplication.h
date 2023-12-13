@@ -6,6 +6,6 @@ class CDiaryApplication final : public Frame::IApplication {
 
 protected:
 	
-	virtual void Initialize() override;
+	virtual void Initialize(int argc, char ** argv) override;
 
 };

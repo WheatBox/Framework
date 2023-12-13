@@ -1,108 +1,132 @@
 ﻿#include <FrameRender/Renderer.h>
 
-#include <FrameRender/ShapeRenderer.h>
-#include <FrameRender/TextRenderer.h>
+#include <FrameRender/DefaultShaders.h>
 
-#include <FrameAsset/AssetsManager.h>
+#include <FrameAsset/Sprite.h>
+#include <FrameRender/Shader.h>
+#include <FrameCore/Globals.h> // for gShaderInUsing
 
-#include <SDL_render.h>
-#include <SDL_hints.h>
+#include <glad/glad.h>
+#include <GLFW/glfw3.h>
 
 namespace Frame {
 
-	void CRenderer::Initialize(SDL_Window * sdlWindow) {
-		m_sdlRenderer = SDL_CreateRenderer(sdlWindow, -1, 0);
+	CRenderer::CRenderer()
+		: m_pDefaultShader { new CShader {} }
+	{}
 
-		m_blendMode = EBlendMode::Blend;
+	CRenderer::~CRenderer() {
+		delete m_pDefaultShader;
+	}
 
-		SDL_SetRenderDrawBlendMode(m_sdlRenderer, SDL_BLENDMODE_BLEND);
-		SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "1");
+	void CRenderer::Initialize(int windowWidth, int windowHeight) {
 
-		pShapeRenderer = new CShapeRenderer {};
-		pShapeRenderer->SetSdlRenderer(m_sdlRenderer);
+		FramebufferResizeCallback(windowWidth, windowHeight);
 
-		pTextRenderer = new CTextRenderer { & m_color, & m_alpha };
-		pTextRenderer->SetSdlRenderer(m_sdlRenderer);
+		glEnable(GL_CULL_FACE);
+		glCullFace(GL_BACK);
+		glFrontFace(GL_CCW);
+
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+		unsigned int indices[] = {
+			1, 0, 3, 2
+		};
+
+		glGenBuffers(1, & m_VBO);
+		glGenVertexArrays(1, & m_VAO);
+		glGenBuffers(1, & m_EBO);
+
+		glBindVertexArray(m_VAO);
+
+		glBindBuffer(GL_ARRAY_BUFFER, m_VBO);
+		
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_EBO);
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_DYNAMIC_DRAW);
+		
+		GLsizei stride = (3 + 4 + 2) * (GLsizei)sizeof(float);
+		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, stride, (void *)0);
+		glEnableVertexAttribArray(0);
+		glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, stride, (void *)(3 * sizeof(float)));
+		glEnableVertexAttribArray(1);
+		glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, stride, (void *)(7 * sizeof(float)));
+		glEnableVertexAttribArray(2);
+
+		pShapeRenderer = new CShapeRenderer { this };
+		pTextRenderer = new CTextRenderer { this };
+
+		if(!m_pDefaultShader->CompileFiles(DEFAULT_SPRITE_SHADER_FILES)) {
+			// TODO - 警告信息
+			m_pDefaultShader->Compile(DEFAULT_SPRITE_SHADER);
+		}
+		m_pDefaultShader->SetUniformInt("u_BaseTexture", 0);
+		SetShader(m_pDefaultShader);
+
+		glActiveTexture(GL_TEXTURE0);
+	}
+
+	void CRenderer::FramebufferResizeCallback(int width, int height) {
+		m_windowWidth = width;
+		m_windowHeight = height;
 	}
 
 	void CRenderer::RenderBegin() {
-		SetColorAlpha(m_backgroundColor.r, m_backgroundColor.g, m_backgroundColor.b, 255);
-		SDL_RenderClear(m_sdlRenderer);
+		glClearColor(ONERGB(m_backgroundColor), 1.f);
+		glClear(GL_COLOR_BUFFER_BIT);
 	}
 
 	void CRenderer::RenderEnd() {
-		SDL_RenderPresent(m_sdlRenderer);
 	}
 
 	/* +-----------------------------------------------+ */
 	/* |                Set Draw Params                | */
 	/* +-----------------------------------------------+ */
 
-	void CRenderer::SetColorAlpha(Uint8 r, Uint8 g, Uint8 b, Uint8 alpha) {
-		m_color.Set(r, g, b);
-		m_alpha = alpha;
-		SDL_SetRenderDrawColor(m_sdlRenderer, r, g, b, alpha);
-	}
-
-	void CRenderer::SetBlendMode(EBlendMode blendMode) {
-		m_blendMode = blendMode;
-		SDL_SetRenderDrawBlendMode(m_sdlRenderer, static_cast<SDL_BlendMode>(blendMode));
-	}
+	/*void CRenderer::SetBlendMode(EBlendMode blendMode) {
+		//TODO
+	}*/
 
 	/* +-----------------------------------------------+ */
-	/* |                 Draw  Texture                 | */
+	/* |                  Draw Sprite                  | */
 	/* +-----------------------------------------------+ */
 
-	void CRenderer::DrawSprite(const Vec2 & vPos, CStaticSprite * pSprite, const Vec2 & vScale, float angle) {
-		Vec2 vOffset = pSprite->GetOffset() * vScale;
-		SDL_FRect destRect {
-			vPos.x - vOffset.x,
-			vPos.y - vOffset.y,
-			static_cast<float>(pSprite->GetWidth()) * vScale.x,
-			static_cast<float>(pSprite->GetHeight()) * vScale.y
-		};
-		SDL_FPoint rotationOffset { vOffset.x, vOffset.y };
-		SDL_RenderCopyExF(m_sdlRenderer, pSprite->GetSdlTexture(), NULL, & destRect, angle, & rotationOffset, SDL_RendererFlip::SDL_FLIP_NONE);
+	void CRenderer::DrawTexture(unsigned int textureId, const STextureVertexBuffer & textureVertexBuffer, const CShader * _pShader) {
+		glBindVertexArray(m_VAO);
+
+		glBindBuffer(GL_ARRAY_BUFFER, m_VBO);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(textureVertexBuffer.m_data), textureVertexBuffer.m_data, GL_DYNAMIC_DRAW);
+
+		glBindTexture(GL_TEXTURE_2D, textureId);
+		_pShader->Use();
+		glDrawElements(GL_TRIANGLE_STRIP, 4, GL_UNSIGNED_INT, NULL);
 	}
 
-#define Save_sprite_color_and_set_another_one_then_load_the_saved(pSprite, rgb, innerCode) \
-	ColorRGB rgbBefore = pSprite->GetBlend(); \
-	pSprite->SetBlend(rgb); \
-	innerCode \
-	pSprite->SetBlend(rgbBefore);
+	void CRenderer::DrawSprite(CStaticSprite * pSprite, const Vec2 & vPos, STextureVertexBuffer & textureVertexBuffer) {
+		textureVertexBuffer.SetPositions(
+			Project(vPos + pSprite->GetTopLeftOffset()),
+			Project(vPos + pSprite->GetBottomRightOffset())
+		);
 
-#define Save_sprite_alpha_and_set_another_one_then_load_the_saved(pSprite, alpha, innerCode) \
-	Uint8 alphaBefore; \
-	pSprite->GetAlpha(& alphaBefore); \
-	pSprite->SetAlpha(alpha); \
-	innerCode \
-	pSprite->SetAlpha(alphaBefore);
-
-	void CRenderer::DrawSpriteTransparent(const Vec2 & vPos, CStaticSprite * pSprite, const Vec2 & vScale, float angle, Uint8 alpha) {
-		Save_sprite_alpha_and_set_another_one_then_load_the_saved(
-			pSprite, alpha,
-			DrawSprite(vPos, pSprite, vScale, angle);
-		)
+		DrawTexture(pSprite->GetTextureId(), textureVertexBuffer);
 	}
 
-	void CRenderer::DrawSpriteBlended(const Vec2 & vPos, CStaticSprite * pSprite, const Vec2 & vScale, float angle, const ColorRGB & rgb) {
-		Save_sprite_color_and_set_another_one_then_load_the_saved(
-			pSprite, rgb,
-			DrawSprite(vPos, pSprite, vScale, angle);
-		)
+	void CRenderer::DrawSprite(CStaticSprite * pSprite, const Vec2 & vPos, const Vec2 & vScale, float angle, STextureVertexBuffer & textureVertexBuffer) {
+		Vec2 vTL = pSprite->GetTopLeftOffset();
+		Vec2 vTR = pSprite->GetTopRightOffset();
+		Vec2 vBL = pSprite->GetBottomLeftOffset();
+		Vec2 vBR = pSprite->GetBottomRightOffset();
+		
+		Rotate2DVectorsDegree(angle, vTL, vTR, vBL, vBR);
+
+		textureVertexBuffer.SetPositions(
+			Project(vPos + vTL * vScale),
+			Project(vPos + vTR * vScale),
+			Project(vPos + vBL * vScale),
+			Project(vPos + vBR * vScale)
+		);
+
+		DrawTexture(pSprite->GetTextureId(), textureVertexBuffer);
 	}
 
-	void CRenderer::DrawSpriteBlended(const Vec2 & vPos, CStaticSprite * pSprite, const Vec2 & vScale, float angle, const ColorRGB & rgb, Uint8 alpha) {
-		Save_sprite_alpha_and_set_another_one_then_load_the_saved(
-			pSprite, alpha,
-			Save_sprite_color_and_set_another_one_then_load_the_saved(
-				pSprite, rgb,
-				DrawSprite(vPos, pSprite, vScale, angle);
-			)
-		)
-	}
-
-#undef Save_sprite_color_and_set_another_one_then_load_the_saved
-#undef Save_sprite_alpha_and_set_another_one_then_load_the_saved
-
-};
+}
