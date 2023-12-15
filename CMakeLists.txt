@@ -1,8 +1,8 @@
 ﻿cmake_minimum_required(VERSION 3.14)
 
-project(Diary)
+project(Framework)
 
-set(EXE_NAME Diary)
+set(EXE_NAME Framework)
 
 set(CMAKE_C_STANDARD 99)
 set(CMAKE_CXX_STANDARD 17)
