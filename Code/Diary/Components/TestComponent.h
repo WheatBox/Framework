@@ -58,7 +58,10 @@ private:
 
 	float m_angle = 0.f;
 
+	float m_seconds = 0.f;
+
 	Frame::CStaticSprite * m_pSprite = nullptr;
+	Frame::CAnimatedSprite * m_pAnimSprite = nullptr;
 	Frame::CFont * m_pFont = nullptr;
 	std::vector<Frame::CFont::STextAutoWrapLineFormat> m_lineFormats {};
 	UnicodeString m_text = Frame::UTF8Utils::ToUnicode(

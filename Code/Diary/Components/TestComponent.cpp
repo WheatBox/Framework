@@ -58,6 +58,8 @@ void CTestComponent2::Initialize() {
 	m_pSprite = new Frame::CStaticSprite { "./Assets/spr_t.bmp" };
 	m_pSprite->SetOffset({ static_cast<float>(m_pSprite->GetWidth()) / 2.f, static_cast<float>(m_pSprite->GetHeight()) / 2.f });
 
+	m_pAnimSprite = new Frame::CAnimatedSprite { "Assets/StripTest.png", 4 };
+
 	//m_pFont = new Frame::CFont { "C:/Windows/Fonts/STZHONGS.TTF", 32.f };
 	//m_pFont = new Frame::CFont { "C:/Windows/Fonts/simkai.ttf", 32.f };
 	//m_pFont = new Frame::CFont { "C:/Windows/Fonts/SIMLI.TTF", 32.f };
@@ -82,6 +84,8 @@ void CTestComponent2::ProcessEvent(const Frame::EntityEvent::SEvent & event) {
 	case Frame::EntityEvent::Update:
 	{
 		float frameTime = event.params[0].f;
+
+		m_seconds += frameTime;
 
 		m_strFrameTime = "Test\n测试\nFrame time: " + std::to_string(frameTime) + "\nFps: " + std::to_string(int(1 / frameTime));
 		
@@ -113,6 +117,8 @@ void CTestComponent2::ProcessEvent(const Frame::EntityEvent::SEvent & event) {
 			0x0000FF, 0.f, 0xFFFF00, 0.f,
 			1.2f, -m_angle
 		);
+
+		Frame::gRenderer->DrawSprite(m_pAnimSprite->GetFrame(static_cast<int>(m_seconds)), { 100, 100 });
 
 		//Frame::gRenderer->pTextRenderer->SetColorAlpha(0xFFFFFF, .4f);
 		//Frame::gRenderer->pTextRenderer->DrawText("Hello, world! 你好，世界！", { 20, 20 });

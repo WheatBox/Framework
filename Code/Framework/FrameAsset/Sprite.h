@@ -7,34 +7,40 @@ namespace Frame {
 
 	struct ISprite {
 
-		virtual unsigned int GetTextureId() const = 0;
+		ISprite(int & refWidth, int & refHeight, Vec2 & refVOffset)
+			: m_refWidth { refWidth }
+			, m_refHeight { refHeight }
+			, m_refVOffset { refVOffset }
+		{}
 
-		int GetWidth() const { return m_width; }
-		int GetHeight() const { return m_height; }
+		int GetWidth() const { return m_refWidth; }
+		int GetHeight() const { return m_refHeight; }
 
-		const Vec2 & GetOffset() const { return m_vOffset; }
-		float GetXOffset() const { return m_vOffset.x; }
-		float GetYOffset() const { return m_vOffset.y; }
+		const Vec2 & GetOffset() const { return m_refVOffset; }
+		float GetXOffset() const { return m_refVOffset.x; }
+		float GetYOffset() const { return m_refVOffset.y; }
 
 		Vec2 GetTopLeftOffset() const {
-			return { - m_vOffset.x, - m_vOffset.y };
+			return { - m_refVOffset.x, - m_refVOffset.y };
 		}
 		Vec2 GetTopRightOffset() const {
-			return { static_cast<float>(m_width) - m_vOffset.x, - m_vOffset.y };
+			return { static_cast<float>(m_refWidth) - m_refVOffset.x, - m_refVOffset.y };
 		}
 		Vec2 GetBottomLeftOffset() const {
-			return { - m_vOffset.x, static_cast<float>(m_height) - m_vOffset.y };
+			return { - m_refVOffset.x, static_cast<float>(m_refHeight) - m_refVOffset.y };
 		}
 		Vec2 GetBottomRightOffset() const {
-			return { static_cast<float>(m_width) - m_vOffset.x, static_cast<float>(m_height) - m_vOffset.y };
+			return { static_cast<float>(m_refWidth) - m_refVOffset.x, static_cast<float>(m_refHeight) - m_refVOffset.y };
 		}
 
-		void SetOffset(const Vec2 & vOffset) { m_vOffset = vOffset; }
+		void SetOffset(const Vec2 & vOffset) { m_refVOffset = vOffset; }
 
 	protected:
-		int m_width = 0;
-		int m_height = 0;
-		Vec2 m_vOffset {};
+		int & m_refWidth;
+		int & m_refHeight;
+		Vec2 & m_refVOffset;
+
+		unsigned int Generate(unsigned char * pData, int channel, int width, int height);
 	};
 
 	class CStaticSprite : public ISprite {
@@ -42,36 +48,47 @@ namespace Frame {
 		CStaticSprite() = delete;
 
 		CStaticSprite(const char * filename);
+		CStaticSprite(unsigned int textureId, int & refWidth, int & refHeight, Vec2 & refVOffset)
+			: ISprite { refWidth, refHeight, refVOffset }
+			, m_textureId { textureId }
+		{}
 
-		// TODO - 若无法正常初始化，则将 sdlTexture 设为一张错误提示图片
+		// TODO - 若无法正常初始化，则将 m_textureId 设为一张错误提示图片
 
 		virtual ~CStaticSprite();
 
-		virtual unsigned int GetTextureId() const override { return m_textureId; }
-
-		void Generate(unsigned char * pData, int channel);
+		unsigned int GetTextureId() const { return m_textureId; }
 
 	private:
-		unsigned int m_textureId = 0;
+		unsigned int m_textureId;
+
+		int m_width = 0;
+		int m_height = 0;
+		Vec2 m_vOffset {};
 	};
 
-#if 0
 	class CAnimatedSprite : public ISprite {
 	public:
 		CAnimatedSprite() = delete;
-		CAnimatedSprite(SDL_Renderer * sdlRenderer, SDL_Surface ** sdlSurfaces, int frameCount, int width, int height, const Vec2 & vOffset);
-		// TODO - sdlSurfaces to m_frames
-		virtual ~CAnimatedSprite() = default;
+		CAnimatedSprite(const char * stripFilename, int frameCount);
+		// CAnimatedSprite(const char * gifFilename); // TODO
 
-		virtual SDL_Texture * GetSdlTexture() const override { return m_frames[0]; }
-		SDL_Texture * GetSdlTexture(int frame) const { return m_frames[frame % m_frameCount]; }
+		// TODO - 若无法正常初始化，则将 m_textureId 设为一张错误提示图片
+		virtual ~CAnimatedSprite();
 
-		SDL_Texture ** GetFrames() const { return m_frames; }
+		const CStaticSprite * GetFrame(int frame) const {
+			return m_frames[frame % m_frameCount];
+		}
+
 		int GetFrameCount() const { return m_frameCount; }
 
 	private:
-		SDL_Texture ** m_frames;
+		CStaticSprite ** m_frames;
 		int m_frameCount;
+
+		int m_width = 0;
+		int m_height = 0;
+		Vec2 m_vOffset {};
 	};
-#endif
+
 }

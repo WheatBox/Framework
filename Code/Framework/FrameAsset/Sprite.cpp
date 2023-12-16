@@ -5,25 +5,11 @@
 
 namespace Frame {
 
-	CStaticSprite::CStaticSprite(const char * filename) {
-		stbi_set_flip_vertically_on_load(true);
-		int channel = 0;
-		unsigned char * pData = stbi_load(filename, & m_width, & m_height, & channel, 0);
-		if(pData) {
-			Generate(pData, channel);
-		} else {
-			// TODO - 错误提示
-		}
-		stbi_image_free(pData);
-	}
+	unsigned int ISprite::Generate(unsigned char * pData, int channel, int width, int height) {
+		unsigned int resultTextureId;
 
-	CStaticSprite::~CStaticSprite() {
-		glDeleteTextures(1, & m_textureId);
-	}
-
-	void CStaticSprite::Generate(unsigned char * pData, int channel) {
-		glGenTextures(1, & m_textureId);
-		glBindTexture(GL_TEXTURE_2D, m_textureId);
+		glGenTextures(1, & resultTextureId);
+		glBindTexture(GL_TEXTURE_2D, resultTextureId);
 
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_MIRRORED_REPEAT);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_MIRRORED_REPEAT);
@@ -39,8 +25,80 @@ namespace Frame {
 			mode = GL_RGBA;
 			break;
 		}
-		glTexImage2D(GL_TEXTURE_2D, 0, mode, m_width, m_height, 0, mode, GL_UNSIGNED_BYTE, pData);
+		glTexImage2D(GL_TEXTURE_2D, 0, mode, width, height, 0, mode, GL_UNSIGNED_BYTE, pData);
 		glGenerateMipmap(GL_TEXTURE_2D);
+
+		return resultTextureId;
+	}
+
+	CStaticSprite::CStaticSprite(const char * filename)
+		: ISprite { m_width, m_height, m_vOffset }
+	{
+		int channel;
+		unsigned char * data = stbi_load(filename, & m_width, & m_height, & channel, 0);
+		if(data) {
+			m_textureId = Generate(data, channel, m_width, m_height);
+		} else {
+			// TODO - 错误提示 和 错误贴图
+			//m_textureId = ...;
+		}
+		stbi_image_free(data);
+	}
+
+	CStaticSprite::~CStaticSprite() {
+		glDeleteTextures(1, & m_textureId);
+	}
+
+	CAnimatedSprite::CAnimatedSprite(const char * stripFilename, int frameCount)
+		: ISprite { m_width, m_height, m_vOffset }
+	{
+		if(frameCount <= 0) {
+			// TODO - 错误提示 和 错误贴图
+			m_frameCount = 1;
+			// m_frames = new CStaticSprite * [1] { 错误贴图 };
+			return;
+		}
+		m_frameCount = frameCount;
+		m_frames = new CStaticSprite * [frameCount];
+
+		int channel, stripWidth;
+		unsigned char * data = stbi_load(stripFilename, & stripWidth, & m_height, & channel, 0);
+		
+		m_width = stripWidth / frameCount;
+		
+		if(data) {
+
+			int stripWidthInByte = stripWidth * channel;
+			int frameWidthInByte = m_width * channel;
+			unsigned char * currentFrameData = new unsigned char[frameWidthInByte * m_height];
+
+			for(int i = 0; i < frameCount; i++) {
+
+				for(int _y = 0; _y < m_height; _y++) {
+					for(int _x = 0; _x < frameWidthInByte; _x++) {
+						currentFrameData[_y * frameWidthInByte + _x] = data[_y * stripWidthInByte + i * frameWidthInByte + _x];
+					}
+				}
+
+				m_frames[i] = new CStaticSprite { Generate(currentFrameData, channel, m_width, m_height), m_width, m_height, m_vOffset };
+			}
+
+			delete[] currentFrameData;
+
+		} else {
+			// TODO - 错误提示 和 错误贴图
+			m_frameCount = 1;
+			//m_textureIds[0] = ...;
+		}
+		stbi_image_free(data);
+	}
+
+	CAnimatedSprite::~CAnimatedSprite() {
+		while(m_frameCount) {
+			m_frameCount--;
+			delete m_frames[m_frameCount];
+		}
+		delete[] m_frames;
 	}
 
 }

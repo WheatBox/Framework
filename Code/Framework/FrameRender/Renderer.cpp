@@ -102,7 +102,7 @@ namespace Frame {
 		glDrawElements(GL_TRIANGLE_STRIP, 4, GL_UNSIGNED_INT, NULL);
 	}
 
-	void CRenderer::DrawSprite(CStaticSprite * pSprite, const Vec2 & vPos, STextureVertexBuffer & textureVertexBuffer) {
+	void CRenderer::DrawSprite(const CStaticSprite * pSprite, const Vec2 & vPos, STextureVertexBuffer & textureVertexBuffer) {
 		textureVertexBuffer.SetPositions(
 			Project(vPos + pSprite->GetTopLeftOffset()),
 			Project(vPos + pSprite->GetBottomRightOffset())
@@ -111,7 +111,7 @@ namespace Frame {
 		DrawTexture(pSprite->GetTextureId(), textureVertexBuffer);
 	}
 
-	void CRenderer::DrawSprite(CStaticSprite * pSprite, const Vec2 & vPos, const Vec2 & vScale, float angle, STextureVertexBuffer & textureVertexBuffer) {
+	void CRenderer::DrawSprite(const CStaticSprite * pSprite, const Vec2 & vPos, const Vec2 & vScale, float angle, STextureVertexBuffer & textureVertexBuffer) {
 		Vec2 vTL = pSprite->GetTopLeftOffset();
 		Vec2 vTR = pSprite->GetTopRightOffset();
 		Vec2 vBL = pSprite->GetBottomLeftOffset();
