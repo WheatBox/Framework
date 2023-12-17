@@ -40,7 +40,7 @@ namespace Frame {
 		int & m_refHeight;
 		Vec2 & m_refVOffset;
 
-		unsigned int Generate(unsigned char * pData, int channel, int width, int height);
+		unsigned int Generate(const unsigned char * pData, int channel, int width, int height);
 	};
 
 	class CStaticSprite : public ISprite {
@@ -52,8 +52,6 @@ namespace Frame {
 			: ISprite { refWidth, refHeight, refVOffset }
 			, m_textureId { textureId }
 		{}
-
-		// TODO - 若无法正常初始化，则将 m_textureId 设为一张错误提示图片
 
 		virtual ~CStaticSprite();
 
@@ -73,7 +71,6 @@ namespace Frame {
 		CAnimatedSprite(const char * stripFilename, int frameCount);
 		// CAnimatedSprite(const char * gifFilename); // TODO
 
-		// TODO - 若无法正常初始化，则将 m_textureId 设为一张错误提示图片
 		virtual ~CAnimatedSprite();
 
 		const CStaticSprite * GetFrame(int frame) const {
@@ -83,6 +80,9 @@ namespace Frame {
 		int GetFrameCount() const { return m_frameCount; }
 
 	private:
+
+		void ConstructErrorSprites();
+
 		CStaticSprite ** m_frames;
 		int m_frameCount;
 

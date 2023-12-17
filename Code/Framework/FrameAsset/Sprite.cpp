@@ -1,11 +1,12 @@
 ﻿#include <FrameAsset/Sprite.h>
+#include <FrameAsset/ErrorSprite.h>
 
 #include <glad/glad.h>
 #include <stb_image.h>
 
 namespace Frame {
 
-	unsigned int ISprite::Generate(unsigned char * pData, int channel, int width, int height) {
+	unsigned int ISprite::Generate(const unsigned char * pData, int channel, int width, int height) {
 		unsigned int resultTextureId;
 
 		glGenTextures(1, & resultTextureId);
@@ -39,8 +40,10 @@ namespace Frame {
 		if(data) {
 			m_textureId = Generate(data, channel, m_width, m_height);
 		} else {
-			// TODO - 错误提示 和 错误贴图
-			//m_textureId = ...;
+			// TODO - 错误提示
+			m_width = __errorSpriteDataWidth;
+			m_height = __errorSpriteDataHeight;
+			m_textureId = Generate(__errorSpriteData, __errorSpriteDataChannel, __errorSpriteDataWidth, __errorSpriteDataHeight);
 		}
 		stbi_image_free(data);
 	}
@@ -53,13 +56,10 @@ namespace Frame {
 		: ISprite { m_width, m_height, m_vOffset }
 	{
 		if(frameCount <= 0) {
-			// TODO - 错误提示 和 错误贴图
-			m_frameCount = 1;
-			// m_frames = new CStaticSprite * [1] { 错误贴图 };
+			// TODO - 错误提示
+			ConstructErrorSprites();
 			return;
 		}
-		m_frameCount = frameCount;
-		m_frames = new CStaticSprite * [frameCount];
 
 		int channel, stripWidth;
 		unsigned char * data = stbi_load(stripFilename, & stripWidth, & m_height, & channel, 0);
@@ -67,6 +67,9 @@ namespace Frame {
 		m_width = stripWidth / frameCount;
 		
 		if(data) {
+
+			m_frameCount = frameCount;
+			m_frames = new CStaticSprite * [frameCount];
 
 			int stripWidthInByte = stripWidth * channel;
 			int frameWidthInByte = m_width * channel;
@@ -86,9 +89,8 @@ namespace Frame {
 			delete[] currentFrameData;
 
 		} else {
-			// TODO - 错误提示 和 错误贴图
-			m_frameCount = 1;
-			//m_textureIds[0] = ...;
+			// TODO - 错误提示
+			ConstructErrorSprites();
 		}
 		stbi_image_free(data);
 	}
@@ -99,6 +101,21 @@ namespace Frame {
 			delete m_frames[m_frameCount];
 		}
 		delete[] m_frames;
+	}
+
+	void CAnimatedSprite::ConstructErrorSprites() {
+		m_width = __errorSpriteDataWidth;
+		m_height = __errorSpriteDataHeight;
+
+		m_frameCount = 1;
+		m_frames = new CStaticSprite * [1] {
+			new CStaticSprite {
+				Generate(__errorSpriteData, __errorSpriteDataChannel, __errorSpriteDataWidth, __errorSpriteDataHeight),
+				m_width,
+				m_height,
+				m_vOffset
+			}
+		};
 	}
 
 }
