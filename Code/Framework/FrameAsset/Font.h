@@ -18,8 +18,6 @@ typedef FT_FaceRec_ * FT_Face;
 
 namespace Frame {
 
-	class CStaticSprite;
-
 	class CFont {
 
 	public:

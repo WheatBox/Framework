@@ -7,58 +7,76 @@ namespace Frame {
 
 	struct ISprite {
 
-		ISprite(int & refWidth, int & refHeight, Vec2 & refVOffset)
-			: m_refWidth { refWidth }
-			, m_refHeight { refHeight }
-			, m_refVOffset { refVOffset }
-		{}
+		virtual std::pair<int, int> GetSize() const = 0;
+		virtual Vec2 GetOffset() const = 0;
 
-		int GetWidth() const { return m_refWidth; }
-		int GetHeight() const { return m_refHeight; }
-
-		const Vec2 & GetOffset() const { return m_refVOffset; }
-		float GetXOffset() const { return m_refVOffset.x; }
-		float GetYOffset() const { return m_refVOffset.y; }
+		int GetWidth() const { return GetSize().first; }
+		int GetHeight() const { return GetSize().second; }
+		
+		float GetXOffset() const { return GetOffset().x; }
+		float GetYOffset() const { return GetOffset().y; }
 
 		Vec2 GetTopLeftOffset() const {
-			return { - m_refVOffset.x, - m_refVOffset.y };
+			return { - GetXOffset(), - GetYOffset() };
 		}
 		Vec2 GetTopRightOffset() const {
-			return { static_cast<float>(m_refWidth) - m_refVOffset.x, - m_refVOffset.y };
+			return { static_cast<float>(GetWidth()) - GetXOffset(), - GetYOffset() };
 		}
 		Vec2 GetBottomLeftOffset() const {
-			return { - m_refVOffset.x, static_cast<float>(m_refHeight) - m_refVOffset.y };
+			return { - GetXOffset(), static_cast<float>(GetHeight()) - GetYOffset() };
 		}
 		Vec2 GetBottomRightOffset() const {
-			return { static_cast<float>(m_refWidth) - m_refVOffset.x, static_cast<float>(m_refHeight) - m_refVOffset.y };
+			return { static_cast<float>(GetWidth()) - GetXOffset(), static_cast<float>(GetHeight()) - GetYOffset() };
 		}
 
-		void SetOffset(const Vec2 & vOffset) { m_refVOffset = vOffset; }
+		virtual void SetOffset(const Vec2 & vOffset) = 0;
+		//virtual void SetSize(TODO) = 0; // TODO
+	};
 
-	protected:
+	struct SSpriteImage : public ISprite {
+		SSpriteImage() = delete;
+		SSpriteImage(const unsigned char * data, int channel, int & refWidth, int & refHeight, Vec2 & refVOffset);
+		virtual ~SSpriteImage();
+
+		/* ---------- ISprite ---------- */
+		virtual std::pair<int, int> GetSize() const override { return { m_refWidth, m_refHeight }; }
+		virtual Vec2 GetOffset() const override { return m_refVOffset; }
+	private:
+		virtual void SetOffset(const Vec2 &) override {};
+		/* ---------- ~ISprite ---------- */
+	public:
+
+		unsigned int GetTextureId() const {
+			return m_textureId;
+		}
+
+	private:
+		unsigned int m_textureId = 0;
+
 		int & m_refWidth;
 		int & m_refHeight;
 		Vec2 & m_refVOffset;
 
-		unsigned int Generate(const unsigned char * pData, int channel, int width, int height);
+		unsigned int Generate(const unsigned char * data, int channel, int width, int height);
 	};
 
 	class CStaticSprite : public ISprite {
 	public:
 		CStaticSprite() = delete;
-
 		CStaticSprite(const char * filename);
-		CStaticSprite(unsigned int textureId, int & refWidth, int & refHeight, Vec2 & refVOffset)
-			: ISprite { refWidth, refHeight, refVOffset }
-			, m_textureId { textureId }
-		{}
-
 		virtual ~CStaticSprite();
 
-		unsigned int GetTextureId() const { return m_textureId; }
+		/* ---------- ISprite ---------- */
+		virtual std::pair<int, int> GetSize() const override { return { m_width, m_height }; }
+		virtual Vec2 GetOffset() const override { return m_vOffset; }
+
+		virtual void SetOffset(const Vec2 & vOffset) override { m_vOffset = vOffset; }
+		/* --------- ~ISprite ---------- */
+
+		const SSpriteImage * GetImage() const { return m_pImage; }
 
 	private:
-		unsigned int m_textureId;
+		SSpriteImage * m_pImage;
 
 		int m_width = 0;
 		int m_height = 0;
@@ -73,17 +91,24 @@ namespace Frame {
 
 		virtual ~CAnimatedSprite();
 
-		const CStaticSprite * GetFrame(int frame) const {
+		/* ---------- ISprite ---------- */
+		virtual std::pair<int, int> GetSize() const override { return { m_width, m_height }; }
+		virtual Vec2 GetOffset() const override { return m_vOffset; }
+
+		virtual void SetOffset(const Vec2 & vOffset) override { m_vOffset = vOffset; }
+		/* --------- ~ISprite ---------- */
+
+		const SSpriteImage * GetFrame(int frame) const {
 			return m_frames[frame % m_frameCount];
 		}
 
 		int GetFrameCount() const { return m_frameCount; }
 
 	private:
+		void ConstructErrorImages();
 
-		void ConstructErrorSprites();
-
-		CStaticSprite ** m_frames;
+	private:
+		SSpriteImage ** m_frames;
 		int m_frameCount;
 
 		int m_width = 0;

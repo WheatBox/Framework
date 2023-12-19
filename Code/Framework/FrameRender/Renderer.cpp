@@ -102,20 +102,20 @@ namespace Frame {
 		glDrawElements(GL_TRIANGLE_STRIP, 4, GL_UNSIGNED_INT, NULL);
 	}
 
-	void CRenderer::DrawSprite(const CStaticSprite * pSprite, const Vec2 & vPos, STextureVertexBuffer & textureVertexBuffer) {
+	void CRenderer::DrawSprite(const SSpriteImage * pSpriteImage, const Vec2 & vPos, STextureVertexBuffer & textureVertexBuffer) {
 		textureVertexBuffer.SetPositions(
-			Project(vPos + pSprite->GetTopLeftOffset()),
-			Project(vPos + pSprite->GetBottomRightOffset())
+			Project(vPos + pSpriteImage->GetTopLeftOffset()),
+			Project(vPos + pSpriteImage->GetBottomRightOffset())
 		);
 
-		DrawTexture(pSprite->GetTextureId(), textureVertexBuffer);
+		DrawTexture(pSpriteImage->GetTextureId(), textureVertexBuffer);
 	}
 
-	void CRenderer::DrawSprite(const CStaticSprite * pSprite, const Vec2 & vPos, const Vec2 & vScale, float angle, STextureVertexBuffer & textureVertexBuffer) {
-		Vec2 vTL = pSprite->GetTopLeftOffset();
-		Vec2 vTR = pSprite->GetTopRightOffset();
-		Vec2 vBL = pSprite->GetBottomLeftOffset();
-		Vec2 vBR = pSprite->GetBottomRightOffset();
+	void CRenderer::DrawSprite(const SSpriteImage * pSpriteImage, const Vec2 & vPos, const Vec2 & vScale, float angle, STextureVertexBuffer & textureVertexBuffer) {
+		Vec2 vTL = pSpriteImage->GetTopLeftOffset();
+		Vec2 vTR = pSpriteImage->GetTopRightOffset();
+		Vec2 vBL = pSpriteImage->GetBottomLeftOffset();
+		Vec2 vBR = pSpriteImage->GetBottomRightOffset();
 		
 		Rotate2DVectorsDegree(angle, vTL, vTR, vBL, vBR);
 
@@ -126,7 +126,7 @@ namespace Frame {
 			Project(vPos + vBR * vScale)
 		);
 
-		DrawTexture(pSprite->GetTextureId(), textureVertexBuffer);
+		DrawTexture(pSpriteImage->GetTextureId(), textureVertexBuffer);
 	}
 
 }

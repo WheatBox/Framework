@@ -14,6 +14,8 @@ struct GLFWwindow;
 
 namespace Frame {
 
+	struct SSpriteImage;
+
 	class CRenderer : public RendererBaseClass::IColorAlpha {
 
 	public:
@@ -122,103 +124,103 @@ namespace Frame {
 			DrawTexture(textureId, textureVertexBuffer, m_pShader);
 		}
 		void DrawTexture(unsigned int textureId, const STextureVertexBuffer & textureVertexBuffer, const CShader * _pShader);
-
-		void DrawSprite(const CStaticSprite * pSprite, const Vec2 & vPos, STextureVertexBuffer & textureVertexBuffer);
-		void DrawSprite(const CStaticSprite * pSprite, const Vec2 & vPos, const Vec2 & vScale, float angle, STextureVertexBuffer & textureVertexBuffer);
-		void DrawSprite(const CStaticSprite * pSprite, const Vec2 & vPos, STextureVertexBuffer && textureVertexBuffer) {
-			DrawSprite(pSprite, vPos, static_cast<STextureVertexBuffer &>(textureVertexBuffer));
+		
+		void DrawSprite(const SSpriteImage * pSpriteImage, const Vec2 & vPos, STextureVertexBuffer & textureVertexBuffer);
+		void DrawSprite(const SSpriteImage * pSpriteImage, const Vec2 & vPos, const Vec2 & vScale, float angle, STextureVertexBuffer & textureVertexBuffer);
+		void DrawSprite(const SSpriteImage * pSpriteImage, const Vec2 & vPos, STextureVertexBuffer && textureVertexBuffer) {
+			DrawSprite(pSpriteImage, vPos, static_cast<STextureVertexBuffer &>(textureVertexBuffer));
 		}
-		void DrawSprite(const CStaticSprite * pSprite, const Vec2 & vPos, const Vec2 & vScale, float angle, STextureVertexBuffer && textureVertexBuffer) {
-			DrawSprite(pSprite, vPos, vScale, angle, static_cast<STextureVertexBuffer &>(textureVertexBuffer));
-		}
-
-		void DrawSprite(const CStaticSprite * pSprite, const Vec2 & vPos) {
-			DrawSprite(pSprite, vPos, m_defaultTextureVertexBuffer);
-		}
-		void DrawSprite(const CStaticSprite * pSprite, const Vec2 & vPos, const Vec2 & vScale, float angle) {
-			DrawSprite(pSprite, vPos, vScale, angle, m_defaultTextureVertexBuffer);
+		void DrawSprite(const SSpriteImage * pSpriteImage, const Vec2 & vPos, const Vec2 & vScale, float angle, STextureVertexBuffer && textureVertexBuffer) {
+			DrawSprite(pSpriteImage, vPos, vScale, angle, static_cast<STextureVertexBuffer &>(textureVertexBuffer));
 		}
 
-		void DrawSpriteColorBlended(const CStaticSprite * pSprite, const Vec2 & vPos, const ColorRGB & rgb) {
+		void DrawSprite(const SSpriteImage * pSpriteImage, const Vec2 & vPos) {
+			DrawSprite(pSpriteImage, vPos, m_defaultTextureVertexBuffer);
+		}
+		void DrawSprite(const SSpriteImage * pSpriteImage, const Vec2 & vPos, const Vec2 & vScale, float angle) {
+			DrawSprite(pSpriteImage, vPos, vScale, angle, m_defaultTextureVertexBuffer);
+		}
+
+		void DrawSpriteColorBlended(const SSpriteImage * pSpriteImage, const Vec2 & vPos, const ColorRGB & rgb) {
 			STextureVertexBuffer textureVertexBuffer = m_defaultTextureVertexBuffer;
 			textureVertexBuffer.SetColorBlends(rgb);
-			DrawSprite(pSprite, vPos, textureVertexBuffer);
+			DrawSprite(pSpriteImage, vPos, textureVertexBuffer);
 		}
-		void DrawSpriteColorBlended(const CStaticSprite * pSprite, const Vec2 & vPos, const ColorRGB & rgb, const Vec2 & vScale, float angle) {
+		void DrawSpriteColorBlended(const SSpriteImage * pSpriteImage, const Vec2 & vPos, const ColorRGB & rgb, const Vec2 & vScale, float angle) {
 			STextureVertexBuffer textureVertexBuffer = m_defaultTextureVertexBuffer;
 			textureVertexBuffer.SetColorBlends(rgb);
-			DrawSprite(pSprite, vPos, vScale, angle, textureVertexBuffer);
+			DrawSprite(pSpriteImage, vPos, vScale, angle, textureVertexBuffer);
 		}
-		void DrawSpriteColorBlended(const CStaticSprite * pSprite, const Vec2 & vPos,
+		void DrawSpriteColorBlended(const SSpriteImage * pSpriteImage, const Vec2 & vPos,
 			const ColorRGB & rgbTL,    const ColorRGB & rgbTR,
 			const ColorRGB & rgbBL,    const ColorRGB & rgbBR
 		) {
 			STextureVertexBuffer textureVertexBuffer = m_defaultTextureVertexBuffer;
 			textureVertexBuffer.SetColorBlends(rgbTL, rgbTR, rgbBL, rgbBR);
-			DrawSprite(pSprite, vPos, textureVertexBuffer);
+			DrawSprite(pSpriteImage, vPos, textureVertexBuffer);
 		}
-		void DrawSpriteColorBlended(const CStaticSprite * pSprite, const Vec2 & vPos,
+		void DrawSpriteColorBlended(const SSpriteImage * pSpriteImage, const Vec2 & vPos,
 			const ColorRGB & rgbTL,    const ColorRGB & rgbTR,
 			const ColorRGB & rgbBL,    const ColorRGB & rgbBR,
 			const Vec2 & vScale, float angle
 		) {
 			STextureVertexBuffer textureVertexBuffer = m_defaultTextureVertexBuffer;
 			textureVertexBuffer.SetColorBlends(rgbTL, rgbTR, rgbBL, rgbBR);
-			DrawSprite(pSprite, vPos, vScale, angle, textureVertexBuffer);
+			DrawSprite(pSpriteImage, vPos, vScale, angle, textureVertexBuffer);
 		}
 		
-		void DrawSpriteAlphaBlended(const CStaticSprite * pSprite, const Vec2 & vPos, float alpha) {
+		void DrawSpriteAlphaBlended(const SSpriteImage * pSpriteImage, const Vec2 & vPos, float alpha) {
 			STextureVertexBuffer textureVertexBuffer = m_defaultTextureVertexBuffer;
 			textureVertexBuffer.SetAlphaBlends(alpha);
-			DrawSprite(pSprite, vPos, textureVertexBuffer);
+			DrawSprite(pSpriteImage, vPos, textureVertexBuffer);
 		}
-		void DrawSpriteAlphaBlended(const CStaticSprite * pSprite, const Vec2 & vPos, float alpha, const Vec2 & vScale, float angle) {
+		void DrawSpriteAlphaBlended(const SSpriteImage * pSpriteImage, const Vec2 & vPos, float alpha, const Vec2 & vScale, float angle) {
 			STextureVertexBuffer textureVertexBuffer = m_defaultTextureVertexBuffer;
 			textureVertexBuffer.SetAlphaBlends(alpha);
-			DrawSprite(pSprite, vPos, vScale, angle, textureVertexBuffer);
+			DrawSprite(pSpriteImage, vPos, vScale, angle, textureVertexBuffer);
 		}
-		void DrawSpriteAlphaBlended(const CStaticSprite * pSprite, const Vec2 & vPos,
+		void DrawSpriteAlphaBlended(const SSpriteImage * pSpriteImage, const Vec2 & vPos,
 			float aTL,    float aTR,
 			float aBL,    float aBR
 		) {
 			STextureVertexBuffer textureVertexBuffer = m_defaultTextureVertexBuffer;
 			textureVertexBuffer.SetAlphaBlends(aTL, aTR, aBL, aBR);
-			DrawSprite(pSprite, vPos, textureVertexBuffer);
+			DrawSprite(pSpriteImage, vPos, textureVertexBuffer);
 		}
-		void DrawSpriteAlphaBlended(const CStaticSprite * pSprite, const Vec2 & vPos,
+		void DrawSpriteAlphaBlended(const SSpriteImage * pSpriteImage, const Vec2 & vPos,
 			float aTL,    float aTR,
 			float aBL,    float aBR,
 			const Vec2 & vScale, float angle
 		) {
 			STextureVertexBuffer textureVertexBuffer = m_defaultTextureVertexBuffer;
 			textureVertexBuffer.SetAlphaBlends(aTL, aTR, aBL, aBR);
-			DrawSprite(pSprite, vPos, vScale, angle, textureVertexBuffer);
+			DrawSprite(pSpriteImage, vPos, vScale, angle, textureVertexBuffer);
 		}
 		
-		void DrawSpriteBlended(const CStaticSprite * pSprite, const Vec2 & vPos, const ColorRGB & rgb, float alpha) {
-			DrawSprite(pSprite, vPos, { {}, {},
+		void DrawSpriteBlended(const SSpriteImage * pSpriteImage, const Vec2 & vPos, const ColorRGB & rgb, float alpha) {
+			DrawSprite(pSpriteImage, vPos, { {}, {},
 				rgb, alpha, rgb, alpha, rgb, alpha, rgb, alpha
 			});
 		}
-		void DrawSpriteBlended(const CStaticSprite * pSprite, const Vec2 & vPos, const ColorRGB & rgb, float alpha, const Vec2 & vScale, float angle) {
-			DrawSprite(pSprite, vPos, vScale, angle, { {}, {},
+		void DrawSpriteBlended(const SSpriteImage * pSpriteImage, const Vec2 & vPos, const ColorRGB & rgb, float alpha, const Vec2 & vScale, float angle) {
+			DrawSprite(pSpriteImage, vPos, vScale, angle, { {}, {},
 				rgb, alpha, rgb, alpha, rgb, alpha, rgb, alpha
 			});
 		}
-		void DrawSpriteBlended(const CStaticSprite * pSprite, const Vec2 & vPos,
+		void DrawSpriteBlended(const SSpriteImage * pSpriteImage, const Vec2 & vPos,
 			const ColorRGB & rgbTL, float aTL,    const ColorRGB & rgbTR, float aTR,
 			const ColorRGB & rgbBL, float aBL,    const ColorRGB & rgbBR, float aBR
 		) {;
-			DrawSprite(pSprite, vPos, { {}, {},
+			DrawSprite(pSpriteImage, vPos, { {}, {},
 				rgbTL, aTL, rgbTR, aTR, rgbBL, aBL, rgbBR, aBR
 			});
 		}
-		void DrawSpriteBlended(const CStaticSprite * pSprite, const Vec2 & vPos,
+		void DrawSpriteBlended(const SSpriteImage * pSpriteImage, const Vec2 & vPos,
 			const ColorRGB & rgbTL, float aTL,    const ColorRGB & rgbTR, float aTR,
 			const ColorRGB & rgbBL, float aBL,    const ColorRGB & rgbBR, float aBR,
 			const Vec2 & vScale, float angle
 		) {
-			DrawSprite(pSprite, vPos, vScale, angle, { {}, {},
+			DrawSprite(pSpriteImage, vPos, vScale, angle, { {}, {},
 				rgbTL, aTL, rgbTR, aTR, rgbBL, aBL, rgbBR, aBR
 			});
 		}
