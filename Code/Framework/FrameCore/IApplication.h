@@ -2,6 +2,8 @@
 
 #include <chrono> // for m_maxFrameDelay
 
+#include <FrameCore/Log.h>
+
 struct GLFWwindow;
 
 namespace Frame {
@@ -15,7 +17,7 @@ namespace Frame {
 	public:
 		int EntryPoint(int argc, char ** argv) {
 			if(!InitializeWindow("Framework", 800, 600)) {
-				// TODO
+				Log::Log(Log::ELevel::Fatal, "Can not initialize the window!");
 				Terminate();
 				return -1;
 			}

@@ -2,6 +2,7 @@
 
 #include <FrameEntity/Entity.h>
 
+#include <FrameCore/Log.h>
 #include <FrameCore/Globals.h>
 #include <FrameRender/Renderer.h>
 #include <FrameInput/Input.h>
@@ -89,6 +90,8 @@ void CTestComponent2::ProcessEvent(const Frame::EntityEvent::SEvent & event) {
 
 		m_strFrameTime = "Test\n测试\nFrame time: " + std::to_string(frameTime) + "\nFps: " + std::to_string(int(1 / frameTime));
 		
+		Frame::Log::Log(Frame::Log::ELevel::Info, "Hello, world! %f %f", 1 / frameTime, m_seconds);
+
 		//m_angle += frameTime * 360; // => 360°/s
 		m_angle += frameTime * 360 / 5.f;
 
