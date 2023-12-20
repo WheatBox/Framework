@@ -194,7 +194,7 @@ namespace Frame {
 		}
 		// outlineWidth : 轮廓线宽度，设为 0.0f 则是填充
 		// outlineWidth : Outline width, set to 0.0f for filling
-		void DrawTriangleColorBlended(Vec2 vPos1, Vec2 vPos2, Vec2 vPos3,
+		void DrawTriangleColorBlended(const Vec2 & vPos1, const Vec2 & vPos2, const Vec2 & vPos3,
 			const ColorRGB & rgb1, const ColorRGB & rgb2, const ColorRGB & rgb3,
 			float outlineWidth = SDefault::outlineWidth
 		) {
@@ -208,7 +208,7 @@ namespace Frame {
 		}
 		// outlineWidth : 轮廓线宽度，设为 0.0f 则是填充
 		// outlineWidth : Outline width, set to 0.0f for filling
-		void DrawTriangleAlphaBlended(Vec2 vPos1, Vec2 vPos2, Vec2 vPos3,
+		void DrawTriangleAlphaBlended(const Vec2 & vPos1, const Vec2 & vPos2, const Vec2 & vPos3,
 			float alpha1, float alpha2, float alpha3,
 			float outlineWidth = SDefault::outlineWidth
 		) {
