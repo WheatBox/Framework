@@ -90,22 +90,37 @@ void CTestComponent2::ProcessEvent(const Frame::EntityEvent::SEvent & event) {
 
 		m_strFrameTime = "Test\n测试\nFrame time: " + std::to_string(frameTime) + "\nFps: " + std::to_string(int(1 / frameTime));
 		
-		Frame::Log::Log(Frame::Log::ELevel::Info, "Hello, world! %f %f", 1 / frameTime, m_seconds);
+		//Frame::Log::Log(Frame::Log::ELevel::Info, "Hello, world! 你好，世界！ %f %f", 1 / frameTime, m_seconds); // 当前游戏帧数 和 当前经过的游戏时间
 
 		//m_angle += frameTime * 360; // => 360°/s
 		m_angle += frameTime * 360 / 5.f;
 
-		if( Frame::gInput->pKeyboard->GetInputState(Frame::eIKI_A) | 
-			Frame::gInput->pKeyboard->GetInputState(Frame::eIKI_S) | 
-			Frame::gInput->pKeyboard->GetInputState(Frame::eIKI_D) | 
-			Frame::gInput->pKeyboard->GetInputState(Frame::eIKI_LShift)
+		if( Frame::gInput->pKeyboard->GetInputState(Frame::eKI_A) | 
+			Frame::gInput->pKeyboard->GetInputState(Frame::eKI_S) | 
+			Frame::gInput->pKeyboard->GetInputState(Frame::eKI_D) | 
+			Frame::gInput->pKeyboard->GetInputState(Frame::eKI_LShift) |
+			Frame::gInput->pMouse->GetInputState(Frame::eMBI_Left) |
+			Frame::gInput->pMouse->GetInputState(Frame::eMBI_Middle) |
+			Frame::gInput->pMouse->GetInputState(Frame::eMBI_Right)
 		)
-		printf("%d %d %d %d\n",
-			Frame::gInput->pKeyboard->GetInputState(Frame::eIKI_A),
-			Frame::gInput->pKeyboard->GetInputState(Frame::eIKI_S),
-			Frame::gInput->pKeyboard->GetInputState(Frame::eIKI_D),
-			Frame::gInput->pKeyboard->GetInputState(Frame::eIKI_LShift)
+		printf("%d %d %d %d %d %d %d\n",
+			Frame::gInput->pKeyboard->GetInputState(Frame::eKI_A),
+			Frame::gInput->pKeyboard->GetInputState(Frame::eKI_S),
+			Frame::gInput->pKeyboard->GetInputState(Frame::eKI_D),
+			Frame::gInput->pKeyboard->GetInputState(Frame::eKI_LShift) ,
+			Frame::gInput->pMouse->GetInputState(Frame::eMBI_Left) ,
+			Frame::gInput->pMouse->GetInputState(Frame::eMBI_Middle) ,
+			Frame::gInput->pMouse->GetInputState(Frame::eMBI_Right)
 		);
+
+		if(m_vMousePos != Frame::gInput->pMouse->GetPosition()) {
+			m_vMousePos = Frame::gInput->pMouse->GetPosition();
+			printf("%f %f\n", m_vMousePos.x, m_vMousePos.y);
+		}
+
+		if(Frame::gInput->pKeyboard->GetHolding(Frame::eKI_Q)) {
+			Frame::gInput->pMouse->SetPosition({ 100, 100 });
+		}
 	}
 	break;
 	case Frame::EntityEvent::Render:

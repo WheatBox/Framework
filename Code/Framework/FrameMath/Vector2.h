@@ -33,6 +33,9 @@ namespace Frame {
 		Vec2_tpl<T> operator *(const T & val) const { return { this->x * val, this->y * val }; };
 		Vec2_tpl<T> operator /(const T & val) const { return { this->x / val, this->y / val }; };
 
+		bool operator ==(const Vec2_tpl<T> & v) const { return this->x == v.x && this->y == v.y; }
+		bool operator !=(const Vec2_tpl<T> & v) const { return this->x != v.x || this->y != v.y; }
+
 		T Dot(T _x, T _y) const { return this->x * _x + this->y * _y; };
 		T Dot(const Vec2_tpl<T> & v) const { return this->x * v.x + this->y * v.y; };
 		T Cross(T _x, T _y) const { return this->x * _y - this->y * _x; };

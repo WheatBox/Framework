@@ -60,6 +60,8 @@ private:
 
 	float m_seconds = 0.f;
 
+	Frame::Vec2 m_vMousePos {};
+
 	Frame::CStaticSprite * m_pSprite = nullptr;
 	Frame::CAnimatedSprite * m_pAnimSprite = nullptr;
 	Frame::CFont * m_pFont = nullptr;

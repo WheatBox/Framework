@@ -7,19 +7,23 @@
 namespace Frame {
 
 	CKeyboardInput * __pKeyboard;
+	CMouseInput * __pMouse;
 
 	void CInput::Initialize(GLFWwindow * pWindow) {
-		__pKeyboard = pKeyboard;
 		m_pWindow = pWindow;
+		pMouse->Initialize(pWindow);
+		
+		__pKeyboard = pKeyboard;
 		glfwSetKeyCallback(m_pWindow, [](GLFWwindow *, int key, int, int action, int) -> void {
-			switch(action) {
-			case GLFW_RELEASE:
-				__pKeyboard->SetInputState(static_cast<EInputKeyId>(key), EInputState::eIS_Release);
-				break;
-			case GLFW_PRESS:
-				__pKeyboard->SetInputState(static_cast<EInputKeyId>(key), EInputState::eIS_Press);
-				break;
-			}
+			__pKeyboard->__ButtonCallback(key, action);
+		});
+
+		__pMouse = pMouse;
+		glfwSetCursorPosCallback(m_pWindow, [](GLFWwindow *, double xpos, double ypos) -> void {
+			__pMouse->__PosCallback(xpos, ypos);
+		});
+		glfwSetMouseButtonCallback(m_pWindow, [](GLFWwindow *, int button, int action, int) -> void {
+			__pMouse->__ButtonCallback(button, action);
 		});
 	}
 
