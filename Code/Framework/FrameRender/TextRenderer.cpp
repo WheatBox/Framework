@@ -2,6 +2,7 @@
 
 #include <FrameRender/DefaultShaders.h>
 #include <FrameRender/Renderer.h>
+#include <FrameCore/Log.h>
 
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
@@ -13,7 +14,7 @@ namespace Frame {
 		, m_pDefaultShader { new CShader {} }
 	{
 		if(!m_pDefaultShader->CompileFiles(DEFAULT_TEXT_SHADER_FILES)) {
-			// TODO - 警告信息
+			Log::Log(Log::ELevel::Error, "Failed to load or compile default text shader files: %s; %s; So now using in-build default text shaders", DEFAULT_TEXT_SHADER_FILES);
 			m_pDefaultShader->Compile(DEFAULT_TEXT_SHADER);
 		}
 		m_pDefaultShader->SetUniformInt("u_BaseTexture", 0);
@@ -31,11 +32,14 @@ namespace Frame {
 		glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 	}
 
+#define __DRAWTEXT_CHECK_FONT_BEFORE_DRAWING \
+if(!m_pFont) { \
+	Log::Log(Log::ELevel::Error, "Font not set before drawing text"); \
+	return; \
+}
+
 	void CTextRenderer::DrawTextSingleLine__DontUseMyShader(UnicodeStringView unicodeText, const Vec2 & vPos) {
-		if(!m_pFont) {
-			/* TODO - 错误信息 */
-			return;
-		}
+		__DRAWTEXT_CHECK_FONT_BEFORE_DRAWING
 
 		Vec2 vCurrPos = vPos;
 
@@ -53,10 +57,7 @@ namespace Frame {
 	vCurrPos.x = vBasePos.x;
 
 	void CTextRenderer::DrawTextBlended(UnicodeStringView unicodeText, const Vec2 & vPos, const ColorRGB & rgb, float alpha) {
-		if(!m_pFont) {
-			/* TODO - 错误信息 */
-			return;
-		}
+		__DRAWTEXT_CHECK_FONT_BEFORE_DRAWING
 
 		UseMyShader(rgb, alpha);
 		
@@ -92,10 +93,7 @@ namespace Frame {
 	}
 
 	void CTextRenderer::DrawTextAutoWrapBlended(UnicodeStringView unicodeText, const Vec2 & vPos, float _maxLineWidth, const ColorRGB & rgb, float alpha) {
-		if(!m_pFont) {
-			/* TODO - 错误信息 */
-			return;
-		}
+		__DRAWTEXT_CHECK_FONT_BEFORE_DRAWING
 
 		if(_maxLineWidth <= 0.f) {
 			DrawTextBlended(unicodeText, vPos, rgb, alpha);
@@ -165,5 +163,6 @@ namespace Frame {
 	}
 
 #undef __DRAWTEXT_NEXTLINE
+#undef __DRAWTEXT_CHECK_FONT_BEFORE_DRAWING
 
 }

@@ -24,13 +24,13 @@ namespace Frame {
 
 		m_pWindow = glfwCreateWindow(windowWidth, windowHeight, title, NULL, NULL);
 		if(!m_pWindow) {
-			// TODO 错误消息
+			Log::Log(Log::ELevel::Fatal, "Failed to create the window \"%s\"", title);
 			return false;
 		}
 		glfwMakeContextCurrent(m_pWindow);
 
 		if(!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
-			// TODO 错误消息
+			Log::Log(Log::ELevel::Fatal, "Failed to initialize GLAD");
 			return false;
 		}
 

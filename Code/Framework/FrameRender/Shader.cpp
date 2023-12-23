@@ -1,6 +1,7 @@
 ﻿#include <FrameRender/Shader.h>
 
 #include <FrameCore/Globals.h>
+#include <FrameCore/Log.h>
 
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
@@ -22,7 +23,7 @@ namespace Frame {
 		glGetShaderiv(vertex, GL_COMPILE_STATUS, & success);
 		if(!success) {
 			glGetShaderInfoLog(vertex, 512, NULL, infoLog);
-			printf("[ERROR] %s\n", infoLog); // TODO - 等Log系统做完后重写这一句（还有下面类似的句子）
+			Log::Log(Log::ELevel::Error, "Failed to compile the vertex shader. Detail: %s", infoLog);
 
 			glDeleteShader(vertex);
 			return false;
@@ -35,7 +36,7 @@ namespace Frame {
 		glGetShaderiv(fragment, GL_COMPILE_STATUS, & success);
 		if(!success) {
 			glGetShaderInfoLog(fragment, 512, NULL, infoLog);
-			printf("[ERROR] %s\n", infoLog);
+			Log::Log(Log::ELevel::Error, "Failed to compile the fragment shader. Detail: %s", infoLog);
 
 			glDeleteShader(fragment);
 			return false;
@@ -49,7 +50,7 @@ namespace Frame {
 		glGetProgramiv(m_glProgramId, GL_LINK_STATUS, & success);
 		if(!success) {
 			glGetProgramInfoLog(m_glProgramId, 512, NULL, infoLog);
-			printf("[ERROR] %s\n", infoLog);
+			Log::Log(Log::ELevel::Error, "Failed to create shader programs. Detail: %s", infoLog);
 
 			glDeleteProgram(m_glProgramId);
 			return false;
@@ -86,8 +87,7 @@ namespace Frame {
 			fragmentCode = fShaderStream.str();
 
 		} catch(std::ifstream::failure e) {
-			printf("[ERROR] %s\n", e.what());
-
+			Log::Log(Log::ELevel::Error, "Failed to load shaders. Detail: %s", e.what());
 			return false;
 		}
 

@@ -5,6 +5,7 @@
 #include <FrameAsset/Sprite.h>
 #include <FrameRender/Shader.h>
 #include <FrameCore/Globals.h> // for gShaderInUsing
+#include <FrameCore/Log.h>
 
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
@@ -57,7 +58,7 @@ namespace Frame {
 		pTextRenderer = new CTextRenderer { this };
 
 		if(!m_pDefaultShader->CompileFiles(DEFAULT_SPRITE_SHADER_FILES)) {
-			// TODO - 警告信息
+			Log::Log(Log::ELevel::Error, "Failed to load or compile default sprite shader files: %s; %s; So now using in-build default sprite shaders", DEFAULT_SPRITE_SHADER_FILES);
 			m_pDefaultShader->Compile(DEFAULT_SPRITE_SHADER);
 		}
 		m_pDefaultShader->SetUniformInt("u_BaseTexture", 0);

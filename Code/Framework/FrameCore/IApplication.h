@@ -17,7 +17,7 @@ namespace Frame {
 	public:
 		int EntryPoint(int argc, char ** argv) {
 			if(!InitializeWindow("Framework", 800, 600)) {
-				Log::Log(Log::ELevel::Fatal, "Can not initialize the window!");
+				Log::Log(Log::ELevel::Fatal, "Can not initialize the window! The program will be terminated.");
 				Terminate();
 				return -1;
 			}

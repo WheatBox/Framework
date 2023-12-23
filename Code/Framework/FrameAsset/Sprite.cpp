@@ -1,6 +1,8 @@
 ﻿#include <FrameAsset/Sprite.h>
 #include <FrameAsset/ErrorSprite.h>
 
+#include <FrameCore/Log.h>
+
 #include <glad/glad.h>
 #include <stb_image.h>
 
@@ -50,7 +52,8 @@ namespace Frame {
 		if(data) {
 			m_pImage = new SSpriteImage { data, channel, m_width, m_height, m_vOffset };
 		} else {
-			// TODO - 错误提示
+			Log::Log(Log::ELevel::Error, "Failed to load static sprite file: %s", filename);
+
 			m_width = __errorSpriteDataWidth;
 			m_height = __errorSpriteDataHeight;
 			m_pImage = new SSpriteImage { __errorSpriteData, __errorSpriteDataChannel, m_width, m_height, m_vOffset };
@@ -64,7 +67,7 @@ namespace Frame {
 
 	CAnimatedSprite::CAnimatedSprite(const char * stripFilename, int frameCount) {
 		if(frameCount <= 0) {
-			// TODO - 错误提示
+			Log::Log(Log::ELevel::Error, "Animated sprites' frame count (in this time, it is %d) can not be lower than 1. Filename: %s", frameCount, stripFilename);
 			ConstructErrorImages();
 			return;
 		}
@@ -97,7 +100,7 @@ namespace Frame {
 			delete[] currentFrameData;
 
 		} else {
-			// TODO - 错误提示
+			Log::Log(Log::ELevel::Error, "Failed to load animated sprite file: %s", stripFilename);
 			ConstructErrorImages();
 		}
 		stbi_image_free(data);

@@ -2,6 +2,7 @@
 
 #include <FrameRender/DefaultShaders.h>
 #include <FrameRender/Renderer.h>
+#include <FrameCore/Log.h>
 
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
@@ -28,7 +29,7 @@ namespace Frame {
 		glEnableVertexAttribArray(1);
 
 		if(!m_pDefaultShader->CompileFiles(DEFAULT_COLOR_SHADER_FILES)) {
-			// TODO - 警告信息
+			Log::Log(Log::ELevel::Error, "Failed to load or compile default color shader files: %s; %s; So now using in-build default color shaders", DEFAULT_COLOR_SHADER_FILES);
 			m_pDefaultShader->Compile(DEFAULT_COLOR_SHADER);
 		}
 		SetShader(m_pDefaultShader);

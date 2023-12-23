@@ -1,6 +1,7 @@
 ﻿#include <FrameAsset/Font.h>
 
 #include <FrameAsset/Sprite.h>
+#include <FrameCore/Log.h>
 
 #include <ft2build.h>
 #include <freetype/freetype.h>
@@ -45,13 +46,13 @@ namespace Frame {
 
 		ftError = FT_Init_FreeType(& m_ftLib);
 		if(ftError) {
-			printf("[ERROR] %d %d\n", ftError, __LINE__); // TODO
+			Log::Log(Log::ELevel::Error, "Failed to initialize FreeType. Error code: %d", ftError);
 			return;
 		}
 
 		ftError = FT_New_Face(m_ftLib, filename, 0, & m_ftFace);
 		if(ftError) {
-			printf("[ERROR] %d %d\n", ftError, __LINE__); // TODO
+			Log::Log(Log::ELevel::Error, "Failed to create a new FreeType face. Error code: %d", ftError);
 			return;
 		}
 
@@ -69,7 +70,7 @@ namespace Frame {
 		
 		FT_Error ftError = FT_Load_Char(m_ftFace, _character, FT_LOAD_RENDER);
 		if(ftError) {
-			printf("[ERROR] %d %d\n", ftError, __LINE__); // TODO
+			Log::Log(Log::ELevel::Error, "Failed to load the character. Character ID: %d. Error code: %d", _character, ftError);
 			return nullptr;
 		}
 
