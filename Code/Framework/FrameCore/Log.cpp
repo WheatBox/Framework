@@ -57,29 +57,7 @@ namespace Frame::Log {
 
 	std::queue<std::string> __logStrsQueue {};
 
-	std::thread __thread {
-		[]() {
-			while(true) {
-				if(__logStrsQueue.empty()) {
-					continue;
-				}
-
-				std::cout << __logStrsQueue.front() << std::endl;
-				__fsLogOut << __logStrsQueue.front() << std::endl;
-				__fsLogOut.flush();
-
-				__logStrsQueue.pop();
-			}
-		}
-	};
-	bool __threadDetached = false;
-
 	bool Open(std::string pathName) {
-		if(!__threadDetached) {
-			__thread.detach();
-			__threadDetached = true;
-		}
-
 		if(__fsLogOut.is_open()) {
 			__fsLogOut.close();
 		}
@@ -122,5 +100,26 @@ namespace Frame::Log {
 
 		__logStrsQueue.push({ szLogBuf });
 	}
+
+	struct __SLogInit {
+		__SLogInit() {
+			m_thread.detach();
+		}
+		std::thread m_thread {
+			[]() {
+				while(true) {
+					if(__logStrsQueue.empty()) {
+						continue;
+					}
+
+					std::cout << __logStrsQueue.front() << std::endl;
+					__fsLogOut << __logStrsQueue.front() << std::endl;
+					__fsLogOut.flush();
+
+					__logStrsQueue.pop();
+				}
+			}
+		};
+	} __logInit {};
 
 }
