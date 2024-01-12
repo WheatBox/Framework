@@ -1,8 +1,9 @@
 Bin/
 Build/
 
-Third/glfw-3.3.8.bin.WIN64/*
-!Third/glfw-3.3.8.bin.WIN64/__Place_holder_for_git__.txt
+Third/Windows/glfw-3.3.8.bin.WIN64/*
+Third/Windows/freetype-windows-binaries-2.13.2/*
+Third/Windows/openal-soft-1.23.1-bin/*
+Third/Windows/libsndfile-1.2.2-win64/*
 
-Third/freetype-windows-binaries-2.13.2/*
-!Third/freetype-windows-binaries-2.13.2/__Place_holder_for_git__.txt
+!__Place_holder_for_git__.txt

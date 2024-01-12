@@ -7,6 +7,9 @@
 
 #include <FrameAsset/Sprite.h>
 #include <FrameAsset/Font.h>
+#include <FrameAsset/Sound.h>
+
+#include <FrameAudio/AudioSource.h>
 
 #include <string>
 #include <iostream>
@@ -49,7 +52,7 @@ public:
 	}
 
 	virtual Frame::EntityEvent::Flags GetEventFlags() const override {
-		return Frame::EntityEvent::EFlag::Update;// | Frame::EntityEvent::EFlag::Render;
+		return Frame::EntityEvent::EFlag::Update | Frame::EntityEvent::EFlag::Render;
 	}
 	virtual void ProcessEvent(const Frame::EntityEvent::SEvent & event) override;
 
@@ -65,6 +68,9 @@ private:
 	Frame::CStaticSprite * m_pSprite = nullptr;
 	Frame::CAnimatedSprite * m_pAnimSprite = nullptr;
 	Frame::CFont * m_pFont = nullptr;
+	Frame::CSound * m_pSound = nullptr;
+	std::shared_ptr<Frame::CAudioSource> m_pAudioSource = nullptr;
+
 	std::vector<Frame::CFont::STextAutoWrapLineFormat> m_lineFormats {};
 	UnicodeString m_text = Frame::UTF8Utils::ToUnicode(
 		"《出师表》\n"

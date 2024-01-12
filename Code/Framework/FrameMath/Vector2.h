@@ -1,5 +1,7 @@
 ﻿#pragma once
 
+// TODO - 有多处需要改动和规范，例如弧度和角度区分的函数可以都合并成一个，只用弧度
+
 #include <FrameMath/Math.h>
 
 namespace Frame {
@@ -17,29 +19,16 @@ namespace Frame {
 		Vec2_tpl<T> & operator *=(const Vec2_tpl<T> & v) { this->x *= v.x; this->y *= v.y; return * this; }
 		Vec2_tpl<T> & operator /=(const Vec2_tpl<T> & v) { this->x /= v.x; this->y /= v.y; return * this; }
 
-		Vec2_tpl<T> & operator =(const T & val) { this->x = val; this->y = val; return * this; }
-		Vec2_tpl<T> & operator +=(const T & val) { this->x += val; this->y += val; return * this; }
-		Vec2_tpl<T> & operator -=(const T & val) { this->x -= val; this->y -= val; return * this; }
-		Vec2_tpl<T> & operator *=(const T & val) { this->x *= val; this->y *= val; return * this; }
-		Vec2_tpl<T> & operator /=(const T & val) { this->x /= val; this->y /= val; return * this; }
-
-		Vec2_tpl<T> operator +(const Vec2_tpl<T> & v) const { return { this->x + v.x, this->y + v.y }; };
-		Vec2_tpl<T> operator -(const Vec2_tpl<T> & v) const { return { this->x - v.x, this->y - v.y }; };
-		Vec2_tpl<T> operator *(const Vec2_tpl<T> & v) const { return { this->x * v.x, this->y * v.y }; };
-		Vec2_tpl<T> operator /(const Vec2_tpl<T> & v) const { return { this->x / v.x, this->y / v.y }; };
-
-		Vec2_tpl<T> operator +(const T & val) const { return { this->x + val, this->y + val }; };
-		Vec2_tpl<T> operator -(const T & val) const { return { this->x - val, this->y - val }; };
-		Vec2_tpl<T> operator *(const T & val) const { return { this->x * val, this->y * val }; };
-		Vec2_tpl<T> operator /(const T & val) const { return { this->x / val, this->y / val }; };
+		Vec2_tpl<T> operator +(const Vec2_tpl<T> & v) const { return { this->x + v.x, this->y + v.y }; }
+		Vec2_tpl<T> operator -(const Vec2_tpl<T> & v) const { return { this->x - v.x, this->y - v.y }; }
+		Vec2_tpl<T> operator *(const Vec2_tpl<T> & v) const { return { this->x * v.x, this->y * v.y }; }
+		Vec2_tpl<T> operator /(const Vec2_tpl<T> & v) const { return { this->x / v.x, this->y / v.y }; }
 
 		bool operator ==(const Vec2_tpl<T> & v) const { return this->x == v.x && this->y == v.y; }
 		bool operator !=(const Vec2_tpl<T> & v) const { return this->x != v.x || this->y != v.y; }
 
-		T Dot(T _x, T _y) const { return this->x * _x + this->y * _y; };
-		T Dot(const Vec2_tpl<T> & v) const { return this->x * v.x + this->y * v.y; };
-		T Cross(T _x, T _y) const { return this->x * _y - this->y * _x; };
-		T Cross(const Vec2_tpl<T> & v) const { return this->x * v.y - this->y * v.x; };
+		T Dot(const Vec2_tpl<T> & v) const { return this->x * v.x + this->y * v.y; }
+		T Cross(const Vec2_tpl<T> & v) const { return this->x * v.y - this->y * v.x; }
 
 		T Length() const { return std::sqrt(x * x + y * y); }
 
@@ -49,11 +38,10 @@ namespace Frame {
 		}
 		T Degree() const { return RadToDeg(Radian()); }
 
-		T IncludedAngleRadian(T _x, T _y) const { return std::acos(Dot(_x, _y) / (Length() * std::sqrt(_x * _x + _y * _y))); }
-		T IncludedAngleRadian(const Vec2_tpl<T> & v) const { return IncludedAngleRadian(v.x, v.y); }
-		
-		T IncludedAngleDegree(T _x, T _y) const { return RadToDeg(IncludedAngleRadian(_x, _y)); }
-		T IncludedAngleDegree(const Vec2_tpl<T> & v) const { return RadToDeg(IncludedAngleRadian(v.x, v.y)); }
+		T IncludedAngleRadian(const Vec2_tpl<T> & v) const {
+			return std::acos(Dot(v.x, v.y) / (Length() * std::sqrt(v.x * v.x + v.y * v.y)));
+		}
+		T IncludedAngleDegree(const Vec2_tpl<T> & v) const { return RadToDeg(IncludedAngleRadian(v)); }
 
 		Vec2_tpl RotateRadian(T rad) const {
 			T cosr = std::cos(rad), sinr = std::sin(rad);

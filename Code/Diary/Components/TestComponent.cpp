@@ -6,6 +6,7 @@
 #include <FrameCore/Globals.h>
 #include <FrameRender/Renderer.h>
 #include <FrameInput/Input.h>
+#include <FrameAudio/AudioPlayer.h>
 
 REGISTER_ENTITY_COMPONENT(, CTestComponent);
 REGISTER_ENTITY_COMPONENT(, CTestComponent2);
@@ -72,6 +73,11 @@ void CTestComponent2::Initialize() {
 	m_lineFormats = m_pFont->TextAutoWrapLineFormats(m_text, 0.f);
 
 	Frame::gRenderer->pTextRenderer->SetFont(m_pFont);
+
+	m_pSound = new Frame::CSound { "D:/RickAstley.mp3", true };
+	//m_pSound = new Frame::CSound { "F:/GameMakerProjects/2022CGJ/Audios/stone_door_open.wav", true };
+	//m_pSound = new Frame::CSound { "D:/Downloads/bounce.wav" };
+	//m_pSound = new Frame::CSound { "F:/C_CPP/_download/openal-impl-vid4/res/soundeffects/sci-fidrone.ogg" };
 }
 
 void CTestComponent2::OnShutDown() {
@@ -113,13 +119,24 @@ void CTestComponent2::ProcessEvent(const Frame::EntityEvent::SEvent & event) {
 			Frame::gInput->pMouse->GetInputState(Frame::eMBI_Right)
 		);
 
-		if(m_vMousePos != Frame::gInput->pMouse->GetPosition()) {
+		/*if(m_vMousePos != Frame::gInput->pMouse->GetPosition()) {
 			m_vMousePos = Frame::gInput->pMouse->GetPosition();
 			printf("%f %f\n", m_vMousePos.x, m_vMousePos.y);
-		}
+		}*/
 
 		if(Frame::gInput->pKeyboard->GetHolding(Frame::eKI_Q)) {
 			Frame::gInput->pMouse->SetPosition({ 100, 100 });
+		}
+
+		if(Frame::gInput->pKeyboard->GetPressed(Frame::eKI_P)) {
+			Frame::SAudioPlaySoundParams soundParams = Frame::SAudioPlaySoundParams {};
+			//soundParams.bPosRelative = true;
+			m_pAudioSource = Frame::gAudioPlayer->PlaySound(m_pSound, soundParams);
+			printf("Sound Play %p\n", m_pAudioSource.get());
+		}
+		if(m_pAudioSource != nullptr) {
+			//Frame::gAudioPlayer->SetListenerPosition({ 1 * sin(Frame::DegToRad(m_angle)), 0, 0 });
+			m_pAudioSource->SetPosition({ 1 * sin(Frame::DegToRad(m_angle)), 0, 0 });
 		}
 	}
 	break;

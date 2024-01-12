@@ -3,6 +3,7 @@
 #include <FrameRender/Renderer.h>
 #include <FrameEntity/EntitySystem.h>
 #include <FrameInput/Input.h>
+#include <FrameAudio/AudioPlayer.h>
 
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
@@ -44,6 +45,7 @@ namespace Frame {
 		);
 
 		gInput->Initialize(m_pWindow);
+		gAudioPlayer->Initialize();
 
 		return true;
 	}
@@ -59,6 +61,7 @@ namespace Frame {
 			prevTimePoint = beforeLoopTimePoint;
 
 			gInput->Process();
+			gAudioPlayer->Process();
 
 			gRenderer->RenderBegin();
 
@@ -91,6 +94,21 @@ namespace Frame {
 	}
 
 	void IApplication::Terminate() {
+		delete gRenderer;
+		gRenderer = nullptr;
+		
+		delete gEntitySystem;
+		gEntitySystem = nullptr;
+		
+		delete gInput;
+		gInput = nullptr;
+
+		delete gAudioPlayer;
+		gAudioPlayer = nullptr;
+
+		delete gShaderInUsing;
+		gShaderInUsing = nullptr;
+
 		glfwTerminate();
 	}
 

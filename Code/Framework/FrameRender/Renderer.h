@@ -1,5 +1,7 @@
 ﻿#pragma once
 
+// TODO - 角度制都改成弧度制
+
 #include <FrameRender/RendererBaseClass.h>
 
 #include <FrameRender/TextureVertexBuffer.h>
