@@ -42,16 +42,16 @@ namespace Frame {
 
 		void DrawBasicShapes(float * vertexBuffer, uint8 _GL_mode, int count);
 
-		void DrawPixel(const Vec2 & vPos, float _size = SDefault::pixelSize) {
-			DrawPixelBlended(vPos, m_color, m_alpha, _size);
+		void DrawPoint(const Vec2 & vPos, float _size = SDefault::pixelSize) {
+			DrawPointBlended(vPos, m_color, m_alpha, _size);
 		}
-		void DrawPixelColorBlended(const Vec2 & vPos, const ColorRGB & rgb, float _size = SDefault::pixelSize) {
-			DrawPixelBlended(vPos, rgb, m_alpha, _size);
+		void DrawPointColorBlended(const Vec2 & vPos, const ColorRGB & rgb, float _size = SDefault::pixelSize) {
+			DrawPointBlended(vPos, rgb, m_alpha, _size);
 		}
-		void DrawPixelAlphaBlended(const Vec2 & vPos, float alpha, float _size = SDefault::pixelSize) {
-			DrawPixelBlended(vPos, m_color, alpha, _size);
+		void DrawPointAlphaBlended(const Vec2 & vPos, float alpha, float _size = SDefault::pixelSize) {
+			DrawPointBlended(vPos, m_color, alpha, _size);
 		}
-		void DrawPixelBlended(Vec2 vPos, const ColorRGB & rgb, float alpha, float _size = SDefault::pixelSize);
+		void DrawPointBlended(Vec2 vPos, const ColorRGB & rgb, float alpha, float _size = SDefault::pixelSize);
 
 		void DrawLine(const Vec2 & vPos1, const Vec2 & vPos2, float width = SDefault::lineWidth) {
 			DrawLineBlended(vPos1, vPos2, m_color, m_alpha, width);

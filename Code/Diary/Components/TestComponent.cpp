@@ -78,6 +78,9 @@ void CTestComponent2::Initialize() {
 	//m_pSound = new Frame::CSound { "F:/GameMakerProjects/2022CGJ/Audios/stone_door_open.wav", true };
 	//m_pSound = new Frame::CSound { "D:/Downloads/bounce.wav" };
 	//m_pSound = new Frame::CSound { "F:/C_CPP/_download/openal-impl-vid4/res/soundeffects/sci-fidrone.ogg" };
+
+	//Frame::gAudioPlayer->SetFalloffModel(Frame::CAudioPlayer::EFalloffModel::None);
+	Frame::gAudioPlayer->SetFalloffModel(Frame::CAudioPlayer::EFalloffModel::ExponentDistanceClamped);
 }
 
 void CTestComponent2::OnShutDown() {
@@ -129,20 +132,26 @@ void CTestComponent2::ProcessEvent(const Frame::EntityEvent::SEvent & event) {
 		}
 
 		if(Frame::gInput->pKeyboard->GetPressed(Frame::eKI_P)) {
-			Frame::SAudioPlaySoundParams soundParams = Frame::SAudioPlaySoundParams {};
-			//soundParams.bPosRelative = true;
-			m_pAudioSource = Frame::gAudioPlayer->PlaySound(m_pSound, soundParams);
+			Frame::SAudioSourceParams audioSourceParams {};
+			//audioSourceParams.bPosRelative = true;
+			m_pAudioSource = Frame::gAudioPlayer->PlaySound(m_pSound, audioSourceParams);
 			printf("Sound Play %p\n", m_pAudioSource.get());
 		}
 		if(m_pAudioSource != nullptr) {
 			//Frame::gAudioPlayer->SetListenerPosition({ 1 * sin(Frame::DegToRad(m_angle)), 0, 0 });
-			m_pAudioSource->SetPosition({ 1 * sin(Frame::DegToRad(m_angle)), 0, 0 });
+			m_pAudioSource->SetPosition({ 10 * cos(Frame::DegToRad(m_angle)), 10 * sin(Frame::DegToRad(m_angle)), 0 });
 		}
 	}
 	break;
 	case Frame::EntityEvent::Render:
 	{
 #if 1
+		Frame::Vec2 vPos { 400.f, 300.f };
+		Frame::gRenderer->pShapeRenderer->DrawPoint(vPos, 12.f);
+		Frame::gRenderer->pShapeRenderer->DrawPoint(vPos + Frame::Vec2 { Frame::gAudioPlayer->GetListenerOrientation().first.x, Frame::gAudioPlayer->GetListenerOrientation().first.y } * 10, 4.f);
+		Frame::gRenderer->pShapeRenderer->DrawPointColorBlended(vPos + Frame::Vec2 { 10 * cos(Frame::DegToRad(m_angle)), 10 * sin(Frame::DegToRad(m_angle)) } * 10, 0xFFFF00, 12.f);
+#endif
+#if 0
 		//Frame::gRenderer->pSpriteShader->Use();
 		//Frame::gRenderer->pSpriteShader->SetUniformInt("u_BaseTexture", 0);
 		
@@ -227,16 +236,18 @@ void CTestComponent2::ProcessEvent(const Frame::EntityEvent::SEvent & event) {
 		
 		Frame::gRenderer->pShapeRenderer->DrawTriangle({ 100, 200 }, { 400, 300 }, { 200, 250 });
 		Frame::gRenderer->pShapeRenderer->DrawTriangle({ 100, 400 }, { 200, 450 }, { 400, 500 });
-#else 
+#endif
+#if 0
 		for(int i = 0; i < 100; i++) Frame::gRenderer->DrawSpriteBlended(pSprite, { 400 , 300 }, 0xFFFFFF, 0.5f, { 1.f }, angle);
 #endif
-
+#if 0
 		Frame::gRenderer->pShapeRenderer->SetColorAlpha(0xFFFFFF, .5f);
 		Frame::gRenderer->pShapeRenderer->DrawRectangle({ 120, 40 }, { 400, 200 }, 1.f);
 
 		Frame::gRenderer->pTextRenderer->DrawTextAutoWrapAlignBlended("Hello, world!\n你好，世界，我在这里！", { 400, 400 }, 160, Frame::ETextHAlign::Left, Frame::ETextVAlign::Top, 0xFFFFFF, .7f);
 		Frame::gRenderer->pTextRenderer->DrawTextAutoWrapAlignBlended("Hello, world!\n你好，世界，我在这里！", { 400, 400 }, 160, Frame::ETextHAlign::Right, Frame::ETextVAlign::Bottom, 0xFFFFFF, 1.f);
 		Frame::gRenderer->pTextRenderer->DrawTextAutoWrapAlignBlended("Hello, world!\n你好，世界，我在这里！", { 400, 300 }, 160, Frame::ETextHAlign::Center, Frame::ETextVAlign::Bottom, 0xFFFFFF, 1.f);
+#endif
 	}
 	break;
 	}

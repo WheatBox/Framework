@@ -51,7 +51,7 @@ namespace Frame {
 		glDrawArrays(_GL_mode, 0, count);
 	}
 
-	void CShapeRenderer::DrawPixelBlended(Vec2 vPos, const ColorRGB & rgb, float alpha, float _size) {
+	void CShapeRenderer::DrawPointBlended(Vec2 vPos, const ColorRGB & rgb, float alpha, float _size) {
 		m_pRenderer->Project(& vPos);
 		float vertexBuffer[] = { vPos.x, vPos.y, 0.f, ONERGB(rgb), alpha };
 		glPointSize(_size);
