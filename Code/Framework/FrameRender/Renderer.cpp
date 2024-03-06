@@ -118,7 +118,7 @@ namespace Frame {
 		Vec2 vBL = pSpriteImage->GetBottomLeftOffset();
 		Vec2 vBR = pSpriteImage->GetBottomRightOffset();
 		
-		Rotate2DVectorsDegree(angle, vTL, vTR, vBL, vBR);
+		Rotate2DVectorsDegree(angle, { & vTL, & vTR, & vBL, & vBR });
 
 		textureVertexBuffer.SetPositions(
 			Project(vPos + vTL * vScale),

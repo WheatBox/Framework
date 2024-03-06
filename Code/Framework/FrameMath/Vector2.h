@@ -1,8 +1,8 @@
 ﻿#pragma once
 
-// TODO - 有多处需要改动和规范，例如弧度和角度区分的函数可以都合并成一个，只用弧度
-
 #include <FrameMath/Math.h>
+
+#include <vector>
 
 namespace Frame {
 	
@@ -38,21 +38,21 @@ namespace Frame {
 		}
 		T Degree() const { return RadToDeg(Radian()); }
 
-		T IncludedAngleRadian(const Vec2_tpl<T> & v) const {
+		// 弧度 | Radian
+		T IncludedAngle(const Vec2_tpl<T> & v) const {
 			return std::acos(Dot(v.x, v.y) / (Length() * std::sqrt(v.x * v.x + v.y * v.y)));
 		}
-		T IncludedAngleDegree(const Vec2_tpl<T> & v) const { return RadToDeg(IncludedAngleRadian(v)); }
+		T IncludedAngleDegree(const Vec2_tpl<T> & v) const { return RadToDeg(IncludedAngle(v)); }
 
-		Vec2_tpl RotateRadian(T rad) const {
+		Vec2_tpl Rotate(T rad) const {
 			T cosr = std::cos(rad), sinr = std::sin(rad);
 			return {
 				x * cosr - y * sinr,
 				y * cosr + x * sinr
 			};
 		}
-		
 		Vec2_tpl RotateDegree(T deg) const {
-			return RotateRadian(DegToRad(deg));
+			return Rotate(DegToRad(deg));
 		}
 
 		Vec2_tpl GetNormalized() const {
@@ -91,39 +91,46 @@ namespace Frame {
 		};
 	}
 
-#define __ROTATE2DVECTOR_TEMP(vec) \
-	xTemp = vec.x; \
-	vec.x = xTemp * cosr - vec.y * sinr; \
-	vec.y = vec.y * cosr + xTemp * sinr;
-
+	// 范例 | Example:
+	// Rotate2DVectors(radian, { & v1, & v2, ... });
 	template<typename T>
-	constexpr void Rotate2DVectorsRadian(float radian, Vec2_tpl<T> & v1, Vec2_tpl<T> & v2) {
+	constexpr void Rotate2DVectors(float radian, std::initializer_list<Vec2_tpl<T> *> vecs) {
 		T cosr = std::cos(radian), sinr = std::sin(radian);
 		T xTemp;
-		__ROTATE2DVECTOR_TEMP(v1);
-		__ROTATE2DVECTOR_TEMP(v2);
+		for(auto vec : vecs) {
+			xTemp = vec->x;
+			vec->x = xTemp * cosr - vec->y * sinr;
+			vec->y = vec->y * cosr + xTemp * sinr;
+		}
 	}
 
+	// 范例 | Example:
+	// std::vector<Vec2> vecs { ... };
+	// Rotate2DVectors(radian, vecs);
 	template<typename T>
-	constexpr void Rotate2DVectorsRadian(float radian, Vec2_tpl<T> & v1, Vec2_tpl<T> & v2, Vec2_tpl<T> & v3, Vec2_tpl<T> & v4) {
+	constexpr void Rotate2DVectors(float radian, const std::vector<Vec2_tpl<T>> & vecs) {
 		T cosr = std::cos(radian), sinr = std::sin(radian);
 		T xTemp;
-		__ROTATE2DVECTOR_TEMP(v1);
-		__ROTATE2DVECTOR_TEMP(v2);
-		__ROTATE2DVECTOR_TEMP(v3);
-		__ROTATE2DVECTOR_TEMP(v4);
+		for(auto & vec : vecs) {
+			xTemp = vec.x;
+			vec.x = xTemp * cosr - vec.y * sinr;
+			vec.y = vec.y * cosr + xTemp * sinr;
+		}
 	}
 
+	// 范例 | Example:
+	// Rotate2DVectors(degree, { & v1, & v2, ... });
 	template<typename T>
-	constexpr void Rotate2DVectorsDegree(float degree, Vec2_tpl<T> & v1, Vec2_tpl<T> & v2) {
-		Rotate2DVectorsRadian(DegToRad(degree), v1, v2);
+	constexpr void Rotate2DVectorsDegree(float degree, std::initializer_list<Vec2_tpl<T> *> vecs) {
+		Rotate2DVectors(DegToRad(degree), vecs);
 	}
 
+	// 范例 | Example:
+	// std::vector<Vec2> vecs { ... };
+	// Rotate2DVectors(degree, vecs);
 	template<typename T>
-	constexpr void Rotate2DVectorsDegree(float degree, Vec2_tpl<T> & v1, Vec2_tpl<T> & v2, Vec2_tpl<T> & v3, Vec2_tpl<T> & v4) {
-		Rotate2DVectorsRadian(DegToRad(degree), v1, v2, v3, v4);
+	constexpr void Rotate2DVectorsDegree(float degree, const std::vector<Vec2_tpl<T>> & vecs) {
+		Rotate2DVectors(DegToRad(degree), vecs);
 	}
-
-#undef __ROTATE2DVECTOR_TEMP
 
 }
