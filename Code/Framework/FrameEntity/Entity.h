@@ -2,6 +2,7 @@
 
 #include <FrameMath/Vector2.h>
 #include <FrameUtility/GUID.h>
+#include <FrameEntity/ComponentRegister.h>
 
 #include <unordered_map>
 
