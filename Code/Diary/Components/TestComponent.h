@@ -1,7 +1,6 @@
 ﻿#pragma once
 
 #include <FrameEntity/IEntityComponent.h>
-#include <FrameEntity/ComponentRegister.h>
 
 #include <FrameMath/Vector2.h>
 
