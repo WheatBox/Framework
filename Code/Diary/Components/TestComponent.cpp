@@ -7,6 +7,7 @@
 #include <FrameRender/Renderer.h>
 #include <FrameInput/Input.h>
 #include <FrameAudio/AudioPlayer.h>
+#include <FrameCore/Camera.h>
 
 REGISTER_ENTITY_COMPONENT(, CTestComponent);
 REGISTER_ENTITY_COMPONENT(, CTestComponent2);
@@ -147,11 +148,15 @@ void CTestComponent2::ProcessEvent(const Frame::EntityEvent::SEvent & event) {
 	{
 #if 1
 		Frame::Vec2 vPos { 400.f, 300.f };
+		//Frame::Vec2 vPos { 0.f, 0.f };
 		Frame::gRenderer->pShapeRenderer->DrawPoint(vPos, 12.f);
 		Frame::gRenderer->pShapeRenderer->DrawPoint(vPos + Frame::Vec2 { Frame::gAudioPlayer->GetListenerOrientation().first.x, Frame::gAudioPlayer->GetListenerOrientation().first.y } * 10, 4.f);
 		Frame::gRenderer->pShapeRenderer->DrawPointColorBlended(vPos + Frame::Vec2 { 10 * cos(Frame::DegToRad(m_angle)), 10 * sin(Frame::DegToRad(m_angle)) } * 10, 0xFFFF00, 12.f);
+		Frame::gCamera->SetPos(vPos + Frame::Vec2 { 10 * cos(Frame::DegToRad(m_angle)), 10 * sin(Frame::DegToRad(m_angle)) } * 10);
+		//Frame::gCamera->SetPos(vPos);
+		Frame::gCamera->SetZoom(.5f);
 #endif
-#if 0
+#if 1
 		//Frame::gRenderer->pSpriteShader->Use();
 		//Frame::gRenderer->pSpriteShader->SetUniformInt("u_BaseTexture", 0);
 		
@@ -163,6 +168,8 @@ void CTestComponent2::ProcessEvent(const Frame::EntityEvent::SEvent & event) {
 		);
 
 		Frame::gRenderer->DrawSprite(m_pAnimSprite->GetFrame(static_cast<int>(m_seconds)), { 100, 100 });
+#endif
+#if 1
 
 		//Frame::gRenderer->pTextRenderer->SetColorAlpha(0xFFFFFF, .4f);
 		//Frame::gRenderer->pTextRenderer->DrawText("Hello, world! 你好，世界！", { 20, 20 });
@@ -198,7 +205,7 @@ void CTestComponent2::ProcessEvent(const Frame::EntityEvent::SEvent & event) {
 		Frame::gRenderer->pTextRenderer->DrawTextAutoWrapLineFormatsAlign(m_text, { 1200.f, 800.f }, m_lineFormats, Frame::ETextHAlign::Center, Frame::ETextVAlign::Bottom);
 
 		Frame::Vec2 vOff { 700, 500 };
-		Frame::gRenderer->pShapeRenderer->DrawPixelBlended(
+		Frame::gRenderer->pShapeRenderer->DrawPointBlended(
 			vOff, 0xFFFF00, 1.f, 4.f
 		);
 		Frame::gRenderer->pTextRenderer->DrawTextAutoWrapAlignColorBlended(
@@ -221,7 +228,7 @@ void CTestComponent2::ProcessEvent(const Frame::EntityEvent::SEvent & event) {
 		//	}
 		//);
 
-		Frame::gRenderer->pShapeRenderer->DrawPixelColorBlended({ 100.f, 300.f }, 0x00FF00, 32.f);
+		Frame::gRenderer->pShapeRenderer->DrawPointColorBlended({ 100.f, 300.f }, 0x00FF00, 32.f);
 
 		Frame::gRenderer->pShapeRenderer->DrawLineBlended({ 200.f, 200.f }, { 700.f, 500.f }, 0x00FF00, 1.f, 0x0000FF, 0.f, 16.f);
 		Frame::gRenderer->pShapeRenderer->DrawLineAlphaBlended({ 200.f, 500.f }, { 700.f, 500.f }, 1.f, 0.f, 16.f);

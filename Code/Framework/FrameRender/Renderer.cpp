@@ -4,7 +4,8 @@
 
 #include <FrameAsset/Sprite.h>
 #include <FrameRender/Shader.h>
-#include <FrameCore/Globals.h> // for gShaderInUsing
+#include <FrameCore/Camera.h>
+#include <FrameCore/Globals.h> // for gShaderInUsing & gCamera
 #include <FrameCore/Log.h>
 
 #include <glad/glad.h>
@@ -80,6 +81,19 @@ namespace Frame {
 	void CRenderer::RenderEnd() {
 	}
 
+	Vec2 CRenderer::GetProjection() const {
+		return Vec2 {
+			2.f / m_windowWidth,
+			2.f / m_windowHeight
+		} * gCamera->GetZoom();
+	}
+
+	void CRenderer::SetShaderProjectionUniforms(CShader * pShader) const {
+		const Vec2 proj = GetProjection(), camPos = gCamera->GetPos();
+		pShader->SetUniformVec2("u_vProj", proj.x, proj.y);
+		pShader->SetUniformVec2("u_vCamPos", camPos.x, camPos.y);
+	}
+
 	/* +-----------------------------------------------+ */
 	/* |                Set Draw Params                | */
 	/* +-----------------------------------------------+ */
@@ -92,7 +106,7 @@ namespace Frame {
 	/* |                  Draw Sprite                  | */
 	/* +-----------------------------------------------+ */
 
-	void CRenderer::DrawTexture(unsigned int textureId, const STextureVertexBuffer & textureVertexBuffer, const CShader * _pShader) {
+	void CRenderer::DrawTexture(unsigned int textureId, const STextureVertexBuffer & textureVertexBuffer, CShader * _pShader) {
 		glBindVertexArray(m_VAO);
 
 		glBindBuffer(GL_ARRAY_BUFFER, m_VBO);
@@ -100,13 +114,14 @@ namespace Frame {
 
 		glBindTexture(GL_TEXTURE_2D, textureId);
 		_pShader->Use();
+		SetShaderProjectionUniforms(_pShader);
 		glDrawElements(GL_TRIANGLE_STRIP, 4, GL_UNSIGNED_INT, NULL);
 	}
 
 	void CRenderer::DrawSprite(const SSpriteImage * pSpriteImage, const Vec2 & vPos, STextureVertexBuffer & textureVertexBuffer) {
 		textureVertexBuffer.SetPositions(
-			Project(vPos + pSpriteImage->GetTopLeftOffset()),
-			Project(vPos + pSpriteImage->GetBottomRightOffset())
+			vPos + pSpriteImage->GetTopLeftOffset(),
+			vPos + pSpriteImage->GetBottomRightOffset()
 		);
 
 		DrawTexture(pSpriteImage->GetTextureId(), textureVertexBuffer);
@@ -121,10 +136,10 @@ namespace Frame {
 		Rotate2DVectorsDegree(angle, { & vTL, & vTR, & vBL, & vBR });
 
 		textureVertexBuffer.SetPositions(
-			Project(vPos + vTL * vScale),
-			Project(vPos + vTR * vScale),
-			Project(vPos + vBL * vScale),
-			Project(vPos + vBR * vScale)
+			vPos + vTL * vScale,
+			vPos + vTR * vScale,
+			vPos + vBL * vScale,
+			vPos + vBR * vScale
 		);
 
 		DrawTexture(pSpriteImage->GetTextureId(), textureVertexBuffer);

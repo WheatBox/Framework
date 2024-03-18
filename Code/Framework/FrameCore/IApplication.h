@@ -1,6 +1,7 @@
 ﻿#pragma once
 
 #include <chrono> // for m_maxFrameDelay
+#include <tuple>
 
 #include <FrameCore/Log.h>
 
@@ -16,7 +17,7 @@ namespace Frame {
 
 	public:
 		int EntryPoint(int argc, char ** argv) {
-			if(!InitializeWindow("Framework", 800, 600)) {
+			if(!InitializeWindow("Framework", m_windowSize.first, m_windowSize.second)) {
 				Log::Log(Log::ELevel::Fatal, "Can not initialize the window! The program will be terminated.");
 				Terminate();
 				return -1;
@@ -30,6 +31,11 @@ namespace Frame {
 		}
 
 		void Terminate();
+
+		const std::pair<int, int> & GetWindowSize() const {
+			return m_windowSize;
+		}
+		void SetWindowSize(const std::pair<int, int> & siz);
 
 	protected:
 
@@ -61,6 +67,8 @@ namespace Frame {
 	private:
 		bool m_bVSync = true;
 		std::chrono::microseconds m_maxFrameDelay { 0 };
+
+		std::pair<int, int> m_windowSize { 800, 600 };
 
 	};
 

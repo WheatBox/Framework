@@ -145,21 +145,8 @@ if(!m_pFont) { \
 
 	void CTextRenderer::UseMyShader(const ColorRGB & rgb, float alpha) {
 		m_pShader->Use();
-
-		static ColorRGB __colorPrev = (m_pShader->SetUniformVec4("u_vColor", ONERGB(rgb), alpha), rgb);
-		static float __alphaPrev = alpha;
-		if(__colorPrev != rgb || __alphaPrev != alpha) {
-			m_pShader->SetUniformVec4("u_vColor", ONERGB(rgb), alpha);
-			__colorPrev = rgb;
-			__alphaPrev = alpha;
-		}
-
-		static int __windowWidthPrev = -1, __windowHeightPrev = -1;
-		if(__windowWidthPrev != m_pRenderer->GetWindowWidth() || __windowHeightPrev != m_pRenderer->GetWindowHeight()) {
-			__windowWidthPrev = m_pRenderer->GetWindowWidth();
-			__windowHeightPrev = m_pRenderer->GetWindowHeight();
-			m_pShader->SetUniformVec2("u_vWindowSize", static_cast<float>(__windowWidthPrev), static_cast<float>(__windowHeightPrev));
-		}
+		m_pShader->SetUniformVec4("u_vColor", ONERGB(rgb), alpha);
+		m_pRenderer->SetShaderProjectionUniforms(m_pShader);
 	}
 
 #undef __DRAWTEXT_NEXTLINE

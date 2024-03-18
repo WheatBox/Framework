@@ -6,6 +6,7 @@ namespace Frame {
 	extern class CEntitySystem * gEntitySystem;
 	extern class CInput * gInput;
 	extern class CAudioPlayer * gAudioPlayer;
+	extern class CCamera * gCamera;
 
 	extern class CShader * gShaderInUsing;
 

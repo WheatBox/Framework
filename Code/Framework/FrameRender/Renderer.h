@@ -72,22 +72,9 @@ namespace Frame {
 		void SetShader(CShader * pShader) { m_pShader = pShader; }
 		CShader * GetShader() const { return m_pShader; }
 
-		Vec2 Project(const Vec2 & pos) const {
-			return {
-				pos.x * 2.f / m_windowWidth - 1.f,
-				-pos.y * 2.f / m_windowHeight + 1.f,
-			};
-		}
+		Vec2 GetProjection() const;
 
-		void Project(Vec2 * pos) const {
-			pos->x = pos->x * 2.f / m_windowWidth - 1.f;
-			pos->y = -pos->y * 2.f / m_windowHeight + 1.f;
-		}
-
-		void Project(float * _x, float * _y) const {
-			* _x = (* _x) * 2.f / m_windowWidth - 1.f;
-			* _y = -(* _y) * 2.f / m_windowHeight + 1.f;
-		}
+		void SetShaderProjectionUniforms(CShader * pShader) const;
 
 		int GetWindowWidth() const {
 			return m_windowWidth;
@@ -123,7 +110,7 @@ namespace Frame {
 		void DrawTexture(unsigned int textureId, const STextureVertexBuffer & textureVertexBuffer) {
 			DrawTexture(textureId, textureVertexBuffer, m_pShader);
 		}
-		void DrawTexture(unsigned int textureId, const STextureVertexBuffer & textureVertexBuffer, const CShader * _pShader);
+		void DrawTexture(unsigned int textureId, const STextureVertexBuffer & textureVertexBuffer, CShader * _pShader);
 		
 		void DrawSprite(const SSpriteImage * pSpriteImage, const Vec2 & vPos, STextureVertexBuffer & textureVertexBuffer);
 		void DrawSprite(const SSpriteImage * pSpriteImage, const Vec2 & vPos, const Vec2 & vScale, float angle, STextureVertexBuffer & textureVertexBuffer);

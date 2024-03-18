@@ -12,6 +12,30 @@
 
 namespace Frame {
 
+	void IApplication::Terminate() {
+		delete gRenderer;
+		gRenderer = nullptr;
+
+		delete gEntitySystem;
+		gEntitySystem = nullptr;
+
+		delete gInput;
+		gInput = nullptr;
+
+		delete gAudioPlayer;
+		gAudioPlayer = nullptr;
+
+		delete gShaderInUsing;
+		gShaderInUsing = nullptr;
+
+		glfwTerminate();
+	}
+
+	void IApplication::SetWindowSize(const std::pair<int, int> & siz) {
+		m_windowSize = siz;
+		glfwSetWindowSize(m_pWindow, siz.first, siz.second);
+	}
+
 	bool IApplication::InitializeWindow(const char * title, int windowWidth, int windowHeight) {
 		
 		glfwInit();
@@ -91,25 +115,6 @@ namespace Frame {
 	void IApplication::SetVSync(bool bEnable) {
 		m_bVSync = bEnable;
 		glfwSwapInterval(bEnable);
-	}
-
-	void IApplication::Terminate() {
-		delete gRenderer;
-		gRenderer = nullptr;
-		
-		delete gEntitySystem;
-		gEntitySystem = nullptr;
-		
-		delete gInput;
-		gInput = nullptr;
-
-		delete gAudioPlayer;
-		gAudioPlayer = nullptr;
-
-		delete gShaderInUsing;
-		gShaderInUsing = nullptr;
-
-		glfwTerminate();
 	}
 
 }

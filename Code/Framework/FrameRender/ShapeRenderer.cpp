@@ -48,19 +48,17 @@ namespace Frame {
 		glBindBuffer(GL_ARRAY_BUFFER, m_VBO);
 		glBufferData(GL_ARRAY_BUFFER, sizeof(float) * static_cast<size_t>(count * 7), vertexBuffer, GL_DYNAMIC_DRAW);
 		m_pShader->Use();
+		m_pRenderer->SetShaderProjectionUniforms(m_pShader);
 		glDrawArrays(_GL_mode, 0, count);
 	}
 
 	void CShapeRenderer::DrawPointBlended(Vec2 vPos, const ColorRGB & rgb, float alpha, float _size) {
-		m_pRenderer->Project(& vPos);
 		float vertexBuffer[] = { vPos.x, vPos.y, 0.f, ONERGB(rgb), alpha };
 		glPointSize(_size);
 		DrawBasicShapes(vertexBuffer, GL_POINTS, 1);
 	}
 
 	void CShapeRenderer::DrawLineBlended(Vec2 vPos1, Vec2 vPos2, const ColorRGB & rgb1, float alpha1, const ColorRGB & rgb2, float alpha2, float width) {
-		m_pRenderer->Project(& vPos1);
-		m_pRenderer->Project(& vPos2);
 		float vertexBuffer[] = {
 			vPos1.x, vPos1.y, 0.f, ONERGB(rgb1), alpha1,
 			vPos2.x, vPos2.y, 0.f, ONERGB(rgb2), alpha2
@@ -74,10 +72,6 @@ namespace Frame {
 		const ColorRGB & rgbBL, float alphaBL,    const ColorRGB & rgbBR, float alphaBR,
 		float outlineWidth
 	) {
-		m_pRenderer->Project(& vPosTL);
-		m_pRenderer->Project(& vPosTR);
-		m_pRenderer->Project(& vPosBL);
-		m_pRenderer->Project(& vPosBR);
 		if(outlineWidth) {
 			glLineWidth(outlineWidth);
 			float vertexBuffer[] = {
@@ -107,10 +101,6 @@ namespace Frame {
 			std::swap(rgb1, rgb2);
 			std::swap(alpha1, alpha2);
 		}
-
-		m_pRenderer->Project(& vPos1);
-		m_pRenderer->Project(& vPos2);
-		m_pRenderer->Project(& vPos3);
 
 		float vertexBuffer[] = {
 			vPos1.x, vPos1.y, 0.f, ONERGB(rgb1), alpha1,

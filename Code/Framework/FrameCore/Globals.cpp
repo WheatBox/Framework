@@ -4,6 +4,7 @@
 #include <FrameEntity/EntitySystem.h>
 #include <FrameInput/Input.h>
 #include <FrameAudio/AudioPlayer.h>
+#include <FrameCore/Camera.h>
 
 namespace Frame {
 
@@ -11,6 +12,7 @@ namespace Frame {
 	class CEntitySystem * gEntitySystem = new CEntitySystem {};
 	class CInput * gInput = new CInput {};
 	class CAudioPlayer * gAudioPlayer = new CAudioPlayer {};
+	class CCamera * gCamera = new CCamera {};
 
 	class CShader * gShaderInUsing = nullptr;
 
