@@ -4,6 +4,7 @@
 #include <FrameEntity/EntitySystem.h>
 #include <FrameInput/Input.h>
 #include <FrameAudio/AudioPlayer.h>
+#include <FrameCore/Camera.h>
 
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
@@ -70,6 +71,7 @@ namespace Frame {
 
 		gInput->Initialize(m_pWindow);
 		gAudioPlayer->Initialize();
+		gCamera->SetViewSize({ windowWidth, windowHeight });
 
 		return true;
 	}

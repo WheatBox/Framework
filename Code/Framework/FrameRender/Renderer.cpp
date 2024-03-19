@@ -81,15 +81,13 @@ namespace Frame {
 	void CRenderer::RenderEnd() {
 	}
 
-	Vec2 CRenderer::GetProjection() const {
-		return Vec2 {
-			2.f / m_windowWidth,
-			2.f / m_windowHeight
-		} * gCamera->GetZoom();
-	}
-
 	void CRenderer::SetShaderProjectionUniforms(CShader * pShader) const {
-		const Vec2 proj = GetProjection(), camPos = gCamera->GetPos();
+		const Vec2 viewSize = Vec2Cast<float>(gCamera->GetViewSize());
+		const Vec2 proj = Vec2 {
+			2.f / viewSize.x,
+			2.f / viewSize.y
+		} * gCamera->GetZoom();
+		const Vec2 camPos = gCamera->GetPos();
 		pShader->SetUniformVec2("u_vProj", proj.x, proj.y);
 		pShader->SetUniformVec2("u_vCamPos", camPos.x, camPos.y);
 	}

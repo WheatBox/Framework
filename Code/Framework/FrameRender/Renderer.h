@@ -72,8 +72,6 @@ namespace Frame {
 		void SetShader(CShader * pShader) { m_pShader = pShader; }
 		CShader * GetShader() const { return m_pShader; }
 
-		Vec2 GetProjection() const;
-
 		void SetShaderProjectionUniforms(CShader * pShader) const;
 
 		int GetWindowWidth() const {

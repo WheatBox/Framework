@@ -155,6 +155,7 @@ void CTestComponent2::ProcessEvent(const Frame::EntityEvent::SEvent & event) {
 		Frame::gCamera->SetPos(vPos + Frame::Vec2 { 10 * cos(Frame::DegToRad(m_angle)), 10 * sin(Frame::DegToRad(m_angle)) } * 10);
 		//Frame::gCamera->SetPos(vPos);
 		Frame::gCamera->SetZoom(.5f);
+		Frame::gCamera->SetViewSize({ 200, 600 });
 #endif
 #if 1
 		//Frame::gRenderer->pSpriteShader->Use();
