@@ -42,15 +42,12 @@ namespace Frame {
 		CRenderer();
 		virtual ~CRenderer();
 
-		void Initialize(int windowWidth, int windowHeight);
-
-		void FramebufferResizeCallback(int width, int height);
+		void Initialize();
 
 		CShapeRenderer * pShapeRenderer = nullptr;
 		CTextRenderer * pTextRenderer = nullptr;
 
 	private:
-		int m_windowWidth = 0, m_windowHeight = 0;
 
 		// 顶点缓冲对象(Vertex Buffer Object, VBO)
 		// 顶点数组对象(Vertex Array Object, VAO)
@@ -73,16 +70,6 @@ namespace Frame {
 		CShader * GetShader() const { return m_pShader; }
 
 		void SetShaderProjectionUniforms(CShader * pShader) const;
-
-		int GetWindowWidth() const {
-			return m_windowWidth;
-		}
-		int GetWindowHeight() const {
-			return m_windowHeight;
-		}
-		std::pair<int, int> GetWindowSize() const {
-			return { m_windowWidth, m_windowHeight };
-		}
 
 		STextureVertexBuffer & GetTextureVertexBuffer() {
 			return m_defaultTextureVertexBuffer;

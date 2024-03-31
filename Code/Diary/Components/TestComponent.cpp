@@ -149,13 +149,16 @@ void CTestComponent2::ProcessEvent(const Frame::EntityEvent::SEvent & event) {
 #if 1
 		Frame::Vec2 vPos { 400.f, 300.f };
 		//Frame::Vec2 vPos { 0.f, 0.f };
-		Frame::gRenderer->pShapeRenderer->DrawPoint(vPos, 12.f);
-		Frame::gRenderer->pShapeRenderer->DrawPoint(vPos + Frame::Vec2 { Frame::gAudioPlayer->GetListenerOrientation().first.x, Frame::gAudioPlayer->GetListenerOrientation().first.y } * 10, 4.f);
-		Frame::gRenderer->pShapeRenderer->DrawPointColorBlended(vPos + Frame::Vec2 { 10 * cos(Frame::DegToRad(m_angle)), 10 * sin(Frame::DegToRad(m_angle)) } * 10, 0xFFFF00, 12.f);
 		Frame::gCamera->SetPos(vPos + Frame::Vec2 { 10 * cos(Frame::DegToRad(m_angle)), 10 * sin(Frame::DegToRad(m_angle)) } * 10);
 		//Frame::gCamera->SetPos(vPos);
 		Frame::gCamera->SetZoom(.5f);
 		Frame::gCamera->SetViewSize({ 200, 600 });
+
+		Frame::gRenderer->pShapeRenderer->DrawPoint(Frame::gCamera->WindowToScene(Frame::gInput->pMouse->GetPosition()), 12.f);
+
+		Frame::gRenderer->pShapeRenderer->DrawPoint(vPos, 12.f);
+		Frame::gRenderer->pShapeRenderer->DrawPoint(vPos + Frame::Vec2 { Frame::gAudioPlayer->GetListenerOrientation().first.x, Frame::gAudioPlayer->GetListenerOrientation().first.y } * 10, 4.f);
+		Frame::gRenderer->pShapeRenderer->DrawPointColorBlended(vPos + Frame::Vec2 { 10 * cos(Frame::DegToRad(m_angle)), 10 * sin(Frame::DegToRad(m_angle)) } * 10, 0xFFFF00, 12.f);
 #endif
 #if 1
 		//Frame::gRenderer->pSpriteShader->Use();

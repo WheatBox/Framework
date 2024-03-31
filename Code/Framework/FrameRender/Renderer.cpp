@@ -21,9 +21,7 @@ namespace Frame {
 		delete m_pDefaultShader;
 	}
 
-	void CRenderer::Initialize(int windowWidth, int windowHeight) {
-
-		FramebufferResizeCallback(windowWidth, windowHeight);
+	void CRenderer::Initialize() {
 
 		glEnable(GL_CULL_FACE);
 		glCullFace(GL_BACK);
@@ -66,11 +64,6 @@ namespace Frame {
 		SetShader(m_pDefaultShader);
 
 		glActiveTexture(GL_TEXTURE0);
-	}
-
-	void CRenderer::FramebufferResizeCallback(int width, int height) {
-		m_windowWidth = width;
-		m_windowHeight = height;
 	}
 
 	void CRenderer::RenderBegin() {

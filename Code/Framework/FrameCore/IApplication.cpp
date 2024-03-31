@@ -60,17 +60,18 @@ namespace Frame {
 			return false;
 		}
 
-		gRenderer->Initialize(windowWidth, windowHeight);
+		gRenderer->Initialize();
 		glfwSetFramebufferSizeCallback(m_pWindow,
 			[](GLFWwindow * pWindow, int width, int height) {
 				pWindow;
 				glViewport(0, 0, width, height);
-				gRenderer->FramebufferResizeCallback(width, height);
+				gCamera->SetWindowSize({ width, height });
 			}
 		);
 
 		gInput->Initialize(m_pWindow);
 		gAudioPlayer->Initialize();
+		gCamera->SetWindowSize({ windowWidth, windowHeight });
 		gCamera->SetViewSize({ windowWidth, windowHeight });
 
 		return true;
