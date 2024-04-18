@@ -33,7 +33,7 @@ namespace Frame {
 		std::vector<IEntityComponent *> sortedVector { m_set.begin(), m_set.end() };
 		std::sort(sortedVector.begin(), sortedVector.end(),
 			[](IEntityComponent * a, IEntityComponent * b) {
-				return a->GetEntity()->GetZDepth() - b->GetEntity()->GetZDepth();
+				return a->GetEntity()->GetZDepth() > b->GetEntity()->GetZDepth();
 			}
 		);
 		for(IEntityComponent * pComponent : sortedVector) {
