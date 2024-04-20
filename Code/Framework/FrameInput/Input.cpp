@@ -25,6 +25,9 @@ namespace Frame {
 		glfwSetMouseButtonCallback(m_pWindow, [](GLFWwindow *, int button, int action, int) -> void {
 			__pMouse->__ButtonCallback(button, action);
 		});
+		glfwSetScrollCallback(m_pWindow, [](GLFWwindow *, double xpos, double ypos) -> void {
+			__pMouse->__ScrollCallback(xpos, ypos);
+		});
 	}
 
 }

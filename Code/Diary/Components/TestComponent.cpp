@@ -58,6 +58,10 @@ void CTestComponent::ProcessEvent(const Frame::EntityEvent::SEvent & event) {
 #include <GLFW/glfw3.h>
 
 void CTestComponent2::Initialize() {
+	Frame::gInput->pMouse->SetScrollCallback([](double x, double y) {
+		printf("%lf %lf\n", x, y);
+	});
+
 	m_pSprite = new Frame::CStaticSprite { "./Assets/spr_t.bmp" };
 	m_pSprite->SetOffset({ static_cast<float>(m_pSprite->GetWidth()) / 2.f, static_cast<float>(m_pSprite->GetHeight()) / 2.f });
 
