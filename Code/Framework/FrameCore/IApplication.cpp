@@ -32,9 +32,14 @@ namespace Frame {
 		glfwTerminate();
 	}
 
-	void IApplication::SetWindowSize(const std::pair<int, int> & siz) {
-		m_windowSize = siz;
-		glfwSetWindowSize(m_pWindow, siz.first, siz.second);
+	Frame::Vec2i IApplication::GetWindowSize() const {
+		int w = 0, h = 0;
+		glfwGetWindowSize(m_pWindow, & w, & h);
+		return { w, h };
+	}
+
+	void IApplication::SetWindowSize(const Frame::Vec2i & siz) {
+		glfwSetWindowSize(m_pWindow, siz.x, siz.y);
 	}
 
 	bool IApplication::InitializeWindow(const char * title, int windowWidth, int windowHeight) {
@@ -65,13 +70,13 @@ namespace Frame {
 			[](GLFWwindow * pWindow, int width, int height) {
 				pWindow;
 				glViewport(0, 0, width, height);
-				gCamera->SetWindowSize({ width, height });
+				gCamera->__SetWindowSize({ width, height });
 			}
 		);
 
 		gInput->Initialize(m_pWindow);
 		gAudioPlayer->Initialize();
-		gCamera->SetWindowSize({ windowWidth, windowHeight });
+		gCamera->__SetWindowSize({ windowWidth, windowHeight });
 		gCamera->SetViewSize({ windowWidth, windowHeight });
 
 		return true;

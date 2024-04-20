@@ -16,7 +16,7 @@ namespace Frame {
 			return (posOnWindow - windowSize * .5f) * (viewSize / windowSize) / m_zoom + m_pos;
 		}
 
-		void SetWindowSize(const Vec2i & siz) {
+		void __SetWindowSize(const Vec2i & siz) {
 			m_windowSize = siz;
 		}
 		Vec2i GetWindowSize() const {
