@@ -100,7 +100,9 @@ namespace Frame {
 			MainLoopPriority();
 			/* ------------- Main Loop ------------- */
 
+			gEntitySystem->ProcessBeforeUpdateEvent(frameTime);
 			gEntitySystem->ProcessUpdateEvent(frameTime);
+			gEntitySystem->ProcessAfterUpdateEvent(frameTime);
 
 			gEntitySystem->ProcessRenderEvent();
 

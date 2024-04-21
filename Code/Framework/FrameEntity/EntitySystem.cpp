@@ -6,7 +6,9 @@ namespace Frame {
 
 	CEntitySystem::CEntitySystem() {
 		using namespace EntityEvent;
+		m_pEventProcessors[eEFI_BeforeUpdate]  = new CEntityEventProcessor            { BeforeUpdate };
 		m_pEventProcessors[eEFI_Update]        = new CEntityEventProcessor            { Update };
+		m_pEventProcessors[eEFI_AfterUpdate]   = new CEntityEventProcessor            { AfterUpdate };
 		m_pEventProcessors[eEFI_Render]        = new CEntityEventProcessorZSort       { Render };
 		m_pEventProcessors[eEFI_EnteredView]   = new CEntityEventProcessor            { EnteredView };
 		m_pEventProcessors[eEFI_LeftView]      = new CEntityEventProcessor            { LeftView };
@@ -38,9 +40,19 @@ namespace Frame {
 
 #undef __ComponentDoSomethingAboutProcessors
 
+	void CEntitySystem::ProcessBeforeUpdateEvent(float frameTime) {
+		m_pEventProcessors[EntityEvent::EFlagIndex::eEFI_BeforeUpdate]->SetEventParam(0, frameTime);
+		m_pEventProcessors[EntityEvent::EFlagIndex::eEFI_BeforeUpdate]->Process();
+	}
+
 	void CEntitySystem::ProcessUpdateEvent(float frameTime) {
 		m_pEventProcessors[EntityEvent::EFlagIndex::eEFI_Update]->SetEventParam(0, frameTime);
 		m_pEventProcessors[EntityEvent::EFlagIndex::eEFI_Update]->Process();
+	}
+
+	void CEntitySystem::ProcessAfterUpdateEvent(float frameTime) {
+		m_pEventProcessors[EntityEvent::EFlagIndex::eEFI_AfterUpdate]->SetEventParam(0, frameTime);
+		m_pEventProcessors[EntityEvent::EFlagIndex::eEFI_AfterUpdate]->Process();
 	}
 
 	void CEntitySystem::ProcessRenderEvent() {

@@ -9,7 +9,9 @@ namespace Frame {
 		typedef uint32 Flags;
 
 		enum EFlagIndex : uint8 {
-			eEFI_Update = 0,
+			eEFI_BeforeUpdate = 0,
+			eEFI_Update,
+			eEFI_AfterUpdate,
 			eEFI_Render,
 			eEFI_EnteredView,
 			eEFI_LeftView,
@@ -26,6 +28,8 @@ namespace Frame {
 			// Update (Called in everytime the game loop)
 			// params[0].f = The execution time of this frame
 			Update = FlagBit(EFlagIndex::eEFI_Update),
+			BeforeUpdate = FlagBit(EFlagIndex::eEFI_BeforeUpdate),
+			AfterUpdate = FlagBit(EFlagIndex::eEFI_AfterUpdate),
 
 			// 渲染
 			// 该事件下每个实体对象会按照 m_zDepth 进行排序后再执行
@@ -34,6 +38,8 @@ namespace Frame {
 			// Under this event, each entity object will be sorted by m_zDepth before execution
 			// About m_zDepth, please refer to CEntity for details, located at <FrameEntity/CEntity.h>
 			Render = FlagBit(EFlagIndex::eEFI_Render),
+
+			// ---------------- TODO ---------------- //
 		
 			// 进入视图
 			// Entered the view
