@@ -33,8 +33,8 @@ namespace Frame {
 		T Length() const { return std::sqrt(x * x + y * y); }
 
 		T Radian() const {
-			T res = std::acos(x / Length());
-			return ((y < 0) ? (2 * pi_d - res) : res);
+			double res = static_cast<double>(std::acos(x / Length()));
+			return static_cast<T>((y < 0) ? (2 * pi_d - res) : res);
 		}
 		T Degree() const { return RadToDeg(Radian()); }
 
