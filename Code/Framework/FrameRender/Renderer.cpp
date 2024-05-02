@@ -23,9 +23,9 @@ namespace Frame {
 
 	void CRenderer::Initialize() {
 
-		glEnable(GL_CULL_FACE);
-		glCullFace(GL_BACK);
-		glFrontFace(GL_CCW);
+		//glEnable(GL_CULL_FACE);
+		//glCullFace(GL_BACK);
+		//glFrontFace(GL_CCW);
 
 		glEnable(GL_BLEND);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -133,7 +133,13 @@ namespace Frame {
 			vPos + vBR * vScale
 		);
 
-		DrawTexture(pSpriteImage->GetTextureId(), textureVertexBuffer);
+		//if(vScale.x * vScale.y < 0.f) {
+		//	glFrontFace(GL_CW);
+		//	DrawTexture(pSpriteImage->GetTextureId(), textureVertexBuffer);
+		//	glFrontFace(GL_CCW);
+		//} else {
+			DrawTexture(pSpriteImage->GetTextureId(), textureVertexBuffer);
+		//}
 	}
 
 }

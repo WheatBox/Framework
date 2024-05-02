@@ -156,7 +156,7 @@ void CTestComponent2::ProcessEvent(const Frame::EntityEvent::SEvent & event) {
 		Frame::gCamera->SetPos(vPos + Frame::Vec2 { 10 * cos(Frame::DegToRad(m_angle)), 10 * sin(Frame::DegToRad(m_angle)) } * 10);
 		//Frame::gCamera->SetPos(vPos);
 		Frame::gCamera->SetZoom(.5f);
-		Frame::gCamera->SetViewSize({ 200, 600 });
+		//Frame::gCamera->SetViewSize({ 200, 600 });
 
 		Frame::gRenderer->pShapeRenderer->DrawPoint(Frame::gCamera->WindowToScene(Frame::gInput->pMouse->GetPosition()), 12.f);
 
@@ -172,7 +172,7 @@ void CTestComponent2::ProcessEvent(const Frame::EntityEvent::SEvent & event) {
 		Frame::gRenderer->DrawSpriteBlended(m_pSprite->GetImage(), { 400.f , 300.f },
 			0xFF0000, 1.f, 0x00FF00, 1.f,
 			0x0000FF, 0.f, 0xFFFF00, 0.f,
-			1.2f, -m_angle
+			{ 1.f, -1.f }, -m_angle
 		);
 
 		Frame::gRenderer->DrawSprite(m_pAnimSprite->GetFrame(static_cast<int>(m_seconds)), { 100, 100 });
