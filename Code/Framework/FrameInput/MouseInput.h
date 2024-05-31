@@ -27,6 +27,7 @@ namespace Frame {
 		const Vec2 & GetPosition() const {
 			return m_vPos;
 		}
+		Vec2 GetPositionInScene() const;
 
 		void SetScrollCallback(const std::function<void(double, double)> & func) {
 			m_scrollCallback = func;

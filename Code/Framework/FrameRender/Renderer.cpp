@@ -83,6 +83,7 @@ namespace Frame {
 		const Vec2 camPos = gCamera->GetPos();
 		pShader->SetUniformVec2("u_vProj", proj.x, proj.y);
 		pShader->SetUniformVec2("u_vCamPos", camPos.x, camPos.y);
+		pShader->SetUniformFloat("u_fViewRotRad", gCamera->GetViewRotation());
 	}
 
 	/* +-----------------------------------------------+ */

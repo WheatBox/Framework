@@ -13,7 +13,7 @@ namespace Frame {
 		Vec2 WindowToScene(const Vec2 & posOnWindow) const {
 			Frame::Vec2 windowSize = Frame::Vec2Cast<float>(m_windowSize);
 			Frame::Vec2 viewSize = Frame::Vec2Cast<float>(m_viewSize);
-			return (posOnWindow - windowSize * .5f) * (viewSize / windowSize) / m_zoom + m_pos;
+			return (posOnWindow - windowSize * .5f).Rotate(GetViewRotation()) * (viewSize / windowSize) / m_zoom + m_pos;
 		}
 
 		void __SetWindowSize(const Vec2i & siz) {
@@ -46,11 +46,46 @@ namespace Frame {
 			return m_zoom;
 		}
 
+		// Radian
+		void SetRotation(float angle) {
+			m_rotation = angle;
+		}
+		// Radian
+		float GetRotation() const {
+			return m_rotation;
+		}
+		// Degree
+		void SetRotationDegree(float angle) {
+			m_rotation = DegToRad(angle);
+		}
+		// Degree
+		float GetRotationDegree() const {
+			return RadToDeg(m_rotation);
+		}
+
+		// Radian. View rotation = - Camera rotation
+		void SetViewRotation(float angle) {
+			m_rotation = -angle;
+		}
+		// Radian. View rotation = - Camera rotation
+		float GetViewRotation() const {
+			return -m_rotation;
+		}
+		// Degree. View rotation = - Camera rotation
+		void SetViewRotationDegree(float angle) {
+			m_rotation = -DegToRad(angle);
+		}
+		// Degree. View rotation = - Camera rotation
+		float GetViewRotationDegree() const {
+			return -RadToDeg(m_rotation);
+		}
+
 	private:
 		Vec2i m_windowSize { 1 };
 		Vec2i m_viewSize { 1 };
 		Vec2 m_pos { 0.f }; // Center
 		float m_zoom = 1.f;
+		float m_rotation = 0.f; // Radian
 
 	};
 

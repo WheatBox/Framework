@@ -59,6 +59,7 @@ private:
 	std::string m_strFrameTime;
 
 	float m_angle = 0.f;
+	float m_camAngle = 0.f;
 
 	float m_seconds = 0.f;
 

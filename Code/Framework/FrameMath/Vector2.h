@@ -1,6 +1,6 @@
 ﻿#pragma once
 
-#include <FrameMath/Math.h>
+#include <FrameMath/MathCommon.h>
 
 #include <vector>
 

@@ -8,9 +8,13 @@ out vec2 vTexCoord;
 
 uniform vec2 u_vProj;
 uniform vec2 u_vCamPos;
+uniform float u_fViewRotRad;
 
 void main() {
-	gl_Position = vec4((aPos.x - u_vCamPos.x) * u_vProj.x, (-aPos.y + u_vCamPos.y) * u_vProj.y, aPos.z, 1.f);
+	vec2 pos = vec2(aPos.x - u_vCamPos.x, -aPos.y + u_vCamPos.y);
+	float cosr = cos(u_fViewRotRad), sinr = sin(u_fViewRotRad);
+	pos = vec2(pos.x * cosr - pos.y * sinr, pos.y * cosr + pos.x * sinr);
+	gl_Position = vec4(pos.x * u_vProj.x, pos.y * u_vProj.y, aPos.z, 1.f);
 	vColor = aColor;
 	vTexCoord = aTexCoord;
 }

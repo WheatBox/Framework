@@ -109,6 +109,14 @@ void CTestComponent2::ProcessEvent(const Frame::EntityEvent::SEvent & event) {
 		//m_angle += frameTime * 360; // => 360°/s
 		m_angle += frameTime * 360 / 5.f;
 
+		m_camAngle += frameTime * 60.f * float(-int(Frame::gInput->pKeyboard->GetHolding(Frame::eKI_1)) + int(Frame::gInput->pKeyboard->GetHolding(Frame::eKI_2)));
+		Frame::gCamera->SetRotationDegree(m_camAngle);
+
+		Frame::Vec2 camPos = Frame::gCamera->GetPos();
+		camPos.y += frameTime * 100.f * float(-int(Frame::gInput->pKeyboard->GetHolding(Frame::eKI_W)) + int(Frame::gInput->pKeyboard->GetHolding(Frame::eKI_S)));
+		camPos.x += frameTime * 100.f * float(-int(Frame::gInput->pKeyboard->GetHolding(Frame::eKI_A)) + int(Frame::gInput->pKeyboard->GetHolding(Frame::eKI_D)));
+		Frame::gCamera->SetPos(camPos);
+
 		if( Frame::gInput->pKeyboard->GetInputState(Frame::eKI_A) | 
 			Frame::gInput->pKeyboard->GetInputState(Frame::eKI_S) | 
 			Frame::gInput->pKeyboard->GetInputState(Frame::eKI_D) | 
@@ -153,12 +161,13 @@ void CTestComponent2::ProcessEvent(const Frame::EntityEvent::SEvent & event) {
 #if 1
 		Frame::Vec2 vPos { 400.f, 300.f };
 		//Frame::Vec2 vPos { 0.f, 0.f };
-		Frame::gCamera->SetPos(vPos + Frame::Vec2 { 10 * cos(Frame::DegToRad(m_angle)), 10 * sin(Frame::DegToRad(m_angle)) } * 10);
+		//Frame::gCamera->SetPos(vPos + Frame::Vec2 { 10 * cos(Frame::DegToRad(m_angle)), 10 * sin(Frame::DegToRad(m_angle)) } * 10);
 		//Frame::gCamera->SetPos(vPos);
 		Frame::gCamera->SetZoom(.5f);
 		//Frame::gCamera->SetViewSize({ 200, 600 });
 
-		Frame::gRenderer->pShapeRenderer->DrawPoint(Frame::gCamera->WindowToScene(Frame::gInput->pMouse->GetPosition()), 12.f);
+		//Frame::gRenderer->pShapeRenderer->DrawPoint(Frame::gCamera->WindowToScene(Frame::gInput->pMouse->GetPosition()), 12.f);
+		Frame::gRenderer->pShapeRenderer->DrawPoint(Frame::gInput->pMouse->GetPositionInScene(), 12.f);
 
 		Frame::gRenderer->pShapeRenderer->DrawPoint(vPos, 12.f);
 		Frame::gRenderer->pShapeRenderer->DrawPoint(vPos + Frame::Vec2 { Frame::gAudioPlayer->GetListenerOrientation().first.x, Frame::gAudioPlayer->GetListenerOrientation().first.y } * 10, 4.f);
