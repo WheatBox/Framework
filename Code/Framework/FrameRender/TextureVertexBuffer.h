@@ -165,6 +165,13 @@ namespace Frame {
 		void SetAlphaBlends(float aTL, float aTR, float aBL, float aBR) {
 			m_data[6]  = aTL; m_data[15] = aTR; m_data[24] = aBL; m_data[33] = aBR;
 		}
+
+		void SetTexCoord(const Vec2 & uvLT, const Vec2 & uvRB) { // 0 1   1 0
+			m_data[7]  = uvLT.x; m_data[8]  = uvLT.y; // Top Left
+			m_data[16] = uvRB.x; m_data[17] = uvLT.y; // Top Right
+			m_data[25] = uvLT.x; m_data[26] = uvRB.y; // Bottom Left
+			m_data[34] = uvRB.x; m_data[35] = uvRB.y; // Bottom Right
+		}
 	};
 
 }

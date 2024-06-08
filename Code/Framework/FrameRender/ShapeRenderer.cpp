@@ -44,8 +44,14 @@ namespace Frame {
 	/* +-----------------------------------------------+ */
 
 	void CShapeRenderer::DrawBasicShapes(float * vertexBuffer, uint8 _GL_mode, int count) {
-		glBindVertexArray(m_VAO);
-		glBindBuffer(GL_ARRAY_BUFFER, m_VBO);
+		if(CRenderer::s_currentVAO != m_VAO) {
+			CRenderer::s_currentVAO = m_VAO;
+			glBindVertexArray(m_VAO);
+		}
+		if(CRenderer::s_currentVBO != m_VBO) {
+			CRenderer::s_currentVBO = m_VBO;
+			glBindBuffer(GL_ARRAY_BUFFER, m_VBO);
+		}
 		glBufferData(GL_ARRAY_BUFFER, sizeof(float) * static_cast<size_t>(count * 7), vertexBuffer, GL_DYNAMIC_DRAW);
 		m_pShader->Use();
 		m_pRenderer->SetShaderProjectionUniforms(m_pShader);

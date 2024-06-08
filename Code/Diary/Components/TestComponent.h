@@ -71,6 +71,9 @@ private:
 	Frame::CSound * m_pSound = nullptr;
 	std::shared_ptr<Frame::CAudioSource> m_pAudioSource = nullptr;
 
+	Frame::CTextureAtlas * m_pTextureAtlas = nullptr;
+	Frame::CStaticSprite * m_pTextureAtlasTestSprite = nullptr;
+
 	std::vector<Frame::CFont::STextAutoWrapLineFormat> m_lineFormats {};
 	UnicodeString m_text = Frame::UTF8Utils::ToUnicode(
 		"《出师表》\n"

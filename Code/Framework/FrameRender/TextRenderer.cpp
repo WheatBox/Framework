@@ -27,6 +27,8 @@ namespace Frame {
 
 	void CTextRenderer::DrawCharacterTexture(CFont::SCharacter * pCharacter, Vec2 vPos) {
 		m_pShader->SetUniformVec2("u_vPos", vPos.x, vPos.y);
+		CRenderer::s_currentVAO = pCharacter->m_VAO;
+		CRenderer::s_currentTextureId = pCharacter->textureId;
 		glBindVertexArray(pCharacter->m_VAO);
 		glBindTexture(GL_TEXTURE_2D, pCharacter->textureId);
 		glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);

@@ -99,12 +99,21 @@ namespace Frame {
 	/* +-----------------------------------------------+ */
 
 	void CRenderer::DrawTexture(unsigned int textureId, const STextureVertexBuffer & textureVertexBuffer, CShader * _pShader) {
-		glBindVertexArray(m_VAO);
+		if(s_currentVAO != m_VAO) {
+			s_currentVAO = m_VAO;
+			glBindVertexArray(m_VAO);
+		}
 
-		glBindBuffer(GL_ARRAY_BUFFER, m_VBO);
+		if(s_currentVBO != m_VBO) {
+			s_currentVBO = m_VBO;
+			glBindBuffer(GL_ARRAY_BUFFER, m_VBO);
+		}
 		glBufferData(GL_ARRAY_BUFFER, sizeof(textureVertexBuffer.m_data), textureVertexBuffer.m_data, GL_DYNAMIC_DRAW);
 
-		glBindTexture(GL_TEXTURE_2D, textureId);
+		if(s_currentTextureId != textureId) {
+			s_currentTextureId = textureId;
+			glBindTexture(GL_TEXTURE_2D, textureId);
+		}
 		_pShader->Use();
 		SetShaderProjectionUniforms(_pShader);
 		glDrawElements(GL_TRIANGLE_STRIP, 4, GL_UNSIGNED_INT, NULL);
@@ -115,6 +124,7 @@ namespace Frame {
 			vPos + pSpriteImage->GetTopLeftOffset(),
 			vPos + pSpriteImage->GetBottomRightOffset()
 		);
+		textureVertexBuffer.SetTexCoord(pSpriteImage->GetUVLeftTop(), pSpriteImage->GetUVRightBottom());
 
 		DrawTexture(pSpriteImage->GetTextureId(), textureVertexBuffer);
 	}
@@ -133,6 +143,7 @@ namespace Frame {
 			vPos + vBL * vScale,
 			vPos + vBR * vScale
 		);
+		textureVertexBuffer.SetTexCoord(pSpriteImage->GetUVLeftTop(), pSpriteImage->GetUVRightBottom());
 
 		//if(vScale.x * vScale.y < 0.f) {
 		//	glFrontFace(GL_CW);

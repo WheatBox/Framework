@@ -47,6 +47,10 @@ namespace Frame {
 		CShapeRenderer * pShapeRenderer = nullptr;
 		CTextRenderer * pTextRenderer = nullptr;
 
+		static inline unsigned int s_currentVAO = 0;
+		static inline unsigned int s_currentVBO = 0;
+		static inline unsigned int s_currentTextureId = 0;
+
 	private:
 
 		// 顶点缓冲对象(Vertex Buffer Object, VBO)

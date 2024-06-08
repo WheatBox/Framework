@@ -86,6 +86,25 @@ void CTestComponent2::Initialize() {
 
 	//Frame::gAudioPlayer->SetFalloffModel(Frame::CAudioPlayer::EFalloffModel::None);
 	Frame::gAudioPlayer->SetFalloffModel(Frame::CAudioPlayer::EFalloffModel::ExponentDistanceClamped);
+
+	m_pTextureAtlas = new Frame::CTextureAtlas { "Assets/AtlasTest.png",
+		{
+			{ "image (6).png", { { 0.000000f, 1.000000f }, { 0.976563f, 0.951172f } } },
+			{ "image (4).png", { { 0.000000f, 0.951172f }, { 0.585938f, 0.755859f } } },
+			{ "image (10).png", { { 0.000000f, 0.755859f }, { 0.500000f, 0.255859f } } },
+			{ "image (7).png", { { 0.000000f, 0.255859f }, { 0.500000f, 0.005859f } } },
+			{ "image (1).png", { { 0.500000f, 0.755859f }, { 0.792969f, 0.505859f } } },
+			{ "image (11).png", { { 0.500000f, 0.505859f }, { 0.750000f, 0.005859f } } },
+			{ "image (2).png", { { 0.750000f, 0.505859f }, { 1.000000f, 0.255859f } } },
+			{ "image (12).png", { { 0.750000f, 0.255859f }, { 1.000000f, 0.005859f } } },
+			{ "image (3).png", { { 0.792969f, 0.951172f }, { 0.988281f, 0.638672f } } },
+			{ "image (9).png", { { 0.585938f, 0.951172f }, { 0.679688f, 0.857422f } } },
+			{ "image (8).png", { { 0.585938f, 0.857422f }, { 0.679688f, 0.826172f } } },
+			{ "image (5).png", { { 0.585938f, 0.826172f }, { 0.664063f, 0.763672f } } },
+			{ "full", { { 0.f, 1.f }, { 1.f, 0.f } } }
+		}
+	};
+	m_pTextureAtlasTestSprite = new Frame::CStaticSprite { m_pTextureAtlas, "image (3).png" };
 }
 
 void CTestComponent2::OnShutDown() {
@@ -164,6 +183,7 @@ void CTestComponent2::ProcessEvent(const Frame::EntityEvent::SEvent & event) {
 		//Frame::gCamera->SetPos(vPos + Frame::Vec2 { 10 * cos(Frame::DegToRad(m_angle)), 10 * sin(Frame::DegToRad(m_angle)) } * 10);
 		//Frame::gCamera->SetPos(vPos);
 		Frame::gCamera->SetZoom(.5f);
+		Frame::gCamera->SetZoom(1.f);
 		//Frame::gCamera->SetViewSize({ 200, 600 });
 
 		//Frame::gRenderer->pShapeRenderer->DrawPoint(Frame::gCamera->WindowToScene(Frame::gInput->pMouse->GetPosition()), 12.f);
@@ -271,6 +291,9 @@ void CTestComponent2::ProcessEvent(const Frame::EntityEvent::SEvent & event) {
 		Frame::gRenderer->pTextRenderer->DrawTextAutoWrapAlignBlended("Hello, world!\n你好，世界，我在这里！", { 400, 400 }, 160, Frame::ETextHAlign::Left, Frame::ETextVAlign::Top, 0xFFFFFF, .7f);
 		Frame::gRenderer->pTextRenderer->DrawTextAutoWrapAlignBlended("Hello, world!\n你好，世界，我在这里！", { 400, 400 }, 160, Frame::ETextHAlign::Right, Frame::ETextVAlign::Bottom, 0xFFFFFF, 1.f);
 		Frame::gRenderer->pTextRenderer->DrawTextAutoWrapAlignBlended("Hello, world!\n你好，世界，我在这里！", { 400, 300 }, 160, Frame::ETextHAlign::Center, Frame::ETextVAlign::Bottom, 0xFFFFFF, 1.f);
+#endif
+#if 1
+		Frame::gRenderer->DrawSpriteBlended(m_pTextureAtlasTestSprite->GetImage(), 0.f, 0xFFFFFF, 1.f);
 #endif
 	}
 	break;
