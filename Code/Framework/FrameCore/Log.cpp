@@ -109,6 +109,7 @@ namespace Frame::Log {
 			[]() {
 				while(true) {
 					if(__logStrsQueue.empty()) {
+						std::this_thread::sleep_for(std::chrono::milliseconds { 50 });
 						continue;
 					}
 
