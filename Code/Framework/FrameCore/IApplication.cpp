@@ -26,9 +26,6 @@ namespace Frame {
 		delete gAudioPlayer;
 		gAudioPlayer = nullptr;
 
-		delete gShaderInUsing;
-		gShaderInUsing = nullptr;
-
 		glfwTerminate();
 	}
 
