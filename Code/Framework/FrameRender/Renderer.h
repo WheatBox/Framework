@@ -1,6 +1,6 @@
 ﻿#pragma once
 
-#include <FrameRender/RendererBaseClass.h>
+#include <FrameRender/RendererBase.h>
 
 #include <FrameRender/TextureVertexBuffer.h>
 #include <FrameRender/ShapeRenderer.h>
@@ -16,7 +16,7 @@ namespace Frame {
 
 	struct SSpriteImage;
 
-	class CRenderer : public RendererBaseClass::IColorAlpha {
+	class CRenderer : public RendererBase::IColorAlpha {
 
 	public:
 		/* +------- RendererBaseClass::IColorAlpha --------+ */

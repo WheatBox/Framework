@@ -2,6 +2,7 @@
 
 #include <FrameRender/DefaultShaders.h>
 #include <FrameRender/Renderer.h>
+#include <FrameRender/RendererBase.h>
 #include <FrameCore/Log.h>
 
 #include <glad/glad.h>
@@ -18,9 +19,9 @@ namespace Frame {
 		glGenBuffers(1, & m_VBO);
 		glGenVertexArrays(1, & m_VAO);
 
-		glBindVertexArray(m_VAO);
+		RendererBase::BindVAO(m_VAO);
 
-		glBindBuffer(GL_ARRAY_BUFFER, m_VBO);
+		RendererBase::BindVBO(m_VBO);
 
 		GLsizei stride = (3 + 4) * (GLsizei)sizeof(float);
 		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, stride, (void *)0);
@@ -44,14 +45,9 @@ namespace Frame {
 	/* +-----------------------------------------------+ */
 
 	void CShapeRenderer::DrawBasicShapes(float * vertexBuffer, uint8 _GL_mode, int count) {
-		if(CRenderer::s_currentVAO != m_VAO) {
-			CRenderer::s_currentVAO = m_VAO;
-			glBindVertexArray(m_VAO);
-		}
-		if(CRenderer::s_currentVBO != m_VBO) {
-			CRenderer::s_currentVBO = m_VBO;
-			glBindBuffer(GL_ARRAY_BUFFER, m_VBO);
-		}
+		RendererBase::BindVAO(m_VAO);
+		RendererBase::BindVBO(m_VBO);
+		
 		glBufferData(GL_ARRAY_BUFFER, sizeof(float) * static_cast<size_t>(count * 7), vertexBuffer, GL_DYNAMIC_DRAW);
 		m_pShader->Use();
 		m_pRenderer->SetShaderProjectionUniforms(m_pShader);

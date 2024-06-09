@@ -2,6 +2,7 @@
 #include <FrameAsset/ErrorSprite.h>
 
 #include <FrameCore/Log.h>
+#include <FrameRender/RendererBase.h>
 
 #include <glad/glad.h>
 #include <stb_image.h>
@@ -12,7 +13,7 @@ namespace Frame {
 		unsigned int resultTextureId;
 
 		glGenTextures(1, & resultTextureId);
-		glBindTexture(GL_TEXTURE_2D, resultTextureId);
+		RendererBase::BindTextureId(resultTextureId);
 
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_MIRRORED_REPEAT);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_MIRRORED_REPEAT);

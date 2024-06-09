@@ -2,6 +2,7 @@
 
 #include <FrameAsset/Sprite.h>
 #include <FrameCore/Log.h>
+#include <FrameRender/RendererBase.h>
 
 #include <ft2build.h>
 #include <freetype/freetype.h>
@@ -26,9 +27,9 @@ namespace Frame {
 		glGenVertexArrays(1, & m_VAO);
 		glGenBuffers(1, & m_VBO);
 
-		glBindVertexArray(m_VAO);
+		RendererBase::BindVAO(m_VAO);
 
-		glBindBuffer(GL_ARRAY_BUFFER, m_VBO);
+		RendererBase::BindVBO(m_VBO);
 
 		GLsizei stride = (3 + 2) * (GLsizei)sizeof(float);
 		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, stride, (void *)0);
@@ -38,7 +39,7 @@ namespace Frame {
 
 		glBufferData(GL_ARRAY_BUFFER, sizeof(vertexBuffer), vertexBuffer, GL_STATIC_DRAW);
 
-		glBindVertexArray(0);
+		RendererBase::BindVAO(0);
 	}
 
 	CFont::CFont(const char * filename, float fontSize) {
@@ -78,7 +79,7 @@ namespace Frame {
 
 		GLuint texture;
 		glGenTextures(1, & texture);
-		glBindTexture(GL_TEXTURE_2D, texture);
+		RendererBase::BindTextureId(texture);
 		glTexImage2D(
 			GL_TEXTURE_2D, 0, GL_RED,
 			m_ftFace->glyph->bitmap.width, m_ftFace->glyph->bitmap.rows,

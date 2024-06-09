@@ -4,7 +4,7 @@
 
 #include <tuple>
 
-namespace Frame::RendererBaseClass {
+namespace Frame::RendererBase {
 	
 	struct IColorAlpha {
 	public:
@@ -35,5 +35,9 @@ namespace Frame::RendererBaseClass {
 		ColorRGB m_color { 255, 255, 255 };
 		float m_alpha = 1.f;
 	};
+
+	void BindVAO(unsigned int VAO);
+	void BindVBO(unsigned int VBO);
+	void BindTextureId(unsigned int textureId);
 
 }

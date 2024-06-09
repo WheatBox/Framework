@@ -1,6 +1,6 @@
 ﻿#pragma once
 
-#include <FrameRender/RendererBaseClass.h>
+#include <FrameRender/RendererBase.h>
 
 #include <FrameCore/BasicTypes.h>
 #include <FrameMath/ColorMath.h>
@@ -31,7 +31,7 @@ namespace Frame {
 		Bottom,
 	};
 
-	class CTextRenderer : public RendererBaseClass::IColorAlpha {
+	class CTextRenderer : public RendererBase::IColorAlpha {
 
 	private:
 		CRenderer * m_pRenderer;

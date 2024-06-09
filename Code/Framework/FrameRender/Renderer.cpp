@@ -7,6 +7,7 @@
 #include <FrameCore/Camera.h>
 #include <FrameCore/Globals.h> // for gShaderInUsing & gCamera
 #include <FrameCore/Log.h>
+#include <FrameRender/RendererBase.h>
 
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
@@ -38,9 +39,9 @@ namespace Frame {
 		glGenVertexArrays(1, & m_VAO);
 		glGenBuffers(1, & m_EBO);
 
-		glBindVertexArray(m_VAO);
+		RendererBase::BindVAO(m_VAO);
 
-		glBindBuffer(GL_ARRAY_BUFFER, m_VBO);
+		RendererBase::BindVBO(m_VBO);
 		
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_EBO);
 		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_DYNAMIC_DRAW);
@@ -99,21 +100,13 @@ namespace Frame {
 	/* +-----------------------------------------------+ */
 
 	void CRenderer::DrawTexture(unsigned int textureId, const STextureVertexBuffer & textureVertexBuffer, CShader * _pShader) {
-		if(s_currentVAO != m_VAO) {
-			s_currentVAO = m_VAO;
-			glBindVertexArray(m_VAO);
-		}
+		RendererBase::BindVAO(m_VAO);
 
-		if(s_currentVBO != m_VBO) {
-			s_currentVBO = m_VBO;
-			glBindBuffer(GL_ARRAY_BUFFER, m_VBO);
-		}
+		RendererBase::BindVBO(m_VBO);
 		glBufferData(GL_ARRAY_BUFFER, sizeof(textureVertexBuffer.m_data), textureVertexBuffer.m_data, GL_DYNAMIC_DRAW);
 
-		if(s_currentTextureId != textureId) {
-			s_currentTextureId = textureId;
-			glBindTexture(GL_TEXTURE_2D, textureId);
-		}
+		RendererBase::BindTextureId(textureId);
+
 		_pShader->Use();
 		SetShaderProjectionUniforms(_pShader);
 		glDrawElements(GL_TRIANGLE_STRIP, 4, GL_UNSIGNED_INT, NULL);
