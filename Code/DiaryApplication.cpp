@@ -11,7 +11,9 @@
 void CDiaryApplication::Initialize(int argc, char ** argv) {
 	argc, argv;
 
-	SetVSync(true);
+	//SetVSync(true);
+	SetVSync(false);
+	SetMaxFPS(60);
 
 	if(Frame::CEntity * pEntity = Frame::gEntitySystem->SpawnEntity()) {
 		pEntity->SetPosition({ 400, 300 });

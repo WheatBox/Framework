@@ -54,7 +54,7 @@ namespace Frame {
 			m_maxFPS = fps > 0 ? fps : 0;
 
 			if(m_maxFPS != 0) {
-				m_maxFrameDelay = std::chrono::microseconds(1000000 / fps);
+				m_targetFrameTime = std::chrono::duration<double> { 1.0 / static_cast<double>(fps) };
 			}
 		}
 
@@ -64,7 +64,7 @@ namespace Frame {
 
 	private:
 		bool m_bVSync = true;
-		std::chrono::microseconds m_maxFrameDelay { 0 };
+		std::chrono::duration<double> m_targetFrameTime { 0.0 };
 
 	};
 

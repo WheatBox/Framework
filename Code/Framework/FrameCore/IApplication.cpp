@@ -83,14 +83,10 @@ namespace Frame {
 	}
 
 	void IApplication::Run() {
+		std::chrono::duration<double> frameTime(0.0);
+		std::chrono::duration<double> sleepAdjust(0.0);
 		while(!glfwWindowShouldClose(m_pWindow)) {
-			static std::chrono::steady_clock::time_point prevTimePoint = std::chrono::steady_clock::now(), beforeLoopTimePoint;
-			static float frameTime = 0.f;
-
-			beforeLoopTimePoint = std::chrono::steady_clock::now();
-
-			frameTime = std::chrono::duration<float>(beforeLoopTimePoint - prevTimePoint).count();
-			prevTimePoint = beforeLoopTimePoint;
+			std::chrono::steady_clock::time_point t1 = std::chrono::steady_clock::now();
 
 			gInput->Process();
 			gAudioPlayer->Process();
@@ -100,9 +96,10 @@ namespace Frame {
 			MainLoopPriority();
 			/* ------------- Main Loop ------------- */
 
-			gEntitySystem->ProcessBeforeUpdateEvent(frameTime);
-			gEntitySystem->ProcessUpdateEvent(frameTime);
-			gEntitySystem->ProcessAfterUpdateEvent(frameTime);
+			float _frameTime = static_cast<float>(frameTime.count());
+			gEntitySystem->ProcessBeforeUpdateEvent(_frameTime);
+			gEntitySystem->ProcessUpdateEvent(_frameTime);
+			gEntitySystem->ProcessAfterUpdateEvent(_frameTime);
 
 			gEntitySystem->ProcessRenderEvent();
 
@@ -115,7 +112,25 @@ namespace Frame {
 			glfwPollEvents();
 
 			if(!m_bVSync && m_maxFPS != 0) {
-				std::this_thread::sleep_until(beforeLoopTimePoint + m_maxFrameDelay);
+				// https://github.com/erincatto/box2d/blob/main/testbed/main.cpp
+
+				// Throttle to cap at 60Hz. This adaptive using a sleep adjustment. This could be improved by
+				// using mm_pause or equivalent for the last millisecond.
+				std::chrono::steady_clock::time_point t2 = std::chrono::steady_clock::now();
+				std::chrono::duration<double> timeUsed = t2 - t1;
+				std::chrono::duration<double> sleepTime = m_targetFrameTime - timeUsed + sleepAdjust;
+				if (sleepTime > std::chrono::duration<double>(0))
+				{
+					std::this_thread::sleep_for(sleepTime);
+				}
+
+				std::chrono::steady_clock::time_point t3 = std::chrono::steady_clock::now();
+				frameTime = t3 - t1;
+
+				// Compute the sleep adjustment using a low pass filter
+				sleepAdjust = 0.9 * sleepAdjust + 0.1 * (m_targetFrameTime - frameTime);
+			} else {
+				frameTime = std::chrono::steady_clock::now() - t1;
 			}
 		}
 

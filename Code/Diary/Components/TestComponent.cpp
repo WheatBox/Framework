@@ -119,6 +119,8 @@ void CTestComponent2::ProcessEvent(const Frame::EntityEvent::SEvent & event) {
 	{
 		float frameTime = event.params[0].f;
 
+		printf("fps: %f\n", 1.f / frameTime);
+
 		m_seconds += frameTime;
 
 		m_strFrameTime = "Test\n测试\nFrame time: " + std::to_string(frameTime) + "\nFps: " + std::to_string(int(1 / frameTime));
