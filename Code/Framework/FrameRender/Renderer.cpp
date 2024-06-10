@@ -122,20 +122,16 @@ namespace Frame {
 		DrawTexture(pSpriteImage->GetTextureId(), textureVertexBuffer);
 	}
 
-	void CRenderer::DrawSprite(const SSpriteImage * pSpriteImage, const Vec2 & vPos, float angle, const Vec2 & vScale, STextureVertexBuffer & textureVertexBuffer) {
-		Vec2 vTL = pSpriteImage->GetTopLeftOffset();
-		Vec2 vTR = pSpriteImage->GetTopRightOffset();
-		Vec2 vBL = pSpriteImage->GetBottomLeftOffset();
-		Vec2 vBR = pSpriteImage->GetBottomRightOffset();
+	void CRenderer::DrawSprite(const SSpriteImage * pSpriteImage, const Vec2 & vPos, const Vec2 & vScale, float angle, STextureVertexBuffer & textureVertexBuffer) {
+		Vec2 vTL = pSpriteImage->GetTopLeftOffset() * vScale;
+		Vec2 vTR = pSpriteImage->GetTopRightOffset() * vScale;
+		Vec2 vBL = pSpriteImage->GetBottomLeftOffset() * vScale;
+		Vec2 vBR = pSpriteImage->GetBottomRightOffset() * vScale;
 		
 		Rotate2DVectorsDegree(angle, { & vTL, & vTR, & vBL, & vBR });
 
-		textureVertexBuffer.SetPositions(
-			vPos + vTL * vScale,
-			vPos + vTR * vScale,
-			vPos + vBL * vScale,
-			vPos + vBR * vScale
-		);
+		textureVertexBuffer.SetPositions(vPos + vTL, vPos + vTR, vPos + vBL, vPos + vBR);
+
 		textureVertexBuffer.SetTexCoord(pSpriteImage->GetUVLeftTop(), pSpriteImage->GetUVRightBottom());
 
 		//if(vScale.x * vScale.y < 0.f) {

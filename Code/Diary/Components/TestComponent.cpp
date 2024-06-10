@@ -199,11 +199,11 @@ void CTestComponent2::ProcessEvent(const Frame::EntityEvent::SEvent & event) {
 		//Frame::gRenderer->pSpriteShader->Use();
 		//Frame::gRenderer->pSpriteShader->SetUniformInt("u_BaseTexture", 0);
 		
-		Frame::gRenderer->DrawSprite(m_pSprite->GetImage(), { 340.f , 400.f }, m_angle, 0.7f);
+		Frame::gRenderer->DrawSprite(m_pSprite->GetImage(), m_angle, { 340.f , 400.f }, 0.7f);
 		Frame::gRenderer->DrawSpriteBlended(m_pSprite->GetImage(), { 400.f , 300.f },
 			0xFF0000, 1.f, 0x00FF00, 1.f,
 			0x0000FF, 0.f, 0xFFFF00, 0.f,
-			-m_angle, { 1.f, -1.f }
+			{ 1.f, -1.f }, -m_angle
 		);
 
 		Frame::gRenderer->DrawSprite(m_pAnimSprite->GetFrame(static_cast<int>(m_seconds)), { 100, 100 });
