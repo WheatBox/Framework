@@ -38,7 +38,7 @@ if(Platform STREQUAL "Windows-x64")
 	set(OUTPUT_DIR ${CMAKE_SOURCE_DIR}/Bin/Windows-x64/)
 	set(THIRD_PARTY_PLATFORM_DIR ${THIRD_PARTY_DIR}/Windows/)
 
-	set(GLFW_DIR ${THIRD_PARTY_PLATFORM_DIR}/glfw-3.3.8.bin.WIN64/)
+	set(GLFW_DIR ${THIRD_PARTY_PLATFORM_DIR}/glfw-3.4.bin.WIN64/)
 	set(FREETYPE_DIR ${THIRD_PARTY_PLATFORM_DIR}/freetype-windows-binaries-2.13.2/)
 	set(OPENAL_DIR ${THIRD_PARTY_PLATFORM_DIR}/openal-soft-1.23.1-bin/)
 	set(SNDFILE_DIR ${THIRD_PARTY_PLATFORM_DIR}/libsndfile-1.2.2-win64/)

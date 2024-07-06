@@ -1,7 +1,7 @@
 Bin/
 Build/
 
-Third/Windows/glfw-3.3.8.bin.WIN64/*
+Third/Windows/glfw-3.4.bin.WIN64/*
 Third/Windows/freetype-windows-binaries-2.13.2/*
 Third/Windows/openal-soft-1.23.1-bin/*
 Third/Windows/libsndfile-1.2.2-win64/*
