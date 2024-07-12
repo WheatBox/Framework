@@ -2,8 +2,6 @@
 
 project(Framework)
 
-set(EXE_NAME Framework)
-
 set(CMAKE_C_STANDARD 99)
 set(CMAKE_CXX_STANDARD 17)
 
@@ -93,7 +91,10 @@ else()
 ")
 endif()
 
+set(OUTPUT_LIB_DIR ${CMAKE_SOURCE_DIR}/Bin/Lib/)
+
 message("OUTPUT_DIR = " ${OUTPUT_DIR})
+message("OUTPUT_LIB_DIR = " ${OUTPUT_LIB_DIR})
 message("GLFW_DIR = " ${GLFW_DIR})
 message("GLFW_LIB_DIR = " ${GLFW_LIB_DIR})
 message("FREETYPE_DIR = " ${FREETYPE_DIR})
@@ -107,6 +108,8 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG ${OUTPUT_DIR})
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_MINSIZEREL ${OUTPUT_DIR})
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE ${OUTPUT_DIR})
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELWITHDEBINFO ${OUTPUT_DIR})
+
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${OUTPUT_LIB_DIR})
 
 if(Windows-x64)
 	file(COPY ${SNDFILE_DIR}/bin/sndfile.dll DESTINATION ${OUTPUT_DIR})
@@ -158,9 +161,6 @@ macro(AddFiles _dest)
 endmacro(AddFiles)
 
 AddFiles(CODE_FILES
-	Code
-	Code/Diary
-	Code/Diary/Components
 	Code/Framework
 	Code/Framework/FrameAsset
 	Code/Framework/FrameAudio
@@ -175,6 +175,12 @@ AddFiles(CODE_FILES
 	Third/glad/src
 )
 
+AddFiles(CODE_TEST_FILES
+	Code
+	Code/Diary
+	Code/Diary/Components
+)
+
 AddFiles(ASSET_FILES
 	Assets
 	Assets/testfolder
@@ -184,9 +190,8 @@ AddFiles(SHADER_FILES
 	Shaders
 )
 
-add_executable(${EXE_NAME}
+add_library(${CMAKE_PROJECT_NAME} STATIC
 	${CODE_FILES}
-	${ASSET_FILES}
 	${SHADER_FILES}
 )
 
@@ -216,6 +221,29 @@ if(MSVC)
 		VS_STARTUP_PROJECT ${CMAKE_PROJECT_NAME}
 	)
 endif()
+
+# - Test --------------------
+
+add_executable(Test
+	${CODE_TEST_FILES}
+	${ASSET_FILES}
+)
+
+target_include_directories(Test PRIVATE
+	${CMAKE_SOURCE_DIR}/Code/Framework/
+)
+
+target_link_libraries(Test PRIVATE
+	${CMAKE_PROJECT_NAME}
+)
+
+if(MSVC)
+	set_target_properties(Test PROPERTIES
+		VS_DEBUGGER_WORKING_DIRECTORY ${OUTPUT_DIR}
+	)
+endif()
+
+# ---------------------------
 
 # Edit & Continue
 if(MSVC)

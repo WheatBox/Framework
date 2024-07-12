@@ -54,8 +54,8 @@ void CTestComponent::ProcessEvent(const Frame::EntityEvent::SEvent & event) {
 	}
 }
 #include <iostream>
-#include <glad/glad.h>
-#include <GLFW/glfw3.h>
+//#include <glad/glad.h>
+//#include <GLFW/glfw3.h>
 
 void CTestComponent2::Initialize() {
 	Frame::gInput->pMouse->SetScrollCallback([](double x, double y) {
