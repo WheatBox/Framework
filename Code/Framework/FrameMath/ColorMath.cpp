@@ -1,6 +1,4 @@
-﻿#pragma once
-
-#include <FrameMath/ColorMath.h>
+﻿#include <FrameMath/ColorMath.h>
 
 #include <FrameMath/Math.h>
 #include <algorithm>

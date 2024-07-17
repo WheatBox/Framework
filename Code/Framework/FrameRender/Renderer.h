@@ -79,6 +79,8 @@ namespace Frame {
 			return m_defaultTextureVertexBuffer;
 		}
 
+		void Clear(ColorRGB color, float alpha);
+
 		/* +-----------------------------------------------+ */
 		/* |                Set Draw Params                | */
 		/* +-----------------------------------------------+ */
@@ -113,7 +115,7 @@ namespace Frame {
 		void DrawSprite(const SSpriteImage * pSpriteImage, const Vec2 & vPos) {
 			DrawSprite(pSpriteImage, vPos, m_defaultTextureVertexBuffer);
 		}
-		void DrawSprite(const SSpriteImage * pSpriteImage, float angle, const Vec2 & vPos, const Vec2 & vScale) {
+		void DrawSprite(const SSpriteImage * pSpriteImage, const Vec2 & vPos, const Vec2 & vScale, float angle) {
 			DrawSprite(pSpriteImage, vPos, vScale, angle, m_defaultTextureVertexBuffer);
 		}
 

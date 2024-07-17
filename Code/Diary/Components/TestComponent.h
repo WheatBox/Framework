@@ -10,6 +10,8 @@
 
 #include <FrameAudio/AudioSource.h>
 
+#include <FrameRender/Framebuffer.h>
+
 #include <string>
 #include <iostream>
 
@@ -73,6 +75,8 @@ private:
 
 	Frame::CTextureAtlas * m_pTextureAtlas = nullptr;
 	Frame::CStaticSprite * m_pTextureAtlasTestSprite = nullptr;
+
+	Frame::CFramebuffer * m_pFramebuffer = nullptr;
 
 	std::vector<Frame::CFont::STextAutoWrapLineFormat> m_lineFormats {};
 	UnicodeString m_text = Frame::UTF8Utils::ToUnicode(

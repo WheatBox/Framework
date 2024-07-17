@@ -68,8 +68,7 @@ namespace Frame {
 	}
 
 	void CRenderer::RenderBegin() {
-		glClearColor(ONERGB(m_backgroundColor), 1.f);
-		glClear(GL_COLOR_BUFFER_BIT);
+		Clear(m_backgroundColor, 1.f);
 	}
 
 	void CRenderer::RenderEnd() {
@@ -85,6 +84,11 @@ namespace Frame {
 		pShader->SetUniformVec2("u_vProj", proj.x, proj.y);
 		pShader->SetUniformVec2("u_vCamPos", camPos.x, camPos.y);
 		pShader->SetUniformFloat("u_fViewRotRad", gCamera->GetViewRotation());
+	}
+
+	void CRenderer::Clear(ColorRGB color, float alpha) {
+		glClearColor(ONERGB(color), alpha);
+		glClear(GL_COLOR_BUFFER_BIT);
 	}
 
 	/* +-----------------------------------------------+ */

@@ -9,7 +9,7 @@
 
 namespace Frame {
 
-	unsigned int GenerateTexture(const unsigned char * data, int channel, const Vec2i & siz) {
+	unsigned int GenerateTexture(const unsigned char * data, int channel, const Vec2i & siz, bool bGenerateMipMap) {
 		unsigned int resultTextureId;
 
 		glGenTextures(1, & resultTextureId);
@@ -17,7 +17,7 @@ namespace Frame {
 
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_MIRRORED_REPEAT);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_MIRRORED_REPEAT);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_NEAREST);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, bGenerateMipMap ? GL_LINEAR_MIPMAP_NEAREST : GL_LINEAR);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
 		int mode = GL_RGBA;
@@ -30,7 +30,10 @@ namespace Frame {
 			break;
 		}
 		glTexImage2D(GL_TEXTURE_2D, 0, mode, siz.x, siz.y, 0, mode, GL_UNSIGNED_BYTE, data);
-		glGenerateMipmap(GL_TEXTURE_2D);
+
+		if(bGenerateMipMap) {
+			glGenerateMipmap(GL_TEXTURE_2D);
+		}
 
 		return resultTextureId;
 	}
@@ -80,8 +83,8 @@ namespace Frame {
 	}
 
 	CStaticSprite::CStaticSprite(const CTextureAtlas * pTextureAtlas, const char * uvKey) {
-		Vec2 uvLT { 0.f, 1.f };
-		Vec2 uvRB { 1.f, 0.f };
+		Vec2 uvLT = defaultUV_LT;
+		Vec2 uvRB = defaultUV_RB;
 		if(!pTextureAtlas || !pTextureAtlas->GetUV(& uvLT, & uvRB, uvKey)) {
 			Log::Log(Log::ELevel::Error, "Failed to find static sprite uvKey: %s", uvKey);
 

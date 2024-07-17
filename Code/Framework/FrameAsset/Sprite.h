@@ -8,7 +8,10 @@
 
 namespace Frame {
 
-	unsigned int GenerateTexture(const unsigned char * data, int channel, const Vec2i & siz);
+	static const Vec2 defaultUV_LT { 0.f, 1.f };
+	static const Vec2 defaultUV_RB { 1.f, 0.f };
+
+	unsigned int GenerateTexture(const unsigned char * data, int channel, const Vec2i & siz, bool bGenerateMipMap = true);
 
 	class CTextureAtlas {
 	public:

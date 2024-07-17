@@ -199,7 +199,7 @@ void CTestComponent2::ProcessEvent(const Frame::EntityEvent::SEvent & event) {
 		//Frame::gRenderer->pSpriteShader->Use();
 		//Frame::gRenderer->pSpriteShader->SetUniformInt("u_BaseTexture", 0);
 		
-		Frame::gRenderer->DrawSprite(m_pSprite->GetImage(), m_angle, { 340.f , 400.f }, 0.7f);
+		Frame::gRenderer->DrawSprite(m_pSprite->GetImage(), { 340.f , 400.f }, 0.7f, m_angle);
 		Frame::gRenderer->DrawSpriteBlended(m_pSprite->GetImage(), { 400.f , 300.f },
 			0xFF0000, 1.f, 0x00FF00, 1.f,
 			0x0000FF, 0.f, 0xFFFF00, 0.f,
@@ -296,6 +296,18 @@ void CTestComponent2::ProcessEvent(const Frame::EntityEvent::SEvent & event) {
 #endif
 #if 1
 		Frame::gRenderer->DrawSpriteBlended(m_pTextureAtlasTestSprite->GetImage(), 0.f, 0xFFFFFF, 1.f);
+#endif
+#if 1
+		if(!m_pFramebuffer) {
+			m_pFramebuffer = new Frame::CFramebuffer { 100 };
+		}
+		m_pFramebuffer->Bind();
+
+		Frame::gRenderer->DrawSprite(m_pSprite->GetImage(), Frame::Vec2Cast(m_pFramebuffer->GetSize()) * .5f, 1.f, m_angle);
+
+		m_pFramebuffer->Unbind();
+
+		Frame::gRenderer->DrawSprite(m_pFramebuffer->GetImage(), Frame::Vec2 { 50.f }.RotateDegree(m_angle) - 100.f, 1.f, -m_angle);
 #endif
 	}
 	break;
