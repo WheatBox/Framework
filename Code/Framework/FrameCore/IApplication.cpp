@@ -39,7 +39,7 @@ namespace Frame {
 		glfwSetWindowSize(m_pWindow, siz.x, siz.y);
 	}
 
-	bool IApplication::InitializeWindow(const char * title, int windowWidth, int windowHeight) {
+	bool IApplication::InitializeWindow(const char * title, const Frame::Vec2i & windowSize) {
 		
 		glfwInit();
 		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
@@ -50,7 +50,7 @@ namespace Frame {
 		glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 #endif
 
-		m_pWindow = glfwCreateWindow(windowWidth, windowHeight, title, NULL, NULL);
+		m_pWindow = glfwCreateWindow(windowSize.x, windowSize.y, title, NULL, NULL);
 		if(!m_pWindow) {
 			Log::Log(Log::ELevel::Fatal, "Failed to create the window \"%s\"", title);
 			return false;
@@ -73,8 +73,8 @@ namespace Frame {
 
 		gInput->Initialize(m_pWindow);
 		gAudioPlayer->Initialize();
-		gCamera->__SetWindowSize({ windowWidth, windowHeight });
-		gCamera->SetViewSize({ windowWidth, windowHeight });
+		gCamera->__SetWindowSize(windowSize);
+		gCamera->SetViewSize(windowSize);
 
 		return true;
 	}

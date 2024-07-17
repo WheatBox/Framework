@@ -16,8 +16,8 @@ namespace Frame {
 		GLFWwindow * m_pWindow = nullptr;
 
 	public:
-		int EntryPoint(int argc, char ** argv) {
-			if(!InitializeWindow("Framework", 800, 600)) {
+		int EntryPoint(const char * title, const Frame::Vec2i & windowSize) {
+			if(!InitializeWindow(title, windowSize)) {
 				Log::Log(Log::ELevel::Fatal, "Can not initialize the window! The program will be terminated.");
 				Terminate();
 				return -1;
@@ -25,7 +25,7 @@ namespace Frame {
 			
 			SetVSync(true);
 
-			Initialize(argc, argv);
+			Initialize();
 			Run();
 			return 0;
 		}
@@ -37,10 +37,10 @@ namespace Frame {
 
 	protected:
 
-		bool InitializeWindow(const char * title, int windowWidth, int windowHeight);
+		bool InitializeWindow(const char * title, const Frame::Vec2i & windowSize);
 		void Run();
 
-		virtual void Initialize(int argc, char ** argv) = 0;
+		virtual void Initialize() = 0;
 
 		virtual void MainLoopPriority() {}
 		virtual void MainLoopLast() {}

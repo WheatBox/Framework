@@ -1,6 +1,6 @@
 ﻿#include "DiaryApplication.h"
 
-int main(int argc, char ** argv) {
+int main() {
 	printf("main called\n");
-	return CDiaryApplication().EntryPoint(argc, argv);
+	return CDiaryApplication {}.EntryPoint("Framework", { 800, 600 });
 }
