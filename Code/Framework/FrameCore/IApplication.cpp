@@ -64,9 +64,7 @@ namespace Frame {
 
 		gRenderer->Initialize();
 		glfwSetFramebufferSizeCallback(m_pWindow,
-			[](GLFWwindow * pWindow, int width, int height) {
-				pWindow;
-				glViewport(0, 0, width, height);
+			[](GLFWwindow *, int width, int height) {
 				gCamera->__SetWindowSize({ width, height });
 			}
 		);

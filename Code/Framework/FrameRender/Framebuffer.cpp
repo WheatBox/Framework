@@ -7,6 +7,8 @@
 
 #include <glad/glad.h>
 
+#include <stack>
+
 namespace Frame {
 
 	CFramebuffer::CFramebuffer(const Frame::Vec2i & siz)
@@ -31,23 +33,33 @@ namespace Frame {
 		glDeleteFramebuffers(1, & m_FBO);
 	}
 
-	void CFramebuffer::Bind(bool bResetCamera, bool bClearAfterBind) {
-		glBindFramebuffer(GL_FRAMEBUFFER, m_FBO);
-		glViewport(0, 0, m_size.x, m_size.y);
-		
-		if(bResetCamera) {
-			m_bResetedCamera = true;
-
-			m_viewSizeBefore = gCamera->GetViewSize();
-			m_camZoomBefore = gCamera->GetZoom();
-			m_camPosBefore = gCamera->GetPos();
-			m_camRotationBefore = gCamera->GetRotation();
-
-			gCamera->SetViewSize(m_size);
-			gCamera->SetZoom(1.f);
-			gCamera->SetPos(Vec2Cast(m_size) * .5f);
-			gCamera->SetRotation(0.f);
+	std::stack<unsigned int> __FBOStack;
+	void __FBOPush(unsigned int FBO) {
+		glBindFramebuffer(GL_FRAMEBUFFER, FBO);
+		__FBOStack.push(FBO);
+	}
+	void __FBOPop() {
+		if(__FBOStack.empty()) {
+			glBindFramebuffer(GL_FRAMEBUFFER, 0);
+			return;
 		}
+		__FBOStack.pop();
+		if(__FBOStack.empty()) {
+			glBindFramebuffer(GL_FRAMEBUFFER, 0);
+		} else {
+			glBindFramebuffer(GL_FRAMEBUFFER, __FBOStack.top());
+		}
+	}
+
+	void CFramebuffer::Bind(bool bClearAfterBind) {
+		__FBOPush(m_FBO);
+		gCamera->PushOntoStack();
+
+		gCamera->SetViewport(0, m_size);
+		gCamera->SetViewSize(m_size);
+		gCamera->SetZoom(1.f);
+		gCamera->SetPos(Vec2Cast(m_size) * .5f);
+		gCamera->SetRotation(0.f);
 
 		if(bClearAfterBind) {
 			gRenderer->Clear(0x000000, 0.f);
@@ -55,18 +67,8 @@ namespace Frame {
 	}
 
 	void CFramebuffer::Unbind() {
-		glBindFramebuffer(GL_FRAMEBUFFER, 0);
-		const Vec2i windowSize = gCamera->GetWindowSize();
-		glViewport(0, 0, windowSize.x, windowSize.y);
-
-		if(m_bResetedCamera) {
-			m_bResetedCamera = false;
-			
-			gCamera->SetViewSize(m_viewSizeBefore);
-			gCamera->SetZoom(m_camZoomBefore);
-			gCamera->SetPos(m_camPosBefore);
-			gCamera->SetRotation(m_camRotationBefore);
-		}
+		__FBOPop();
+		gCamera->PopFromStack();
 	}
 
 }

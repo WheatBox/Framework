@@ -77,6 +77,7 @@ private:
 	Frame::CStaticSprite * m_pTextureAtlasTestSprite = nullptr;
 
 	Frame::CFramebuffer * m_pFramebuffer = nullptr;
+	Frame::CFramebuffer * m_pFramebuffer2 = nullptr;
 
 	std::vector<Frame::CFont::STextAutoWrapLineFormat> m_lineFormats {};
 	UnicodeString m_text = Frame::UTF8Utils::ToUnicode(

@@ -299,15 +299,21 @@ void CTestComponent2::ProcessEvent(const Frame::EntityEvent::SEvent & event) {
 #endif
 #if 1
 		if(!m_pFramebuffer) {
-			m_pFramebuffer = new Frame::CFramebuffer { 100 };
+			m_pFramebuffer = new Frame::CFramebuffer { 200 };
 		}
+		if(!m_pFramebuffer2) {
+			m_pFramebuffer2 = new Frame::CFramebuffer { 100 };
+		}
+
 		m_pFramebuffer->Bind();
-
-		Frame::gRenderer->DrawSprite(m_pSprite->GetImage(), Frame::Vec2Cast(m_pFramebuffer->GetSize()) * .5f, 1.f, m_angle);
-
+		Frame::gRenderer->pShapeRenderer->DrawRectangleBlended(50, 150, 0xCCCC00, 1.f);
+		m_pFramebuffer2->Bind();
+		Frame::gRenderer->DrawSprite(m_pSprite->GetImage(), Frame::Vec2Cast(m_pFramebuffer2->GetSize()) * .5f, 1.f, m_angle);
+		m_pFramebuffer2->Unbind();
+		Frame::gRenderer->DrawSprite(m_pFramebuffer2->GetImage(), Frame::Vec2 { 50.f }.RotateDegree(m_angle) + 100.f, 1.f, -m_angle);
+		Frame::gRenderer->pShapeRenderer->DrawRectangleBlended(50, 150, 0xCC0000, 1.f, 4.f);
 		m_pFramebuffer->Unbind();
-
-		Frame::gRenderer->DrawSprite(m_pFramebuffer->GetImage(), Frame::Vec2 { 50.f }.RotateDegree(m_angle) - 100.f, 1.f, -m_angle);
+		Frame::gRenderer->DrawSprite(m_pFramebuffer->GetImage(), -100.f, 1.f, 0.f);
 #endif
 	}
 	break;
