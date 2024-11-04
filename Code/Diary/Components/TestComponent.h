@@ -124,6 +124,6 @@ public:
 	virtual Frame::EntityEvent::Flags GetEventFlags() const override {
 		return Frame::EntityEvent::EFlag::Nothing;
 	}
-	virtual void ProcessEvent(const Frame::EntityEvent::SEvent & event) override {event;}
+	virtual void ProcessEvent(const Frame::EntityEvent::SEvent &) override {}
 
 };

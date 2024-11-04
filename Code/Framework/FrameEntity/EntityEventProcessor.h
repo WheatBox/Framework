@@ -66,7 +66,7 @@ namespace Frame {
 
 	private:
 		virtual void Process() override {}
-		virtual void Remove(IEntityComponent * pComponent) override { pComponent; }
+		virtual void Remove(IEntityComponent *) override {}
 	};
 
 	// 根据 CEntity::m_zDepth 进行排序

@@ -2,9 +2,7 @@
 
 #include <string>
 
-namespace std {
-	struct tm;
-}
+struct tm;
 
 namespace Frame::Log {
 
@@ -16,7 +14,7 @@ namespace Frame::Log {
 		Fatal
 	};
 
-	std::pair<std::tm *, int> GetTimeStamp();
+	std::pair<tm *, int> GetTimeStamp();
 	const char * GetTimeStampString(char dateDelimiter, char date_clock_Delimiter, char clockDelimiter);
 
 	constexpr const char * GetLevelName(ELevel level) {

@@ -9,6 +9,7 @@
 #include <glad/glad.h>
 
 #include <iostream>
+#include <cfloat>
 
 namespace Frame {
 
@@ -47,13 +48,13 @@ namespace Frame {
 
 		ftError = FT_Init_FreeType(& m_ftLib);
 		if(ftError) {
-			Log::Log(Log::ELevel::Error, "Failed to initialize FreeType. Error code: %d", ftError);
+			Log::Log(Log::ELevel::Error, "Failed to initialize FreeType. Error code: %d; Filename: %s", ftError, filename);
 			return;
 		}
 
 		ftError = FT_New_Face(m_ftLib, filename, 0, & m_ftFace);
 		if(ftError) {
-			Log::Log(Log::ELevel::Error, "Failed to create a new FreeType face. Error code: %d", ftError);
+			Log::Log(Log::ELevel::Error, "Failed to create a new FreeType face. Error code: %d; Filename: %s", ftError, filename);
 			return;
 		}
 
@@ -120,7 +121,7 @@ namespace Frame {
 	}
 
 	void CFont::SetFontSize(float fontSize) {
-		if(fontSize == m_fontSize) {
+		if(!m_ftFace || fontSize == m_fontSize) {
 			return;
 		}
 
@@ -142,6 +143,10 @@ namespace Frame {
 	}
 
 	void CFont::TextAutoWrapBase(UnicodeStringView unicodeText, float _maxLineWidth, const std::function<void (size_t, size_t, const Vec2 &, float)> & What_need_to_do_when_wrap) {
+		if(!m_ftFace) {
+			return;
+		}
+
 		if(_maxLineWidth <= 0.f) {
 			_maxLineWidth = FLT_MAX;
 		}

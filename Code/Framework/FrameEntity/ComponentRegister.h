@@ -28,6 +28,11 @@ namespace Frame {
 
 }
 
+#define REGISTER_ENTITY_COMPONENT(ComponentType) \
+	template<> Frame::GUID Frame::SComponentType<ComponentType>::s_guid {}; \
+	Frame::CComponentRegister<ComponentType> ___Register##ComponentType##__COUNTER__ {};
+/*
 #define REGISTER_ENTITY_COMPONENT(Namespace, ComponentType) \
 	Frame::GUID Frame::SComponentType<Namespace::ComponentType>::s_guid {}; \
 	Frame::CComponentRegister<Namespace::ComponentType> ___##ComponentType##Register {};
+*/

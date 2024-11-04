@@ -86,7 +86,7 @@ namespace Frame {
 			vertexCode = vShaderStream.str();
 			fragmentCode = fShaderStream.str();
 
-		} catch(std::ifstream::failure e) {
+		} catch(std::ifstream::failure & e) {
 			Log::Log(Log::ELevel::Error, "Failed to load shaders. Detail: %s", e.what());
 			return false;
 		}

@@ -9,9 +9,9 @@
 #include <FrameAudio/AudioPlayer.h>
 #include <FrameCore/Camera.h>
 
-REGISTER_ENTITY_COMPONENT(, CTestComponent);
-REGISTER_ENTITY_COMPONENT(, CTestComponent2);
-REGISTER_ENTITY_COMPONENT(, CTestComponent3);
+REGISTER_ENTITY_COMPONENT(CTestComponent);
+REGISTER_ENTITY_COMPONENT(CTestComponent2);
+REGISTER_ENTITY_COMPONENT(CTestComponent3);
 
 Frame::EntityEvent::Flags CTestComponent::GetEventFlags() const {
 	return Frame::EntityEvent::EFlag::Update
@@ -25,7 +25,7 @@ void CTestComponent::ProcessEvent(const Frame::EntityEvent::SEvent & event) {
 	{
 		m_pEntity->Rotate(1.f);
 		
-		Frame::Vec2 pos = m_pEntity->GetPosition();
+		//Frame::Vec2 pos = m_pEntity->GetPosition();
 
 		Frame::gRenderer->SetColor(0x81F377);
 		/*Frame::gRenderer->pShapeRenderer->DrawRectangle(
@@ -39,7 +39,7 @@ void CTestComponent::ProcessEvent(const Frame::EntityEvent::SEvent & event) {
 	break;
 	case Frame::EntityEvent::Render:
 	{
-		Frame::Vec2 pos = m_pEntity->GetPosition();
+		//Frame::Vec2 pos = m_pEntity->GetPosition();
 
 		Frame::gRenderer->SetColor(0x8D6B94);
 		/*Frame::gRenderer->pShapeRenderer->DrawRectangle(
@@ -67,6 +67,7 @@ void CTestComponent2::Initialize() {
 
 	m_pAnimSprite = new Frame::CAnimatedSprite { "Assets/StripTest.png", 4 };
 
+#ifdef _WIN32
 	//m_pFont = new Frame::CFont { "C:/Windows/Fonts/STZHONGS.TTF", 32.f };
 	//m_pFont = new Frame::CFont { "C:/Windows/Fonts/simkai.ttf", 32.f };
 	//m_pFont = new Frame::CFont { "C:/Windows/Fonts/SIMLI.TTF", 32.f };
@@ -74,15 +75,23 @@ void CTestComponent2::Initialize() {
 	m_pFont = new Frame::CFont { "C:/Windows/Fonts/msyh.ttc", 32.f };
 	//m_pFont = new Frame::CFont { "C:/Users/15599/AppData/Local/Microsoft/Windows/Fonts/onryou.ttf", 32.f };
 	//m_pFont = new Frame::CFont { "C:/Users/15599/AppData/Local/Microsoft/Windows/Fonts/YaoSuiXinShouXieTi-2.ttf", 32.f };
+#else
+	//m_pFont = new Frame::CFont { "/usr/share/fonts/truetype/hack/Hack-Regular.ttf", 32.f };
+	m_pFont = new Frame::CFont { "/usr/share/fonts/opentype/noto/NotoSerifCJK-Regular.ttc", 32.f };
+#endif
 	m_pFont->SetFontSize(16.f);
 	m_lineFormats = m_pFont->TextAutoWrapLineFormats(m_text, 0.f);
 
 	Frame::gRenderer->pTextRenderer->SetFont(m_pFont);
 
+#ifdef _WIN32
 	m_pSound = new Frame::CSound { "D:/RickAstley.mp3", true };
 	//m_pSound = new Frame::CSound { "F:/GameMakerProjects/2022CGJ/Audios/stone_door_open.wav", true };
 	//m_pSound = new Frame::CSound { "D:/Downloads/bounce.wav" };
 	//m_pSound = new Frame::CSound { "F:/C_CPP/_download/openal-impl-vid4/res/soundeffects/sci-fidrone.ogg" };
+#else
+	m_pSound = new Frame::CSound { "/home/wheat_box/mp3test.mp3", true };
+#endif
 
 	//Frame::gAudioPlayer->SetFalloffModel(Frame::CAudioPlayer::EFalloffModel::None);
 	Frame::gAudioPlayer->SetFalloffModel(Frame::CAudioPlayer::EFalloffModel::ExponentDistanceClamped);
@@ -119,7 +128,7 @@ void CTestComponent2::ProcessEvent(const Frame::EntityEvent::SEvent & event) {
 	{
 		float frameTime = event.params[0].f;
 
-		printf("fps: %f\n", 1.f / frameTime);
+		//printf("fps: %f\n", 1.f / frameTime);
 
 		m_seconds += frameTime;
 
@@ -173,7 +182,7 @@ void CTestComponent2::ProcessEvent(const Frame::EntityEvent::SEvent & event) {
 		}
 		if(m_pAudioSource != nullptr) {
 			//Frame::gAudioPlayer->SetListenerPosition({ 1 * sin(Frame::DegToRad(m_angle)), 0, 0 });
-			m_pAudioSource->SetPosition({ 10 * cos(Frame::DegToRad(m_angle)), 10 * sin(Frame::DegToRad(m_angle)), 0 });
+			m_pAudioSource->SetPosition({ 10 * std::cos(Frame::DegToRad(m_angle)), 10 * std::sin(Frame::DegToRad(m_angle)), 0 });
 		}
 	}
 	break;
@@ -193,7 +202,7 @@ void CTestComponent2::ProcessEvent(const Frame::EntityEvent::SEvent & event) {
 
 		Frame::gRenderer->pShapeRenderer->DrawPoint(vPos, 12.f);
 		Frame::gRenderer->pShapeRenderer->DrawPoint(vPos + Frame::Vec2 { Frame::gAudioPlayer->GetListenerOrientation().first.x, Frame::gAudioPlayer->GetListenerOrientation().first.y } * 10, 4.f);
-		Frame::gRenderer->pShapeRenderer->DrawPointColorBlended(vPos + Frame::Vec2 { 10 * cos(Frame::DegToRad(m_angle)), 10 * sin(Frame::DegToRad(m_angle)) } * 10, 0xFFFF00, 12.f);
+		Frame::gRenderer->pShapeRenderer->DrawPointColorBlended(vPos + Frame::Vec2 { 10 * std::cos(Frame::DegToRad(m_angle)), 10 * std::sin(Frame::DegToRad(m_angle)) } * 10, 0xFFFF00, 12.f);
 #endif
 #if 1
 		//Frame::gRenderer->pSpriteShader->Use();

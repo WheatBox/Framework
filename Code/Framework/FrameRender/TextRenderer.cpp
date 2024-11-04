@@ -111,6 +111,10 @@ if(!m_pFont) { \
 	}
 
 	void CTextRenderer::DrawTextAutoWrapLineFormatsAlignBlended(UnicodeStringView unicodeText, const Vec2 & vPos, const std::vector<CFont::STextAutoWrapLineFormat> & textAutoWrapLineFormats, ETextHAlign halign, ETextVAlign valign, const ColorRGB & rgb, float alpha) {
+		if(textAutoWrapLineFormats.empty()) {
+			return;
+		}
+
 		UseMyShader(rgb, alpha);
 
 		float xOffsetRatio = 0.f;

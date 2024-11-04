@@ -6,6 +6,7 @@
 #include <chrono>
 #include <thread>
 #include <filesystem>
+#include <cstdarg>
 
 #ifdef _WIN32
 #include <Windows.h>
@@ -15,9 +16,9 @@
 
 namespace Frame::Log {
 
-	std::pair<std::tm *, int> GetTimeStamp() {
+	std::pair<tm *, int> GetTimeStamp() {
 #ifdef _WIN32
-		static std::tm tm;
+		static tm tm;
 		SYSTEMTIME wtm;
 		GetLocalTime(&wtm);
 
@@ -94,7 +95,7 @@ namespace Frame::Log {
 		va_end(argList);
 
 		char szLogBuf[__bufSize] { '\0' };
-		snprintf(szLogBuf, __bufSize - 1, "[%s] %s} %s",
+		snprintf(szLogBuf, __bufSize - 1 + 6, "[%s] %s} %s",
 			GetLevelName(level), GetTimeStampString('-', ' ', ':'), szMessage
 		);
 
