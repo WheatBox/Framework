@@ -5,80 +5,35 @@ project(Framework)
 set(CMAKE_C_STANDARD 99)
 set(CMAKE_CXX_STANDARD 17)
 
-option(Platform "The platform to compile to" "Windows-x64")
-
-set(PlatformNote "#
-#	Platform can only be set to:
-#		Windows-x64 (Default)
-#		Windows-x86 (In Progress)
-#		Linux
-#		Android (Haven't start yet)
-#		iOS (Haven't start yet)
-#")
-
-message("Platform = " ${Platform})
+#set(VCPKG_DEFAULT_LIBRARY_LINKAGE static)
 
 set(THIRD_PARTY_DIR ${CMAKE_SOURCE_DIR}/Third/)
 set(THIRD_PARTY_PLATFORM_DIR "")
 
-set(Windows-x64 NO)
-set(Windows-x86 NO)
-set(Linux NO)
+set(OUTPUT_DIR ${CMAKE_SOURCE_DIR}/Bin/Test/)
 
-if(Platform STREQUAL "Windows-x64")
+find_package(glfw3 CONFIG REQUIRED)
+find_package(Freetype CONFIG REQUIRED)
+find_package(OpenAL CONFIG REQUIRED) # OpenAL-soft
+find_package(SndFile CONFIG REQUIRED)
 
-	set(Windows-x64 YES)
-
-	set(OUTPUT_DIR ${CMAKE_SOURCE_DIR}/Bin/Windows-x64/)
-	set(THIRD_PARTY_PLATFORM_DIR ${THIRD_PARTY_DIR}/Windows/)
-
-elseif(Platform STREQUAL "Windows-x86")
-
-	set(Windows-x86 YES)
-
-	set(OUTPUT_DIR ${CMAKE_SOURCE_DIR}/Bin/Windows-x86/)
-
-elseif(Platform STREQUAL "Linux")
-
-	set(Linux YES)
-
-	set(OUTPUT_DIR ${CMAKE_SOURCE_DIR}/Bin/Linux/)
-
-else()
-	message(FATAL_ERROR "
-# ------------------------------------------------ #
-#
-#	FATAL ERROR : Unknown Platform
-"
-${PlatformNote}
-"
-# ------------------------------------------------ #
-")
-endif()
-
-find_package(glfw3 REQUIRED)
-find_package(Freetype REQUIRED)
-find_package(OpenAL REQUIRED) # OpenAL-soft
-find_package(SndFile REQUIRED)
+set(THIRD_LIBS
+	glfw
+	Freetype::Freetype
+	OpenAL::OpenAL
+	SndFile::sndfile
+)
 
 set(OUTPUT_LIB_DIR ${CMAKE_SOURCE_DIR}/Bin/Lib/)
-
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG ${OUTPUT_DIR})
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_MINSIZEREL ${OUTPUT_DIR})
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE ${OUTPUT_DIR})
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELWITHDEBINFO ${OUTPUT_DIR})
 
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${OUTPUT_LIB_DIR})
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${OUTPUT_DIR})
 
-if(Windows-x64)
-	file(COPY ${SNDFILE_DIR}/bin/sndfile.dll DESTINATION ${OUTPUT_DIR})
-
-	file(COPY ${OPENAL_DIR}/bin/Win64/soft_oal.dll DESTINATION ${OUTPUT_DIR})
-	file(RENAME ${OUTPUT_DIR}/soft_oal.dll ${OUTPUT_DIR}/OpenAL32.dll)
-elseif(Windows-x86)
-endif()
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG ${OUTPUT_DIR})
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_MINSIZEREL ${OUTPUT_DIR})
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE ${OUTPUT_DIR})
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELWITHDEBINFO ${OUTPUT_DIR})
 
 macro(CopyFilesToOutput _folderName)
 
@@ -95,6 +50,7 @@ if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
 		-Wall
 		-Werror
 		-Wno-switch
+		-static
 	)
 endif()
 
@@ -105,7 +61,11 @@ if(MSVC)
 		/W4
 		/WX
 		/permissive
+		$<$<CONFIG:Debug>:/MTd>
+		$<$<CONFIG:Release>:/MT>
 	)
+	#set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /MT")
+	#set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /MTd")
 endif()
 
 macro(AddFiles _dest)
@@ -166,10 +126,7 @@ target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE
 )
 
 target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE
-	glfw
-	Freetype::Freetype
-	OpenAL::OpenAL
-	SndFile::sndfile
+	${THIRD_LIBS}
 )
 
 if(MSVC)
@@ -200,6 +157,8 @@ if(MSVC)
 	set_target_properties(Test PROPERTIES
 		VS_DEBUGGER_WORKING_DIRECTORY ${OUTPUT_DIR}
 	)
+	target_compile_options(Test PUBLIC "/ZI")
+	target_link_options(Test PUBLIC "/INCREMENTAL")
 endif()
 
 # ---------------------------

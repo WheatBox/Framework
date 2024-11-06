@@ -85,7 +85,8 @@ void CTestComponent2::Initialize() {
 	Frame::gRenderer->pTextRenderer->SetFont(m_pFont);
 
 #ifdef _WIN32
-	m_pSound = new Frame::CSound { "D:/RickAstley.mp3", true };
+	m_pSound = new Frame::CSound { "C:/Users/wheat_box/Downloads/mp3test.mp3", true };
+	//m_pSound = new Frame::CSound { "D:/RickAstley.mp3", true };
 	//m_pSound = new Frame::CSound { "F:/GameMakerProjects/2022CGJ/Audios/stone_door_open.wav", true };
 	//m_pSound = new Frame::CSound { "D:/Downloads/bounce.wav" };
 	//m_pSound = new Frame::CSound { "F:/C_CPP/_download/openal-impl-vid4/res/soundeffects/sci-fidrone.ogg" };
