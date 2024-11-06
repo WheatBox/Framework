@@ -18,6 +18,8 @@ This engine is using Entity Component architecture (The interface design has ref
 
 [GLFW](https://www.glfw.org/)
 
+[libsndfile](http://libsndfile.github.io/libsndfile/)
+
 [OpenAL Soft](https://github.com/kcat/openal-soft)
 
 [stb](https://github.com/nothings/stb)
