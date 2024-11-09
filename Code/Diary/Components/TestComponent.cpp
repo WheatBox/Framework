@@ -325,6 +325,9 @@ void CTestComponent2::ProcessEvent(const Frame::EntityEvent::SEvent & event) {
 		m_pFramebuffer->Unbind();
 		Frame::gRenderer->DrawSprite(m_pFramebuffer->GetImage(), -100.f, 1.f, 0.f);
 #endif
+
+		if(Frame::gInput->pKeyboard->GetPressed(Frame::EKeyId::eKI_Space))
+			Frame::Log::Log(Frame::Log::ELevel::Debug, "Test");
 	}
 	break;
 	}

@@ -7,6 +7,7 @@
 #include <thread>
 #include <filesystem>
 #include <cstdarg>
+#include <condition_variable>
 
 #ifdef _WIN32
 #include <Windows.h>
@@ -58,13 +59,17 @@ namespace Frame::Log {
 
 	std::queue<std::string> __logStrsQueue {};
 
+	std::mutex mut;
+	std::condition_variable cv;
+
 	bool Open(std::string pathName) {
 		if(__fsLogOut.is_open()) {
 			__fsLogOut.close();
 		}
 		
 		if(std::filesystem::path path { pathName }; !std::filesystem::exists(path)) {
-			if(!std::filesystem::create_directories(path)) {
+			std::filesystem::create_directories(path);
+			if(!std::filesystem::exists(path)) {
 				printf("Can not open or create directory: %s\n", pathName.c_str());
 				return false;
 			}
@@ -100,6 +105,8 @@ namespace Frame::Log {
 		);
 
 		__logStrsQueue.push({ szLogBuf });
+
+		cv.notify_one();
 	}
 
 	struct __SLogInit {
@@ -110,8 +117,8 @@ namespace Frame::Log {
 			[]() {
 				while(true) {
 					if(__logStrsQueue.empty()) {
-						std::this_thread::sleep_for(std::chrono::milliseconds { 50 });
-						continue;
+						std::unique_lock lock { mut };
+						cv.wait(lock);
 					}
 
 					std::cout << __logStrsQueue.front() << std::endl;
