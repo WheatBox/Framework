@@ -38,7 +38,7 @@ namespace Frame {
 	}
 
 	template<typename T>
-	constexpr T Clamp(T && n, T && low, T && high) {
+	constexpr T Clamp(T n, T low, T high) {
 		if(n < low) {
 			return low;
 		} else if(n > high) {
@@ -48,12 +48,12 @@ namespace Frame {
 	}
 
 	template<typename T>
-	constexpr T Min(T && n, T && min) {
+	constexpr T Min(T n, T min) {
 		return n > min ? min : n;
 	}
 
 	template<typename T>
-	constexpr T Max(T && n, T && max) {
+	constexpr T Max(T n, T max) {
 		return n > max ? n : max;
 	}
 
