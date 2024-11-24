@@ -53,8 +53,6 @@ namespace Frame::Log {
 
 	constexpr const char * const __szDefaultLogPath = "./Logs/";
 
-	constexpr size_t __bufSize = 512;
-
 	std::ofstream __fsLogOut;
 
 	std::queue<std::string> __logStrsQueue {};
@@ -100,7 +98,7 @@ namespace Frame::Log {
 		va_end(argList);
 
 		char szLogBuf[__bufSize] { '\0' };
-		snprintf(szLogBuf, __bufSize - 1 + 6, "[%s] %s} %s",
+		snprintf(szLogBuf, __bufSize - 1, "[%s] %s} %s",
 			GetLevelName(level), GetTimeStampString('-', ' ', ':'), szMessage
 		);
 

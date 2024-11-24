@@ -16,10 +16,24 @@ namespace Frame {
 
 	CRenderer::CRenderer()
 		: m_pDefaultShader { new CShader {} }
+		, m_pDefaultInstanceShader { new CShader {} }
 	{}
 
 	CRenderer::~CRenderer() {
 		delete m_pDefaultShader;
+		delete m_pDefaultInstanceShader;
+	}
+
+	void EnableInstancingVertexAttribArrays() {
+		for(int i = 0; i < 3 + 3 + 1; i++) {
+			glEnableVertexAttribArray(3 + i);
+		}
+	}
+
+	void DisableInstancingVertexAttribArrays() {
+		for(int i = 0; i < 3 + 3 + 1; i++) {
+			glDisableVertexAttribArray(3 + i);
+		}
 	}
 
 	void CRenderer::Initialize() {
@@ -36,6 +50,7 @@ namespace Frame {
 		};
 
 		glGenBuffers(1, & m_VBO);
+		glGenBuffers(1, & m_instanceVBO);
 		glGenVertexArrays(1, & m_VAO);
 		glGenBuffers(1, & m_EBO);
 
@@ -54,6 +69,29 @@ namespace Frame {
 		glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, stride, (void *)(7 * sizeof(float)));
 		glEnableVertexAttribArray(2);
 
+		RendererBase::BindVBO(m_instanceVBO);
+
+		GLsizei instancedStride = (9 + 9 + 4) * (GLsizei)sizeof(float);
+
+		glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, instancedStride, (void *)0);
+		glVertexAttribPointer(4, 3, GL_FLOAT, GL_FALSE, instancedStride, (void *)(3 * sizeof(float)));
+		glVertexAttribPointer(5, 3, GL_FLOAT, GL_FALSE, instancedStride, (void *)(6 * sizeof(float)));
+		glVertexAttribDivisor(3, 1);
+		glVertexAttribDivisor(4, 1);
+		glVertexAttribDivisor(5, 1);
+		
+		glVertexAttribPointer(6, 3, GL_FLOAT, GL_FALSE, instancedStride, (void *)(9 * sizeof(float)));
+		glVertexAttribPointer(7, 3, GL_FLOAT, GL_FALSE, instancedStride, (void *)(12 * sizeof(float)));
+		glVertexAttribPointer(8, 3, GL_FLOAT, GL_FALSE, instancedStride, (void *)(15 * sizeof(float)));
+		glVertexAttribDivisor(6, 1);
+		glVertexAttribDivisor(7, 1);
+		glVertexAttribDivisor(8, 1);
+
+		glVertexAttribPointer(9, 4, GL_FLOAT, GL_FALSE, instancedStride, (void *)(18 * sizeof(float)));
+		glVertexAttribDivisor(9, 1);
+
+		RendererBase::BindVBO(0);
+
 		pShapeRenderer = new CShapeRenderer { this };
 		pTextRenderer = new CTextRenderer { this };
 
@@ -62,7 +100,15 @@ namespace Frame {
 			m_pDefaultShader->Compile(DEFAULT_SPRITE_SHADER);
 		}
 		m_pDefaultShader->SetUniformInt("u_BaseTexture", 0);
+
+		if(!m_pDefaultInstanceShader->CompileFiles(DEFAULT_INSTANCE_SPRITE_SHADER_FILES)) {
+			Log::Log(Log::ELevel::Error, "Failed to load or compile default instance sprite shader files: %s; %s; So now using in-build default instance sprite shaders", DEFAULT_INSTANCE_SPRITE_SHADER_FILES);
+			m_pDefaultInstanceShader->Compile(DEFAULT_INSTANCE_SPRITE_SHADER);
+		}
+		m_pDefaultInstanceShader->SetUniformInt("u_BaseTexture", 0);
+
 		SetShader(m_pDefaultShader);
+		SetInstanceShader(m_pDefaultInstanceShader);
 
 		glActiveTexture(GL_TEXTURE0);
 	}
@@ -74,16 +120,14 @@ namespace Frame {
 	void CRenderer::RenderEnd() {
 	}
 
-	void CRenderer::SetShaderProjectionUniforms(CShader * pShader) const {
+	void CRenderer::SetShaderProjectionMatrix(CShader * pShader) const {
 		const Vec2 viewSize = Vec2Cast<float>(gCamera->GetViewSize());
-		const Vec2 proj = Vec2 {
-			2.f / viewSize.x,
-			2.f / viewSize.y
-		} * gCamera->GetZoom();
-		const Vec2 camPos = gCamera->GetPos();
-		pShader->SetUniformVec2("u_vProj", proj.x, proj.y);
-		pShader->SetUniformVec2("u_vCamPos", camPos.x, camPos.y);
-		pShader->SetUniformFloat("u_fViewRotRad", gCamera->GetViewRotation());
+		
+		pShader->SetUniformMat3("u_mProj", (
+			Matrix33::CreateScale(Vec2 { 2.f / viewSize.x, -2.f / viewSize.y } * gCamera->GetZoom())
+			* Matrix33::CreateRotationZ(gCamera->GetViewRotation())
+			* Matrix33::CreateTranslation(-gCamera->GetPos())
+			).data);
 	}
 
 	void CRenderer::Clear(ColorRGB color, float alpha) {
@@ -109,10 +153,12 @@ namespace Frame {
 		RendererBase::BindVBO(m_VBO);
 		glBufferData(GL_ARRAY_BUFFER, sizeof(textureVertexBuffer.m_data), textureVertexBuffer.m_data, GL_DYNAMIC_DRAW);
 
+		RendererBase::BindVBO(0);
+
 		RendererBase::BindTextureId(textureId);
 
 		_pShader->Use();
-		SetShaderProjectionUniforms(_pShader);
+		SetShaderProjectionMatrix(_pShader);
 		glDrawElements(GL_TRIANGLE_STRIP, 4, GL_UNSIGNED_INT, NULL);
 	}
 
@@ -145,6 +191,42 @@ namespace Frame {
 		//} else {
 			DrawTexture(pSpriteImage->GetTextureId(), textureVertexBuffer);
 		//}
+	}
+
+	/* +-----------------------------------------------+ */
+	/* |             Draw Sprites Instanced            | */
+	/* +-----------------------------------------------+ */
+
+	void CRenderer::DrawTexturesInstanced(unsigned int textureId, const STextureVertexBuffer & textureVertexBuffer, const std::vector<SInstanceBuffer> & instances, CShader * _pShader) {
+		RendererBase::BindVAO(m_VAO);
+
+		RendererBase::BindVBO(m_VBO);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(textureVertexBuffer.m_data), textureVertexBuffer.m_data, GL_DYNAMIC_DRAW);
+
+		RendererBase::BindVBO(m_instanceVBO);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(SInstanceBuffer) * instances.size(), instances.data(), GL_DYNAMIC_DRAW);
+
+		RendererBase::BindVBO(0);
+
+		RendererBase::BindTextureId(textureId);
+
+		EnableInstancingVertexAttribArrays();
+
+		_pShader->Use();
+		SetShaderProjectionMatrix(_pShader);
+		glDrawElementsInstanced(GL_TRIANGLE_STRIP, 4, GL_UNSIGNED_INT, NULL, static_cast<GLsizei>(instances.size()));
+
+		DisableInstancingVertexAttribArrays();
+	}
+
+	void CRenderer::DrawSpritesInstanced(const SSpriteImage * pSpriteImage, const std::vector<SInstanceBuffer> & instances, STextureVertexBuffer & textureVertexBuffer) {
+		textureVertexBuffer.SetPositions(
+			pSpriteImage->GetTopLeftOffset(),
+			pSpriteImage->GetBottomRightOffset()
+		);
+		textureVertexBuffer.SetTexCoord(pSpriteImage->GetUVLeftTop(), pSpriteImage->GetUVRightBottom());
+
+		DrawTexturesInstanced(pSpriteImage->GetTextureId(), textureVertexBuffer, instances);
 	}
 
 }

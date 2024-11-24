@@ -8,7 +8,7 @@
 #include <FrameRender/Shader.h>
 
 #include <FrameMath/ColorMath.h>
-#include <FrameMath/Vector2.h>
+#include <FrameMath/Matrix33.h>
 
 struct GLFWwindow;
 
@@ -58,12 +58,17 @@ namespace Frame {
 		// 元素缓冲对象(Element Buffer Object，EBO)，or 索引缓冲对象(Index Buffer Object，IBO)
 		unsigned int m_VBO = 0, m_VAO = 0, m_EBO = 0;
 
+		unsigned int m_instanceVBO = 0, m_instanceVAO = 0, m_instanceEBO = 0;
+
 		STextureVertexBuffer m_defaultTextureVertexBuffer {};
 
 		ColorRGB m_backgroundColor { 0, 0, 0 };
 
 		CShader * const m_pDefaultShader;
 		CShader * m_pShader = nullptr;
+
+		CShader * const m_pDefaultInstanceShader;
+		CShader * m_pInstanceShader = nullptr;
 
 	public:
 		void RenderBegin();
@@ -73,7 +78,11 @@ namespace Frame {
 		void SetShader(CShader * pShader) { m_pShader = pShader; }
 		CShader * GetShader() const { return m_pShader; }
 
-		void SetShaderProjectionUniforms(CShader * pShader) const;
+		void ResetInstanceShader() { m_pInstanceShader = m_pDefaultInstanceShader; }
+		void SetInstanceShader(CShader * pShader) { m_pInstanceShader = pShader; }
+		CShader * GetInstanceShader() const { return m_pInstanceShader; }
+
+		void SetShaderProjectionMatrix(CShader * pShader) const;
 
 		STextureVertexBuffer & GetTextureVertexBuffer() {
 			return m_defaultTextureVertexBuffer;
@@ -102,7 +111,7 @@ namespace Frame {
 			DrawTexture(textureId, textureVertexBuffer, m_pShader);
 		}
 		void DrawTexture(unsigned int textureId, const STextureVertexBuffer & textureVertexBuffer, CShader * _pShader);
-		
+
 		void DrawSprite(const SSpriteImage * pSpriteImage, const Vec2 & vPos, STextureVertexBuffer & textureVertexBuffer);
 		void DrawSprite(const SSpriteImage * pSpriteImage, const Vec2 & vPos, const Vec2 & vScale, float angle, STextureVertexBuffer & textureVertexBuffer);
 		void DrawSprite(const SSpriteImage * pSpriteImage, const Vec2 & vPos, STextureVertexBuffer && textureVertexBuffer) {
@@ -201,6 +210,38 @@ namespace Frame {
 			DrawSprite(pSpriteImage, vPos, vScale, angle, { {}, {},
 				rgbTL, aTL, rgbTR, aTR, rgbBL, aBL, rgbBR, aBR
 			});
+		}
+
+		/* +-----------------------------------------------+ */
+		/* |             Draw Sprites Instanced            | */
+		/* +-----------------------------------------------+ */
+
+		struct SInstanceBuffer final {
+			Matrix33 transform = Matrix33::CreateIdentity();
+			Matrix33 texCoordTransform = Matrix33::CreateIdentity();
+			float blendRGBA[4] { 1.f, 1.f, 1.f, 1.f };
+		};
+		static_assert(sizeof(SInstanceBuffer) ==
+			sizeof(SInstanceBuffer::transform.data) + sizeof(SInstanceBuffer::texCoordTransform.data) + sizeof(SInstanceBuffer::blendRGBA)
+			, "ERROR! There is some extra memory in SInstanceBuffer!");
+
+		void DrawTexturesInstanced(unsigned int textureId, const STextureVertexBuffer & textureVertexBuffer, const std::vector<SInstanceBuffer> & instances) {
+			DrawTexturesInstanced(textureId, textureVertexBuffer, instances, m_pInstanceShader);
+		}
+		void DrawTexturesInstanced(unsigned int textureId, const STextureVertexBuffer & textureVertexBuffer, const std::vector<SInstanceBuffer> & instances, CShader * _pShader);
+
+		void DrawSpritesInstanced(const SSpriteImage * pSpriteImage, const std::vector<SInstanceBuffer> & instances, STextureVertexBuffer & textureVertexBuffer);
+		void DrawSpritesInstanced(const SSpriteImage * pSpriteImage, const std::vector<SInstanceBuffer> & instances, STextureVertexBuffer && textureVertexBuffer) {
+			DrawSpritesInstanced(pSpriteImage, instances, static_cast<STextureVertexBuffer &>(textureVertexBuffer));
+		}
+
+		void DrawSpritesInstanced(const SSpriteImage * pSpriteImage, const std::vector<SInstanceBuffer> & instances) {
+			DrawSpritesInstanced(pSpriteImage, instances, m_defaultTextureVertexBuffer);
+		}
+		void DrawSpritesInstancedBlended(const SSpriteImage * pSpriteImage, const std::vector<SInstanceBuffer> & instances, const ColorRGB & rgb, float alpha) {
+			DrawSpritesInstanced(pSpriteImage, instances, { {}, {},
+				rgb, alpha, rgb, alpha, rgb, alpha, rgb, alpha
+				});
 		}
 
 	};

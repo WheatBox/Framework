@@ -33,6 +33,11 @@ namespace Frame::Log {
 		return "Unknown";
 	}
 
+	constexpr size_t __bufSize = 1024;
+	constexpr size_t GetBufSize() {
+		return __bufSize;
+	}
+
 	bool Open(std::string pathName = "./Logs/");
 	void Log(ELevel level, const char * const szFormat, ...);
 

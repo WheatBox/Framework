@@ -50,7 +50,7 @@ namespace Frame {
 		
 		glBufferData(GL_ARRAY_BUFFER, sizeof(float) * static_cast<size_t>(count * 7), vertexBuffer, GL_DYNAMIC_DRAW);
 		m_pShader->Use();
-		m_pRenderer->SetShaderProjectionUniforms(m_pShader);
+		m_pRenderer->SetShaderProjectionMatrix(m_pShader);
 		glDrawArrays(_GL_mode, 0, count);
 	}
 

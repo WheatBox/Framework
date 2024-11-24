@@ -6,13 +6,9 @@
 
 namespace Frame {
 
-	struct STextureVertexBuffer {
+	struct STextureVertexBuffer final {
 
-		static const uint8 s_dataLen = 4 * 9;
-
-		float m_data[s_dataLen];
-
-		virtual ~STextureVertexBuffer() = default;
+		float m_data[4 * 9];
 
 		STextureVertexBuffer()
 			: STextureVertexBuffer({ 0.f, 0.f }, { 0.f, 0.f }, 0xFFFFFF, 1.f)

@@ -4,14 +4,9 @@ layout (location = 1) in vec4 aColor;
 
 out vec4 vColor;
 
-uniform vec2 u_vProj;
-uniform vec2 u_vCamPos;
-uniform float u_fViewRotRad;
+uniform mat3 u_mProj;
 
 void main() {
-	vec2 pos = vec2(aPos.x - u_vCamPos.x, -aPos.y + u_vCamPos.y);
-	float cosr = cos(u_fViewRotRad), sinr = sin(u_fViewRotRad);
-	pos = vec2(pos.x * cosr - pos.y * sinr, pos.y * cosr + pos.x * sinr);
-	gl_Position = vec4(pos.x * u_vProj.x, pos.y * u_vProj.y, aPos.z, 1.f);
+	gl_Position = vec4((vec3(aPos.x, aPos.y, 1.f) * u_mProj).xy, aPos.z, 1.f);
 	vColor = aColor;
 }

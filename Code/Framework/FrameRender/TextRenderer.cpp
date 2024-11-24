@@ -151,7 +151,7 @@ if(!m_pFont) { \
 	void CTextRenderer::UseMyShader(const ColorRGB & rgb, float alpha) {
 		m_pShader->Use();
 		m_pShader->SetUniformVec4("u_vColor", ONERGB(rgb), alpha);
-		m_pRenderer->SetShaderProjectionUniforms(m_pShader);
+		m_pRenderer->SetShaderProjectionMatrix(m_pShader);
 	}
 
 #undef __DRAWTEXT_NEXTLINE

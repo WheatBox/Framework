@@ -14,7 +14,7 @@ namespace Frame {
 
 	bool CShader::Compile(const char * szVertexShaderCode, const char * szFragmentShaderCode) {
 		int success;
-		char infoLog[512];
+		char infoLog[Log::GetBufSize()];
 
 		unsigned int vertex = glCreateShader(GL_VERTEX_SHADER);
 		glShaderSource(vertex, 1, & szVertexShaderCode, NULL);
@@ -22,7 +22,7 @@ namespace Frame {
 
 		glGetShaderiv(vertex, GL_COMPILE_STATUS, & success);
 		if(!success) {
-			glGetShaderInfoLog(vertex, 512, NULL, infoLog);
+			glGetShaderInfoLog(vertex, sizeof(infoLog), NULL, infoLog);
 			Log::Log(Log::ELevel::Error, "Failed to compile the vertex shader. Detail: %s", infoLog);
 
 			glDeleteShader(vertex);
@@ -35,7 +35,7 @@ namespace Frame {
 
 		glGetShaderiv(fragment, GL_COMPILE_STATUS, & success);
 		if(!success) {
-			glGetShaderInfoLog(fragment, 512, NULL, infoLog);
+			glGetShaderInfoLog(fragment, sizeof(infoLog), NULL, infoLog);
 			Log::Log(Log::ELevel::Error, "Failed to compile the fragment shader. Detail: %s", infoLog);
 
 			glDeleteShader(fragment);
@@ -49,7 +49,7 @@ namespace Frame {
 
 		glGetProgramiv(m_glProgramId, GL_LINK_STATUS, & success);
 		if(!success) {
-			glGetProgramInfoLog(m_glProgramId, 512, NULL, infoLog);
+			glGetProgramInfoLog(m_glProgramId, sizeof(infoLog), NULL, infoLog);
 			Log::Log(Log::ELevel::Error, "Failed to create shader programs. Detail: %s", infoLog);
 
 			glDeleteProgram(m_glProgramId);

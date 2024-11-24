@@ -8,6 +8,8 @@
 #include <FrameInput/Input.h>
 #include <FrameAudio/AudioPlayer.h>
 #include <FrameCore/Camera.h>
+#include <FrameMath/Matrix33.h>
+#include <FrameMath/Matrix22.h>
 
 REGISTER_ENTITY_COMPONENT(CTestComponent);
 REGISTER_ENTITY_COMPONENT(CTestComponent2);
@@ -115,6 +117,65 @@ void CTestComponent2::Initialize() {
 		}
 	};
 	m_pTextureAtlasTestSprite = new Frame::CStaticSprite { m_pTextureAtlas, "image (3).png" };
+
+	printf("\n");
+
+	{
+		Frame::Matrix_tpl<int, 4, 3> mat1{ {
+				5, 2, 4,
+				3, 8, 2,
+				6, 0, 4,
+				0, 1, 6
+			} };
+		Frame::Matrix_tpl<int, 3, 2> mat2{ {
+				2, 4,
+				1, 3,
+				3, 2
+			} };
+		Frame::Matrix_tpl mat = mat1 * mat2;
+		mat.ForEachIn([](int * data, int i) {
+			printf("%d ", data[i]);
+			if (i % 2 && i != 0) {
+				printf("\n");
+			}
+			});
+	}
+	
+	printf("\n");
+
+	{
+		Frame::Matrix_tpl<int, 2, 3> mat1 = {{
+				1, 0, 3,
+				2, -1, 0
+			}};
+		Frame::Matrix_tpl<int, 3, 2> mat2 = {{
+				1, -1,
+				2, 3,
+				4, 0
+			}};
+		Frame::Matrix_tpl mat = mat1 * mat2;
+		mat.ForEachIn([](int * data, int i) {
+			printf("%d ", data[i]);
+			if(i % 2 == 1) {
+				printf("\n");
+			}
+			});
+	}
+
+	printf("\n");
+
+	{
+		Frame::Matrix33 m { { 1, 2, 3, 4, 5 } };
+		m = m + Frame::Matrix33 { { 10, 10, 10 } };
+		m.ForEachIn([](float * data, int i) {
+			printf("%.2f ", data[i]);
+			if(i % 3 == 2) {
+				printf("\n");
+			}
+			});
+	}
+
+	printf("\n");
 }
 
 void CTestComponent2::OnShutDown() {
@@ -328,6 +389,73 @@ void CTestComponent2::ProcessEvent(const Frame::EntityEvent::SEvent & event) {
 
 		if(Frame::gInput->pKeyboard->GetPressed(Frame::EKeyId::eKI_Space))
 			Frame::Log::Log(Frame::Log::ELevel::Debug, "Test");
+
+		//Frame::gRenderer->DrawSprite(m_pTextureAtlasTestSprite->GetImage(), { -200.f, 0.f });
+		
+		auto pSpriteImage = m_pTextureAtlasTestSprite->GetImage();
+		Frame::gRenderer->DrawSpritesInstancedBlended(pSpriteImage, {
+			{},
+			{ Frame::Matrix33::CreateTranslation({ -100.f }) },
+			{ Frame::Matrix33::CreateTranslation({ -200.f, -100.f }), Frame::Matrix33::CreateTranslation({ -.5f }) },
+			{ Frame::Matrix33::CreateRotationZ(Frame::DegToRad(30.f)), Frame::Matrix33::CreateIdentity(), { 1.f, 0.f, 0.f, 1.f } },
+			{ Frame::Matrix33::CreateTranslation({ -50.f, 50.f }) * Frame::Matrix33::CreateRotationZ(Frame::DegToRad(30.f)) },
+			{ Frame::Matrix33::CreateTranslation({ -50.f, 50.f }), Frame::Matrix33::CreateIdentity(), { 0.f, 0.f, 1.f, 1.f } },
+			{ Frame::Matrix33::CreateTranslation({ 80.f, 20.f }) * Frame::Matrix33::CreateScale({ 2.f, .5f }) * Frame::Matrix33::CreateTranslation({ -100.f }) },
+			{ Frame::Matrix33::CreateScale({ 2.f, .5f }) * Frame::Matrix33::CreateTranslation({ 80.f, 20.f }) * Frame::Matrix33::CreateTranslation({ -100.f }) }
+			}, 0xFFFFFF, .5f);
+
+		{
+			Frame::Vec2 vecpos { 100.f, 0.f };
+
+			Frame::gRenderer->pShapeRenderer->DrawLine(0.f, vecpos);
+			Frame::gRenderer->pTextRenderer->DrawText("1", vecpos);
+
+			vecpos = Frame::Matrix33::CreateTranslation({ 20.f, -30.f }) * vecpos;
+			
+			Frame::gRenderer->pShapeRenderer->DrawLine(0.f, vecpos);
+			Frame::gRenderer->pTextRenderer->DrawText("2", vecpos);
+			
+			vecpos = Frame::Matrix33::CreateScale({ -.5f, 2.f }) * vecpos;
+			
+			Frame::gRenderer->pShapeRenderer->DrawLine(0.f, vecpos);
+			Frame::gRenderer->pTextRenderer->DrawText("3", vecpos);
+			
+			vecpos = Frame::Matrix33::CreateRotationZ(Frame::DegToRad(60.f)) * vecpos;
+			
+			Frame::gRenderer->pShapeRenderer->DrawLine(0.f, vecpos);
+			Frame::gRenderer->pTextRenderer->DrawText("4", vecpos);
+		}
+
+		{
+			Frame::Vec2 vecpos
+				= Frame::Matrix33::CreateRotationZ(Frame::DegToRad(60.f))
+				* Frame::Matrix33::CreateScale({ -.5f, 2.f })
+				* Frame::Matrix33::CreateTranslation({ 20.f, -30.f })
+				* Frame::Vec2 { 100.f, 0.f };
+
+			Frame::gRenderer->pShapeRenderer->DrawLine(0.f, vecpos);
+			Frame::gRenderer->pTextRenderer->DrawText("  5", vecpos);
+		}
+
+		{
+			Frame::Vec2 vecpos { 100.f, 0.f };
+			vecpos += Frame::Vec2 { 20.f, -30.f };
+			vecpos *= Frame::Vec2 { -.5f, 2.f };
+			vecpos = vecpos.RotateDegree(60.f);
+
+			Frame::gRenderer->pShapeRenderer->DrawLine(0.f, vecpos);
+			Frame::gRenderer->pTextRenderer->DrawText("    6", vecpos);
+		}
+
+		{
+			Frame::Vec2 vecpos
+				= Frame::Matrix22::CreateRotation(Frame::DegToRad(60.f))
+				* Frame::Matrix22::CreateScale({ -.5f, 2.f })
+				* (Frame::Vec2 { 100.f, 0.f } + Frame::Vec2 { 20.f, -30.f });
+
+			Frame::gRenderer->pShapeRenderer->DrawLine(0.f, vecpos);
+			Frame::gRenderer->pTextRenderer->DrawText("      7", vecpos);
+		}
 	}
 	break;
 	}
