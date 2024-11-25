@@ -94,12 +94,12 @@ namespace Frame::Log {
 
 		va_list argList;
 		va_start(argList, szFormat);
-		vsnprintf(szMessage, __bufSize - 1, szFormat, argList);
+		vsnprintf(szMessage, __bufSize, szFormat, argList);
 		va_end(argList);
 
 		char szLogBuf[__bufSize] { '\0' };
-		snprintf(szLogBuf, __bufSize - 1, "[%s] %s} %s",
-			GetLevelName(level), GetTimeStampString('-', ' ', ':'), szMessage
+		snprintf(szLogBuf, __bufSize, "[%s] %s} %.*s",
+			GetLevelName(level), GetTimeStampString('-', ' ', ':'), static_cast<int>(__bufSize - 6), szMessage
 		);
 
 		__logStrsQueue.push({ szLogBuf });

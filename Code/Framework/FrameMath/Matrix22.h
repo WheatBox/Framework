@@ -12,8 +12,9 @@ namespace Frame {
 
 		Matrix22_tpl() : BaseMatrixType() {};
 		Matrix22_tpl(std::initializer_list<T> values) : BaseMatrixType(values) {}
+		Matrix22_tpl(const T * values, size_t count) : BaseMatrixType(values, count) {}
 
-		Matrix22_tpl(const BaseMatrixType & mat) : BaseMatrixType(std::initializer_list<T>(mat.data, mat.data + 9)) {}
+		Matrix22_tpl(const BaseMatrixType & mat) : BaseMatrixType(mat.data, 4) {}
 
 		using BaseMatrixType::operator +;
 		using BaseMatrixType::operator -;
@@ -28,26 +29,26 @@ namespace Frame {
 		using BaseMatrixType::operator ==;
 		using BaseMatrixType::operator !=;
 
-		Matrix22_tpl<T> operator +(const BaseMatrixType & m) const { return Matrix_tpl::operator +(m); }
-		Matrix22_tpl<T> operator -(const BaseMatrixType & m) const { return Matrix_tpl::operator -(m); }
-		Matrix22_tpl<T> operator *(const BaseMatrixType & m) const { return Matrix_tpl::operator *(m); }
+		Matrix22_tpl<T> operator +(const BaseMatrixType & m) const { return BaseMatrixType::operator +(m); }
+		Matrix22_tpl<T> operator -(const BaseMatrixType & m) const { return BaseMatrixType::operator -(m); }
+		Matrix22_tpl<T> operator *(const BaseMatrixType & m) const { return BaseMatrixType::operator *(m); }
 
-		Matrix22_tpl<T> operator +=(const BaseMatrixType & m) { return Matrix_tpl::operator +=(m); }
-		Matrix22_tpl<T> operator -=(const BaseMatrixType & m) { return Matrix_tpl::operator -=(m); }
+		Matrix22_tpl<T> operator +=(const BaseMatrixType & m) { return BaseMatrixType::operator +=(m); }
+		Matrix22_tpl<T> operator -=(const BaseMatrixType & m) { return BaseMatrixType::operator -=(m); }
 		Matrix22_tpl<T> operator *=(const BaseMatrixType & m) { (* this) = (* this) * m; return * this; }
 
-		Matrix22_tpl<T> operator +(T val) const { return Matrix_tpl::operator +(val); }
-		Matrix22_tpl<T> operator -(T val) const { return Matrix_tpl::operator -(val); }
-		Matrix22_tpl<T> operator *(T val) const { return Matrix_tpl::operator *(val); }
-		Matrix22_tpl<T> operator /(T val) const { return Matrix_tpl::operator /(val); }
+		Matrix22_tpl<T> operator +(T val) const { return BaseMatrixType::operator +(val); }
+		Matrix22_tpl<T> operator -(T val) const { return BaseMatrixType::operator -(val); }
+		Matrix22_tpl<T> operator *(T val) const { return BaseMatrixType::operator *(val); }
+		Matrix22_tpl<T> operator /(T val) const { return BaseMatrixType::operator /(val); }
 
-		Matrix22_tpl<T> operator +=(T val) { return Matrix_tpl::operator +=(val); }
-		Matrix22_tpl<T> operator -=(T val) { return Matrix_tpl::operator -=(val); }
-		Matrix22_tpl<T> operator *=(T val) { return Matrix_tpl::operator *=(val); }
-		Matrix22_tpl<T> operator /=(T val) { return Matrix_tpl::operator /=(val); }
+		Matrix22_tpl<T> operator +=(T val) { return BaseMatrixType::operator +=(val); }
+		Matrix22_tpl<T> operator -=(T val) { return BaseMatrixType::operator -=(val); }
+		Matrix22_tpl<T> operator *=(T val) { return BaseMatrixType::operator *=(val); }
+		Matrix22_tpl<T> operator /=(T val) { return BaseMatrixType::operator /=(val); }
 		
 		Vec2_tpl<T> operator *(const Vec2_tpl<T> & v) const {
-			return { data[0] * v.x + data[1] * v.y, data[2] * v.x + data[3] * v.y };
+			return { this->data[0] * v.x + this->data[1] * v.y, this->data[2] * v.x + this->data[3] * v.y };
 		}
 
 		static Matrix22_tpl<T> CreateIdentity() {

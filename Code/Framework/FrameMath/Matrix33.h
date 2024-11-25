@@ -13,8 +13,9 @@ namespace Frame {
 
 		Matrix33_tpl() : BaseMatrixType() {};
 		Matrix33_tpl(std::initializer_list<T> values) : BaseMatrixType(values) {}
+		Matrix33_tpl(const T * values, size_t count) : BaseMatrixType(values, count) {}
 
-		Matrix33_tpl(const BaseMatrixType & mat) : BaseMatrixType(std::initializer_list<T>(mat.data, mat.data + 9)) {}
+		Matrix33_tpl(const BaseMatrixType & mat) : BaseMatrixType(mat.data, 9) {}
 		
 		using BaseMatrixType::operator +;
 		using BaseMatrixType::operator -;
@@ -29,23 +30,23 @@ namespace Frame {
 		using BaseMatrixType::operator ==;
 		using BaseMatrixType::operator !=;
 
-		Matrix33_tpl<T> operator +(const BaseMatrixType & m) const { return Matrix_tpl::operator +(m); }
-		Matrix33_tpl<T> operator -(const BaseMatrixType & m) const { return Matrix_tpl::operator -(m); }
-		Matrix33_tpl<T> operator *(const BaseMatrixType & m) const { return Matrix_tpl::operator *(m); }
+		Matrix33_tpl<T> operator +(const BaseMatrixType & m) const { return BaseMatrixType::operator +(m); }
+		Matrix33_tpl<T> operator -(const BaseMatrixType & m) const { return BaseMatrixType::operator -(m); }
+		Matrix33_tpl<T> operator *(const BaseMatrixType & m) const { return BaseMatrixType::operator *(m); }
 
-		Matrix33_tpl<T> operator +=(const BaseMatrixType & m) { return Matrix_tpl::operator +=(m); }
-		Matrix33_tpl<T> operator -=(const BaseMatrixType & m) { return Matrix_tpl::operator -=(m); }
+		Matrix33_tpl<T> operator +=(const BaseMatrixType & m) { return BaseMatrixType::operator +=(m); }
+		Matrix33_tpl<T> operator -=(const BaseMatrixType & m) { return BaseMatrixType::operator -=(m); }
 		Matrix33_tpl<T> operator *=(const BaseMatrixType & m) { (* this) = (* this) * m; return * this; }
 
-		Matrix33_tpl<T> operator +(T val) const { return Matrix_tpl::operator +(val); }
-		Matrix33_tpl<T> operator -(T val) const { return Matrix_tpl::operator -(val); }
-		Matrix33_tpl<T> operator *(T val) const { return Matrix_tpl::operator *(val); }
-		Matrix33_tpl<T> operator /(T val) const { return Matrix_tpl::operator /(val); }
+		Matrix33_tpl<T> operator +(T val) const { return BaseMatrixType::operator +(val); }
+		Matrix33_tpl<T> operator -(T val) const { return BaseMatrixType::operator -(val); }
+		Matrix33_tpl<T> operator *(T val) const { return BaseMatrixType::operator *(val); }
+		Matrix33_tpl<T> operator /(T val) const { return BaseMatrixType::operator /(val); }
 
-		Matrix33_tpl<T> operator +=(T val) { return Matrix_tpl::operator +=(val); }
-		Matrix33_tpl<T> operator -=(T val) { return Matrix_tpl::operator -=(val); }
-		Matrix33_tpl<T> operator *=(T val) { return Matrix_tpl::operator *=(val); }
-		Matrix33_tpl<T> operator /=(T val) { return Matrix_tpl::operator /=(val); }
+		Matrix33_tpl<T> operator +=(T val) { return BaseMatrixType::operator +=(val); }
+		Matrix33_tpl<T> operator -=(T val) { return BaseMatrixType::operator -=(val); }
+		Matrix33_tpl<T> operator *=(T val) { return BaseMatrixType::operator *=(val); }
+		Matrix33_tpl<T> operator /=(T val) { return BaseMatrixType::operator /=(val); }
 		
 		Vec2_tpl<T> operator *(const Vec2_tpl<T> & v) const {
 			Matrix_tpl<T, 3, 1> n = (* this) * Matrix_tpl<T, 3, 1> { { v.x, v.y, 1.f } };
