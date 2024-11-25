@@ -381,7 +381,7 @@ void CTestComponent2::ProcessEvent(const Frame::EntityEvent::SEvent & event) {
 		m_pFramebuffer2->Bind();
 		Frame::gRenderer->DrawSprite(m_pSprite->GetImage(), Frame::Vec2Cast(m_pFramebuffer2->GetSize()) * .5f, 1.f, m_angle);
 		m_pFramebuffer2->Unbind();
-		Frame::gRenderer->DrawSprite(m_pFramebuffer2->GetImage(), Frame::Vec2 { 50.f }.RotateDegree(m_angle) + 100.f, 1.f, -m_angle);
+		Frame::gRenderer->DrawSprite(m_pFramebuffer2->GetImage(), Frame::Vec2 { 50.f }.GetRotatedDegree(m_angle) + 100.f, 1.f, -m_angle);
 		Frame::gRenderer->pShapeRenderer->DrawRectangleBlended(50, 150, 0xCC0000, 1.f, 4.f);
 		m_pFramebuffer->Unbind();
 		Frame::gRenderer->DrawSprite(m_pFramebuffer->GetImage(), -100.f, 1.f, 0.f);
@@ -441,7 +441,7 @@ void CTestComponent2::ProcessEvent(const Frame::EntityEvent::SEvent & event) {
 			Frame::Vec2 vecpos { 100.f, 0.f };
 			vecpos += Frame::Vec2 { 20.f, -30.f };
 			vecpos *= Frame::Vec2 { -.5f, 2.f };
-			vecpos = vecpos.RotateDegree(60.f);
+			vecpos = vecpos.GetRotatedDegree(60.f);
 
 			Frame::gRenderer->pShapeRenderer->DrawLine(0.f, vecpos);
 			Frame::gRenderer->pTextRenderer->DrawText("    6", vecpos);

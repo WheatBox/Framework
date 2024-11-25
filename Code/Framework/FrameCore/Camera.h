@@ -15,7 +15,7 @@ namespace Frame {
 		Vec2 WindowToScene(const Vec2 & posOnWindow) const {
 			Frame::Vec2 windowSize = Frame::Vec2Cast<float>(m_windowSize);
 			Frame::Vec2 viewSize = Frame::Vec2Cast<float>(m_data.viewSize);
-			return (posOnWindow - windowSize * .5f).Rotate(GetViewRotation()) * (viewSize / windowSize) / m_data.zoom + m_data.pos;
+			return (posOnWindow - windowSize * .5f).GetRotated(GetViewRotation()) * (viewSize / windowSize) / m_data.zoom + m_data.pos;
 		}
 
 		void __SetWindowSize(const Vec2i & siz);

@@ -46,15 +46,15 @@ namespace Frame {
 		}
 		T IncludedAngleDegree(const Vec2_tpl<T> & v) const { return RadToDeg(IncludedAngle(v)); }
 
-		Vec2_tpl Rotate(T rad) const {
+		Vec2_tpl GetRotated(T rad) const {
 			T cosr = std::cos(rad), sinr = std::sin(rad);
 			return {
 				x * cosr - y * sinr,
 				y * cosr + x * sinr
 			};
 		}
-		Vec2_tpl RotateDegree(T deg) const {
-			return Rotate(DegToRad(deg));
+		Vec2_tpl GetRotatedDegree(T deg) const {
+			return GetRotated(DegToRad(deg));
 		}
 
 		Vec2_tpl GetNormalized() const {
