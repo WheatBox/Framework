@@ -218,11 +218,20 @@ namespace Frame {
 
 		struct SInstanceBuffer final {
 			Matrix33 transform = Matrix33::CreateIdentity();
-			Matrix33 texCoordTransform = Matrix33::CreateIdentity();
 			float blendRGBA[4] { 1.f, 1.f, 1.f, 1.f };
+			Vec2 uvMulti { 1.f }, uvAdd { 0.f };
+
+			SInstanceBuffer & SetUVTransformation(const Vec2 & destUV_lt, const Vec2 & destUV_rb, const Vec2 & srcUV_lt = { 0.f, 1.f }, const Vec2 & srcUV_rb = { 1.f, 0.f }) {
+				uvMulti = (destUV_rb - destUV_lt) / (srcUV_rb - srcUV_lt);
+				uvAdd = destUV_lt - srcUV_lt * uvMulti;
+				return * this;
+			}
 		};
 		static_assert(sizeof(SInstanceBuffer) ==
-			sizeof(SInstanceBuffer::transform.data) + sizeof(SInstanceBuffer::texCoordTransform.data) + sizeof(SInstanceBuffer::blendRGBA)
+			sizeof(SInstanceBuffer::transform.data)
+			+ sizeof(SInstanceBuffer::blendRGBA)
+			+ sizeof(SInstanceBuffer::uvMulti.x) + sizeof(SInstanceBuffer::uvMulti.y)
+			+ sizeof(SInstanceBuffer::uvAdd.x) + sizeof(SInstanceBuffer::uvAdd.y)
 			, "ERROR! There is some extra memory in SInstanceBuffer!");
 
 		void DrawTexturesInstanced(unsigned int textureId, const STextureVertexBuffer & textureVertexBuffer, const std::vector<SInstanceBuffer> & instances) {

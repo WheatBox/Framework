@@ -396,10 +396,10 @@ void CTestComponent2::ProcessEvent(const Frame::EntityEvent::SEvent & event) {
 		Frame::gRenderer->DrawSpritesInstancedBlended(pSpriteImage, {
 			{},
 			{ Frame::Matrix33::CreateTranslation({ -100.f }) },
-			{ Frame::Matrix33::CreateTranslation({ -200.f, -100.f }), Frame::Matrix33::CreateTranslation({ -.5f }) },
-			{ Frame::Matrix33::CreateRotationZ(Frame::DegToRad(30.f)), Frame::Matrix33::CreateIdentity(), { 1.f, 0.f, 0.f, 1.f } },
+			{ Frame::Matrix33::CreateTranslation({ -200.f, -100.f }), { 1.f, 1.f, 1.f, 1.f }, 1.f, -.5f },
+			{ Frame::Matrix33::CreateRotationZ(Frame::DegToRad(30.f)), { 1.f, 0.f, 0.f, 1.f } },
 			{ Frame::Matrix33::CreateTranslation({ -50.f, 50.f }) * Frame::Matrix33::CreateRotationZ(Frame::DegToRad(30.f)) },
-			{ Frame::Matrix33::CreateTranslation({ -50.f, 50.f }), Frame::Matrix33::CreateIdentity(), { 0.f, 0.f, 1.f, 1.f } },
+			{ Frame::Matrix33::CreateTranslation({ -50.f, 50.f }), { 0.f, 0.f, 1.f, 1.f } },
 			{ Frame::Matrix33::CreateTranslation({ 80.f, 20.f }) * Frame::Matrix33::CreateScale({ 2.f, .5f }) * Frame::Matrix33::CreateTranslation({ -100.f }) },
 			{ Frame::Matrix33::CreateScale({ 2.f, .5f }) * Frame::Matrix33::CreateTranslation({ 80.f, 20.f }) * Frame::Matrix33::CreateTranslation({ -100.f }) }
 			}, 0xFFFFFF, .5f);

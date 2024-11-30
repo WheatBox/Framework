@@ -71,7 +71,7 @@ namespace Frame {
 
 		RendererBase::BindVBO(m_instanceVBO);
 
-		GLsizei instancedStride = (9 + 9 + 4) * (GLsizei)sizeof(float);
+		GLsizei instancedStride = (9 + 2 + 2 + 4) * (GLsizei)sizeof(float);
 
 		glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, instancedStride, (void *)0);
 		glVertexAttribPointer(4, 3, GL_FLOAT, GL_FALSE, instancedStride, (void *)(3 * sizeof(float)));
@@ -80,15 +80,13 @@ namespace Frame {
 		glVertexAttribDivisor(4, 1);
 		glVertexAttribDivisor(5, 1);
 		
-		glVertexAttribPointer(6, 3, GL_FLOAT, GL_FALSE, instancedStride, (void *)(9 * sizeof(float)));
-		glVertexAttribPointer(7, 3, GL_FLOAT, GL_FALSE, instancedStride, (void *)(12 * sizeof(float)));
-		glVertexAttribPointer(8, 3, GL_FLOAT, GL_FALSE, instancedStride, (void *)(15 * sizeof(float)));
+		glVertexAttribPointer(6, 4, GL_FLOAT, GL_FALSE, instancedStride, (void *)(9 * sizeof(float)));
 		glVertexAttribDivisor(6, 1);
+
+		glVertexAttribPointer(7, 2, GL_FLOAT, GL_FALSE, instancedStride, (void *)(13 * sizeof(float)));
+		glVertexAttribPointer(8, 2, GL_FLOAT, GL_FALSE, instancedStride, (void *)(15 * sizeof(float)));
 		glVertexAttribDivisor(7, 1);
 		glVertexAttribDivisor(8, 1);
-
-		glVertexAttribPointer(9, 4, GL_FLOAT, GL_FALSE, instancedStride, (void *)(18 * sizeof(float)));
-		glVertexAttribDivisor(9, 1);
 
 		RendererBase::BindVBO(0);
 
