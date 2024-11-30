@@ -17,6 +17,11 @@ namespace Frame {
 				data[i] = * it;
 			}
 		}
+		Matrix_tpl(const T * values, size_t count) {
+			for(size_t i = 0; i < count; i++) {
+				data[i] = values[i];
+			}
+		}
 
 		Matrix_tpl<T, H, W> & operator +=(const Matrix_tpl<T, H, W> & m) { this->ForEachIn([& m](T * data, int i) { data[i] += m.data[i]; }); return * this; }
 		Matrix_tpl<T, H, W> & operator -=(const Matrix_tpl<T, H, W> & m) { this->ForEachIn([& m](T * data, int i) { data[i] -= m.data[i]; }); return * this; }
@@ -24,7 +29,7 @@ namespace Frame {
 		Matrix_tpl<T, H, W> operator +(const Matrix_tpl<T, H, W> & m) const { return Matrix_tpl<T, H, W> { * this } += m; }
 		Matrix_tpl<T, H, W> operator -(const Matrix_tpl<T, H, W> & m) const { return Matrix_tpl<T, H, W> { * this } -= m; }
 
-		template<typename T, int H2, int W2>
+		template<int H2, int W2>
 		Matrix_tpl<T, H, W2> operator *(const Matrix_tpl<T, H2, W2> & m) const {
 			static_assert(H2 == W, "COLUMN of the first matrix must equals to ROW of the second matrix!");
 
@@ -53,7 +58,7 @@ namespace Frame {
 		Matrix_tpl<T, H, W> operator *(T val) const { return Matrix_tpl<T, H, W> { * this } *= val; }
 		Matrix_tpl<T, H, W> operator /(T val) const { return Matrix_tpl<T, H, W> { * this } /= val; }
 
-		template<typename T, int H2, int W2>
+		template<int H2, int W2>
 		bool operator ==(const Matrix_tpl<T, H2, W2> & mat) const {
 			if(H2 != H || W2 != W) {
 				return false;
@@ -65,7 +70,7 @@ namespace Frame {
 			}
 			return true;
 		}
-		template<typename T, int H2, int W2>
+		template<int H2, int W2>
 		bool operator !=(const Matrix_tpl<T, H2, W2> & mat) const {
 			return !((* this) == mat);
 		}

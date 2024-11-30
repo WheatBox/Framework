@@ -41,7 +41,7 @@ void main() { \
 in vec4 vColor; \
 void main() { \
 	gl_FragColor = vColor; \
-}" \
+}"
 
 #define DEFAULT_TEXT_SHADER_FILES \
 	"./Shaders/Text.vert", "./Shaders/Text.frag"
