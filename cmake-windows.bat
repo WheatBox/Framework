@@ -5,8 +5,7 @@ setlocal
 set "vcpkg_cmake=C:/DevPacks/vcpkg/scripts/buildsystems/vcpkg.cmake"
 
 if exist "%vcpkg_cmake%" (
-	cmake -S . -B Build -DCMAKE_TOOLCHAIN_FILE="%vcpkg_cmake%" -DVCPKG_TARGET_TRIPLET=x64-windows-static -DCMAKE_EXPORT_COMPILE_COMMANDS=1
-	move Build/compile_commands.json compile_commands.json
+	cmake -S . -B Build -DCMAKE_TOOLCHAIN_FILE="%vcpkg_cmake%" -DVCPKG_TARGET_TRIPLET=x64-windows-static
 ) else (
 	echo +-------------------------------------------------------------
 	echo ^| "%vcpkg_cmake%" not exists.
