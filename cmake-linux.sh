@@ -4,7 +4,8 @@
 vcpkg_cmake="/home/wheat_box/DevPacks/vcpkg/scripts/buildsystems/vcpkg.cmake"
 
 if [ -e "$vcpkg_cmake" ]; then
-	cmake -S . -B Build -DCMAKE_TOOLCHAIN_FILE="$vcpkg_cmake"
+	cmake -S . -B Build -DCMAKE_TOOLCHAIN_FILE="$vcpkg_cmake" -DCMAKE_EXPORT_COMPILE_COMMANDS=1
+	mv Build/compile_commands.json compile_commands.json
 else
 	echo +-------------------------------------------------------------
 	echo "|" "$vcpkg_cmake" not exists.
