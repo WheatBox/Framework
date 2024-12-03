@@ -31,7 +31,7 @@ namespace Frame {
 		Vec2 m_vPosition { 0.f };
 		Vec2 m_vScale { 1.f };
 
-		// 角度 | Degree
+		// 弧度 | Radian
 		float m_rotation = 0.f;
 
 		// 主要用以表示遮挡关系（渲染顺序）

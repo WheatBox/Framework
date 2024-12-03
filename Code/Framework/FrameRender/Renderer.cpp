@@ -170,13 +170,13 @@ namespace Frame {
 		DrawTexture(pSpriteImage->GetTextureId(), textureVertexBuffer);
 	}
 
-	void CRenderer::DrawSprite(const SSpriteImage * pSpriteImage, const Vec2 & vPos, const Vec2 & vScale, float angle, STextureVertexBuffer & textureVertexBuffer) {
+	void CRenderer::DrawSprite(const SSpriteImage * pSpriteImage, const Vec2 & vPos, const Vec2 & vScale, float rotation, STextureVertexBuffer & textureVertexBuffer) {
 		Vec2 vTL = pSpriteImage->GetTopLeftOffset() * vScale;
 		Vec2 vTR = pSpriteImage->GetTopRightOffset() * vScale;
 		Vec2 vBL = pSpriteImage->GetBottomLeftOffset() * vScale;
 		Vec2 vBR = pSpriteImage->GetBottomRightOffset() * vScale;
 		
-		Rotate2DVectorsDegree(angle, { & vTL, & vTR, & vBL, & vBR });
+		Rotate2DVectors(rotation, { & vTL, & vTR, & vBL, & vBR });
 
 		textureVertexBuffer.SetPositions(vPos + vTL, vPos + vTR, vPos + vBL, vPos + vBR);
 

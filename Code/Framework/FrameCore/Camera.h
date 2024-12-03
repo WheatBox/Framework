@@ -61,8 +61,8 @@ namespace Frame {
 		}
 
 		// Radian
-		void SetRotation(float angle) {
-			m_data.rotation = angle;
+		void SetRotation(float rad) {
+			m_data.rotation = rad;
 		}
 		// Radian
 		float GetRotation() const {
@@ -78,8 +78,8 @@ namespace Frame {
 		}
 
 		// Radian. View rotation = - Camera rotation
-		void SetViewRotation(float angle) {
-			m_data.rotation = -angle;
+		void SetViewRotation(float rad) {
+			m_data.rotation = -rad;
 		}
 		// Radian. View rotation = - Camera rotation
 		float GetViewRotation() const {

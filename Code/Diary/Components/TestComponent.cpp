@@ -25,7 +25,7 @@ void CTestComponent::ProcessEvent(const Frame::EntityEvent::SEvent & event) {
 	switch(event.flag) {
 	case Frame::EntityEvent::Update:
 	{
-		m_pEntity->Rotate(1.f);
+		m_pEntity->Rotate(Frame::DegToRad(1.f));
 		
 		//Frame::Vec2 pos = m_pEntity->GetPosition();
 
@@ -199,7 +199,7 @@ void CTestComponent2::ProcessEvent(const Frame::EntityEvent::SEvent & event) {
 		//Frame::Log::Log(Frame::Log::ELevel::Info, "Hello, world! 你好，世界！ %f %f", 1 / frameTime, m_seconds); // 当前游戏帧数 和 当前经过的游戏时间
 
 		//m_angle += frameTime * 360; // => 360°/s
-		m_angle += frameTime * 360 / 5.f;
+		m_angle += Frame::DegToRad(frameTime * 360 / 5.f);
 
 		m_camAngle += frameTime * 60.f * float(-int(Frame::gInput->pKeyboard->GetHolding(Frame::eKI_1)) + int(Frame::gInput->pKeyboard->GetHolding(Frame::eKI_2)));
 		Frame::gCamera->SetRotationDegree(m_camAngle);
@@ -243,8 +243,8 @@ void CTestComponent2::ProcessEvent(const Frame::EntityEvent::SEvent & event) {
 			printf("Sound Play %p\n", m_pAudioSource.get());
 		}
 		if(m_pAudioSource != nullptr) {
-			//Frame::gAudioPlayer->SetListenerPosition({ 1 * sin(Frame::DegToRad(m_angle)), 0, 0 });
-			m_pAudioSource->SetPosition({ 10 * std::cos(Frame::DegToRad(m_angle)), 10 * std::sin(Frame::DegToRad(m_angle)), 0 });
+			//Frame::gAudioPlayer->SetListenerPosition({ 1 * sin(m_angle), 0, 0 });
+			m_pAudioSource->SetPosition({ 10 * std::cos(m_angle), 10 * std::sin(m_angle), 0 });
 		}
 	}
 	break;
@@ -253,7 +253,7 @@ void CTestComponent2::ProcessEvent(const Frame::EntityEvent::SEvent & event) {
 #if 1
 		Frame::Vec2 vPos { 400.f, 300.f };
 		//Frame::Vec2 vPos { 0.f, 0.f };
-		//Frame::gCamera->SetPos(vPos + Frame::Vec2 { 10 * cos(Frame::DegToRad(m_angle)), 10 * sin(Frame::DegToRad(m_angle)) } * 10);
+		//Frame::gCamera->SetPos(vPos + Frame::Vec2 { 10 * cos(m_angle), 10 * sin(Frame::m_angle) } * 10);
 		//Frame::gCamera->SetPos(vPos);
 		Frame::gCamera->SetZoom(.5f);
 		Frame::gCamera->SetZoom(1.f);
@@ -264,7 +264,7 @@ void CTestComponent2::ProcessEvent(const Frame::EntityEvent::SEvent & event) {
 
 		Frame::gRenderer->pShapeRenderer->DrawPoint(vPos, 12.f);
 		Frame::gRenderer->pShapeRenderer->DrawPoint(vPos + Frame::Vec2 { Frame::gAudioPlayer->GetListenerOrientation().first.x, Frame::gAudioPlayer->GetListenerOrientation().first.y } * 10, 4.f);
-		Frame::gRenderer->pShapeRenderer->DrawPointColorBlended(vPos + Frame::Vec2 { 10 * std::cos(Frame::DegToRad(m_angle)), 10 * std::sin(Frame::DegToRad(m_angle)) } * 10, 0xFFFF00, 12.f);
+		Frame::gRenderer->pShapeRenderer->DrawPointColorBlended(vPos + Frame::Vec2 { 10 * std::cos(m_angle), 10 * std::sin(m_angle) } * 10, 0xFFFF00, 12.f);
 #endif
 #if 1
 		//Frame::gRenderer->pSpriteShader->Use();
@@ -381,7 +381,7 @@ void CTestComponent2::ProcessEvent(const Frame::EntityEvent::SEvent & event) {
 		m_pFramebuffer2->Bind();
 		Frame::gRenderer->DrawSprite(m_pSprite->GetImage(), Frame::Vec2Cast(m_pFramebuffer2->GetSize()) * .5f, 1.f, m_angle);
 		m_pFramebuffer2->Unbind();
-		Frame::gRenderer->DrawSprite(m_pFramebuffer2->GetImage(), Frame::Vec2 { 50.f }.GetRotatedDegree(m_angle) + 100.f, 1.f, -m_angle);
+		Frame::gRenderer->DrawSprite(m_pFramebuffer2->GetImage(), Frame::Vec2 { 50.f }.GetRotated(m_angle) + 100.f, 1.f, -m_angle);
 		Frame::gRenderer->pShapeRenderer->DrawRectangleBlended(50, 150, 0xCC0000, 1.f, 4.f);
 		m_pFramebuffer->Unbind();
 		Frame::gRenderer->DrawSprite(m_pFramebuffer->GetImage(), -100.f, 1.f, 0.f);

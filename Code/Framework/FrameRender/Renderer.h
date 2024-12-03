@@ -113,19 +113,19 @@ namespace Frame {
 		void DrawTexture(unsigned int textureId, const STextureVertexBuffer & textureVertexBuffer, CShader * _pShader);
 
 		void DrawSprite(const SSpriteImage * pSpriteImage, const Vec2 & vPos, STextureVertexBuffer & textureVertexBuffer);
-		void DrawSprite(const SSpriteImage * pSpriteImage, const Vec2 & vPos, const Vec2 & vScale, float angle, STextureVertexBuffer & textureVertexBuffer);
+		void DrawSprite(const SSpriteImage * pSpriteImage, const Vec2 & vPos, const Vec2 & vScale, float rotation, STextureVertexBuffer & textureVertexBuffer);
 		void DrawSprite(const SSpriteImage * pSpriteImage, const Vec2 & vPos, STextureVertexBuffer && textureVertexBuffer) {
 			DrawSprite(pSpriteImage, vPos, static_cast<STextureVertexBuffer &>(textureVertexBuffer));
 		}
-		void DrawSprite(const SSpriteImage * pSpriteImage, const Vec2 & vPos, const Vec2 & vScale, float angle, STextureVertexBuffer && textureVertexBuffer) {
-			DrawSprite(pSpriteImage, vPos, vScale, angle, static_cast<STextureVertexBuffer &>(textureVertexBuffer));
+		void DrawSprite(const SSpriteImage * pSpriteImage, const Vec2 & vPos, const Vec2 & vScale, float rotation, STextureVertexBuffer && textureVertexBuffer) {
+			DrawSprite(pSpriteImage, vPos, vScale, rotation, static_cast<STextureVertexBuffer &>(textureVertexBuffer));
 		}
 
 		void DrawSprite(const SSpriteImage * pSpriteImage, const Vec2 & vPos) {
 			DrawSprite(pSpriteImage, vPos, m_defaultTextureVertexBuffer);
 		}
-		void DrawSprite(const SSpriteImage * pSpriteImage, const Vec2 & vPos, const Vec2 & vScale, float angle) {
-			DrawSprite(pSpriteImage, vPos, vScale, angle, m_defaultTextureVertexBuffer);
+		void DrawSprite(const SSpriteImage * pSpriteImage, const Vec2 & vPos, const Vec2 & vScale, float rotation) {
+			DrawSprite(pSpriteImage, vPos, vScale, rotation, m_defaultTextureVertexBuffer);
 		}
 
 		void DrawSpriteColorBlended(const SSpriteImage * pSpriteImage, const Vec2 & vPos, const ColorRGB & rgb) {
@@ -133,10 +133,10 @@ namespace Frame {
 			textureVertexBuffer.SetColorBlends(rgb);
 			DrawSprite(pSpriteImage, vPos, textureVertexBuffer);
 		}
-		void DrawSpriteColorBlended(const SSpriteImage * pSpriteImage, const Vec2 & vPos, const ColorRGB & rgb, const Vec2 & vScale, float angle) {
+		void DrawSpriteColorBlended(const SSpriteImage * pSpriteImage, const Vec2 & vPos, const ColorRGB & rgb, const Vec2 & vScale, float rotation) {
 			STextureVertexBuffer textureVertexBuffer = m_defaultTextureVertexBuffer;
 			textureVertexBuffer.SetColorBlends(rgb);
-			DrawSprite(pSpriteImage, vPos, vScale, angle, textureVertexBuffer);
+			DrawSprite(pSpriteImage, vPos, vScale, rotation, textureVertexBuffer);
 		}
 		void DrawSpriteColorBlended(const SSpriteImage * pSpriteImage, const Vec2 & vPos,
 			const ColorRGB & rgbTL,    const ColorRGB & rgbTR,
@@ -149,11 +149,11 @@ namespace Frame {
 		void DrawSpriteColorBlended(const SSpriteImage * pSpriteImage, const Vec2 & vPos,
 			const ColorRGB & rgbTL,    const ColorRGB & rgbTR,
 			const ColorRGB & rgbBL,    const ColorRGB & rgbBR,
-			const Vec2 & vScale, float angle
+			const Vec2 & vScale, float rotation
 		) {
 			STextureVertexBuffer textureVertexBuffer = m_defaultTextureVertexBuffer;
 			textureVertexBuffer.SetColorBlends(rgbTL, rgbTR, rgbBL, rgbBR);
-			DrawSprite(pSpriteImage, vPos, vScale, angle, textureVertexBuffer);
+			DrawSprite(pSpriteImage, vPos, vScale, rotation, textureVertexBuffer);
 		}
 		
 		void DrawSpriteAlphaBlended(const SSpriteImage * pSpriteImage, const Vec2 & vPos, float alpha) {
@@ -161,10 +161,10 @@ namespace Frame {
 			textureVertexBuffer.SetAlphaBlends(alpha);
 			DrawSprite(pSpriteImage, vPos, textureVertexBuffer);
 		}
-		void DrawSpriteAlphaBlended(const SSpriteImage * pSpriteImage, const Vec2 & vPos, float alpha, const Vec2 & vScale, float angle) {
+		void DrawSpriteAlphaBlended(const SSpriteImage * pSpriteImage, const Vec2 & vPos, float alpha, const Vec2 & vScale, float rotation) {
 			STextureVertexBuffer textureVertexBuffer = m_defaultTextureVertexBuffer;
 			textureVertexBuffer.SetAlphaBlends(alpha);
-			DrawSprite(pSpriteImage, vPos, vScale, angle, textureVertexBuffer);
+			DrawSprite(pSpriteImage, vPos, vScale, rotation, textureVertexBuffer);
 		}
 		void DrawSpriteAlphaBlended(const SSpriteImage * pSpriteImage, const Vec2 & vPos,
 			float aTL,    float aTR,
@@ -177,11 +177,11 @@ namespace Frame {
 		void DrawSpriteAlphaBlended(const SSpriteImage * pSpriteImage, const Vec2 & vPos,
 			float aTL,    float aTR,
 			float aBL,    float aBR,
-			const Vec2 & vScale, float angle
+			const Vec2 & vScale, float rotation
 		) {
 			STextureVertexBuffer textureVertexBuffer = m_defaultTextureVertexBuffer;
 			textureVertexBuffer.SetAlphaBlends(aTL, aTR, aBL, aBR);
-			DrawSprite(pSpriteImage, vPos, vScale, angle, textureVertexBuffer);
+			DrawSprite(pSpriteImage, vPos, vScale, rotation, textureVertexBuffer);
 		}
 		
 		void DrawSpriteBlended(const SSpriteImage * pSpriteImage, const Vec2 & vPos, const ColorRGB & rgb, float alpha) {
@@ -189,8 +189,8 @@ namespace Frame {
 				rgb, alpha, rgb, alpha, rgb, alpha, rgb, alpha
 			});
 		}
-		void DrawSpriteBlended(const SSpriteImage * pSpriteImage, const Vec2 & vPos, const ColorRGB & rgb, float alpha, const Vec2 & vScale, float angle) {
-			DrawSprite(pSpriteImage, vPos, vScale, angle, { {}, {},
+		void DrawSpriteBlended(const SSpriteImage * pSpriteImage, const Vec2 & vPos, const ColorRGB & rgb, float alpha, const Vec2 & vScale, float rotation) {
+			DrawSprite(pSpriteImage, vPos, vScale, rotation, { {}, {},
 				rgb, alpha, rgb, alpha, rgb, alpha, rgb, alpha
 			});
 		}
@@ -205,9 +205,9 @@ namespace Frame {
 		void DrawSpriteBlended(const SSpriteImage * pSpriteImage, const Vec2 & vPos,
 			const ColorRGB & rgbTL, float aTL,    const ColorRGB & rgbTR, float aTR,
 			const ColorRGB & rgbBL, float aBL,    const ColorRGB & rgbBR, float aBR,
-			const Vec2 & vScale, float angle
+			const Vec2 & vScale, float rotation
 		) {
-			DrawSprite(pSpriteImage, vPos, vScale, angle, { {}, {},
+			DrawSprite(pSpriteImage, vPos, vScale, rotation, { {}, {},
 				rgbTL, aTL, rgbTR, aTR, rgbBL, aBL, rgbBR, aBR
 			});
 		}
