@@ -58,10 +58,7 @@ namespace Frame {
 		}
 
 		Vec2_tpl & Rotate(T rad) {
-			T cosr = std::cos(rad), sinr = std::sin(rad);
-			x = x * cosr - y * sinr;
-			y = y * cosr + x * sinr;
-			return * this;
+			return * this = GetRotated(rad);
 		}
 		Vec2_tpl & RotateDegree(T deg) {
 			return Rotate(DegToRad(deg));
