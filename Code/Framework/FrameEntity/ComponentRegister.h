@@ -4,35 +4,30 @@
 
 namespace Frame {
 
-	template<typename ComponentType>
-	struct SComponentType {
-		static GUID s_guid;
+	struct SComponentTypeConfig {
+	private:
+		GUID guid;
 
-		static void SetGUID(const char * sz) {
-			s_guid.Set(sz);
-		}
-
-		static const GUID & GetGUID() {
-			return s_guid;
-		}
+	public:
+		void SetGUID(const char * sz) { guid.Set(sz); }
+		const GUID & GetGUID() const { return guid; }
 	};
 
 	template<typename ComponentType>
-	class CComponentRegister {
+	struct SComponentType {
+		static inline SComponentTypeConfig config {};
+	};
+
+	template<typename ComponentType>
+	class __ComponentRegister {
 	public:
-		CComponentRegister() {
-			ComponentType::Register(SComponentType<ComponentType> {});
+		__ComponentRegister() {
+			ComponentType::Register(SComponentType<ComponentType>::config);
 		}
-		virtual ~CComponentRegister() = default;
+		virtual ~__ComponentRegister() = default;
 	};
 
 }
 
 #define REGISTER_ENTITY_COMPONENT(ComponentType) \
-	template<> Frame::GUID Frame::SComponentType<ComponentType>::s_guid {}; \
-	Frame::CComponentRegister<ComponentType> ___Register##ComponentType##__COUNTER__ {};
-/*
-#define REGISTER_ENTITY_COMPONENT(Namespace, ComponentType) \
-	Frame::GUID Frame::SComponentType<Namespace::ComponentType>::s_guid {}; \
-	Frame::CComponentRegister<Namespace::ComponentType> ___##ComponentType##Register {};
-*/
+	Frame::__ComponentRegister<ComponentType> ___Register##ComponentType##__COUNTER__ {};

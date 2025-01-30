@@ -16,8 +16,10 @@
 #include <iostream>
 
 class CTestComponent final : public Frame::IEntityComponent {
-
 public:
+	static void Register(Frame::SComponentTypeConfig & config) {
+		config.SetGUID("{F103ABD5-7F46-4CE6-B20C-84AE2EB9CB5B}");
+	}
 
 	virtual void Initialize() override {
 		std::cout << "CTestComponent Initialize()" << std::endl;
@@ -29,10 +31,6 @@ public:
 	virtual Frame::EntityEvent::Flags GetEventFlags() const override;
 	virtual void ProcessEvent(const Frame::EntityEvent::SEvent & event) override;
 
-	static void Register(Frame::SComponentType<CTestComponent> type) {
-		type.SetGUID("{F103ABD5-7F46-4CE6-B20C-84AE2EB9CB5B}");
-	}
-
 	void SetSize(const Frame::Vec2 & size) { m_size = size; }
 
 private:
@@ -42,15 +40,13 @@ private:
 };
 
 class CTestComponent2 final : public Frame::IEntityComponent {
-
 public:
+	static void Register(Frame::SComponentTypeConfig & config) {
+		config.SetGUID("{AAAAAAAA-7F46-4CE6-B20C-84AE2EB9CB5B}");
+	}
 
 	virtual void Initialize() override;
 	virtual void OnShutDown() override;
-
-	static void Register(Frame::SComponentType<CTestComponent2> type) {
-		type.SetGUID("{AAAAAAAA-7F46-4CE6-B20C-84AE2EB9CB5B}");
-	}
 
 	virtual Frame::EntityEvent::Flags GetEventFlags() const override {
 		return Frame::EntityEvent::EFlag::Update | Frame::EntityEvent::EFlag::Render;
@@ -114,11 +110,9 @@ private:
 };
 
 class CTestComponent3 final : public Frame::IEntityComponent {
-
 public:
-
-	static void Register(Frame::SComponentType<CTestComponent3> type) {
-		type.SetGUID("{BBBBBBBB-7F46-4CE6-B20C-84AE2EB9CB5B}");
+	static void Register(Frame::SComponentTypeConfig & config) {
+		config.SetGUID("{BBBBBBBB-7F46-4CE6-B20C-84AE2EB9CB5B}");
 	}
 
 	virtual Frame::EntityEvent::Flags GetEventFlags() const override {

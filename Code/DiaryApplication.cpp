@@ -16,9 +16,9 @@ void CDiaryApplication::Initialize() {
 	if(Frame::CEntity * pEntity = Frame::gEntitySystem->SpawnEntity()) {
 		pEntity->SetPosition({ 400, 300 });
 
-		printf("%lld\n", Frame::SComponentType<CTestComponent>::GetGUID().high);
-		printf("%lld\n", Frame::SComponentType<CTestComponent2>::GetGUID().high);
-		printf("%lld\n", Frame::SComponentType<CTestComponent3>::GetGUID().high);
+		printf("%lld\n", Frame::SComponentType<CTestComponent>::config.GetGUID().high);
+		printf("%lld\n", Frame::SComponentType<CTestComponent2>::config.GetGUID().high);
+		printf("%lld\n", Frame::SComponentType<CTestComponent3>::config.GetGUID().high);
 
 		printf("\n---------------------------------\n");
 		auto show = [pEntity]() { printf("%p %p %p\n", pEntity->GetComponent<CTestComponent>(), pEntity->GetComponent<CTestComponent2>(), pEntity->GetComponent<CTestComponent3>()); };

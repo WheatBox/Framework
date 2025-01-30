@@ -71,14 +71,14 @@ namespace Frame {
 			ComponentType * pComponent = new ComponentType {};
 			InitializeComponent_And_AddIntoProcessors(pComponent);
 
-			m_components.insert(std::pair<GUID, IEntityComponent *> { SComponentType<ComponentType>::GetGUID(), pComponent });
+			m_components.insert(std::pair<GUID, IEntityComponent *> { SComponentType<ComponentType>::config.GetGUID(), pComponent });
 			
 			return pComponent;
 		}
 
 		template<typename ComponentType>
 		ComponentType * GetComponent() {
-			auto it = m_components.find(SComponentType<ComponentType>::GetGUID());
+			auto it = m_components.find(SComponentType<ComponentType>::config.GetGUID());
 			if(it != m_components.end()) {
 				return static_cast<ComponentType *>(it->second);
 			}
@@ -95,7 +95,7 @@ namespace Frame {
 
 		template<typename ComponentType>
 		void RemoveComponent() {
-			if(auto it = m_components.find(SComponentType<ComponentType>::GetGUID()); it != m_components.end()) {
+			if(auto it = m_components.find(SComponentType<ComponentType>::config.GetGUID()); it != m_components.end()) {
 				RemoveComponent_And_RemoveFromProcessors(it->second);
 				delete it->second;
 				m_components.erase(it);
