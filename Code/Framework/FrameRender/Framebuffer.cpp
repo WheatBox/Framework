@@ -25,7 +25,7 @@ namespace Frame {
 
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
-		m_pImage = new SSpriteImage { texture, defaultUV_LT, defaultUV_RB, m_size, m_offset };
+		m_pImage = new SSpriteImage { texture, defaultUV_LT, defaultUV_RB, m_size, m_origin };
 	}
 
 	CFramebuffer::~CFramebuffer() {

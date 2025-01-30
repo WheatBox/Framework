@@ -71,13 +71,13 @@ namespace Frame {
 		int channel;
 		unsigned char * data = stbi_load(filename, & m_size.x, & m_size.y, & channel, 0);
 		if(data) {
-			m_pImage = new SSpriteImage { data, channel, m_size, m_vOffset };
+			m_pImage = new SSpriteImage { data, channel, m_size, m_origin };
 		} else {
 			Log::Log(Log::ELevel::Error, "Failed to load static sprite file: %s", filename);
 
 			m_size.x = __errorSpriteDataWidth;
 			m_size.y = __errorSpriteDataHeight;
-			m_pImage = new SSpriteImage { __errorSpriteData, __errorSpriteDataChannel, m_size, m_vOffset };
+			m_pImage = new SSpriteImage { __errorSpriteData, __errorSpriteDataChannel, m_size, m_origin };
 		}
 		stbi_image_free(data);
 	}
@@ -90,7 +90,7 @@ namespace Frame {
 
 			m_size.x = __errorSpriteDataWidth;
 			m_size.y = __errorSpriteDataHeight;
-			m_pImage = new SSpriteImage { __errorSpriteData, __errorSpriteDataChannel, m_size, m_vOffset };
+			m_pImage = new SSpriteImage { __errorSpriteData, __errorSpriteDataChannel, m_size, m_origin };
 			return;
 		}
 
@@ -98,7 +98,7 @@ namespace Frame {
 			static_cast<int>(std::round((uvRB.x - uvLT.x) * static_cast<float>(pTextureAtlas->GetSize().x))),
 			static_cast<int>(std::round((uvLT.y - uvRB.y) * static_cast<float>(pTextureAtlas->GetSize().y)))
 		};
-		m_pImage = new SSpriteImage { pTextureAtlas->GetTextureId(), uvLT, uvRB, m_size, m_vOffset };
+		m_pImage = new SSpriteImage { pTextureAtlas->GetTextureId(), uvLT, uvRB, m_size, m_origin };
 	}
 
 	CStaticSprite::~CStaticSprite() {
@@ -134,7 +134,7 @@ namespace Frame {
 					}
 				}
 
-				m_frames[i] = new SSpriteImage { currentFrameData, channel, m_size, m_vOffset };
+				m_frames[i] = new SSpriteImage { currentFrameData, channel, m_size, m_origin };
 			}
 
 			delete[] currentFrameData;
@@ -162,7 +162,7 @@ namespace Frame {
 				Vec2i sizeTemp = m_size;
 				m_size.x = __errorSpriteDataWidth;
 				m_size.y = __errorSpriteDataHeight;
-				pImage = new SSpriteImage { __errorSpriteData, __errorSpriteDataChannel, m_size, m_vOffset };
+				pImage = new SSpriteImage { __errorSpriteData, __errorSpriteDataChannel, m_size, m_origin };
 				m_size = sizeTemp;
 			} else {
 				if(!bGotSize) {
@@ -172,7 +172,7 @@ namespace Frame {
 						static_cast<int>(std::round((uvLT.y - uvRB.y) * static_cast<float>(pTextureAtlas->GetSize().y)))
 					};
 				}
-				pImage = new SSpriteImage { pTextureAtlas->GetTextureId(), uvLT, uvRB, m_size, m_vOffset };
+				pImage = new SSpriteImage { pTextureAtlas->GetTextureId(), uvLT, uvRB, m_size, m_origin };
 			}
 			m_frames[i++] = pImage;
 		}
@@ -201,7 +201,7 @@ namespace Frame {
 				__errorSpriteData,
 				__errorSpriteDataChannel,
 				m_size,
-				m_vOffset
+				m_origin
 			}
 		};
 	}

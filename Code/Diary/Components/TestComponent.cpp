@@ -65,7 +65,7 @@ void CTestComponent2::Initialize() {
 	});
 
 	m_pSprite = new Frame::CStaticSprite { "./Assets/spr_t.bmp" };
-	m_pSprite->SetOffset({ static_cast<float>(m_pSprite->GetWidth()) / 2.f, static_cast<float>(m_pSprite->GetHeight()) / 2.f });
+	m_pSprite->SetOrigin({ static_cast<float>(m_pSprite->GetWidth()) / 2.f, static_cast<float>(m_pSprite->GetHeight()) / 2.f });
 
 	m_pAnimSprite = new Frame::CAnimatedSprite { "Assets/StripTest.png", 4 };
 

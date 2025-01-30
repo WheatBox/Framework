@@ -45,55 +45,55 @@ namespace Frame {
 	struct ISprite {
 
 		virtual const Vec2i & GetSize() const = 0;
-		virtual const Vec2 & GetOffset() const = 0;
+		virtual const Vec2 & GetOrigin() const = 0;
 
 		int GetWidth() const { return GetSize().x; }
 		int GetHeight() const { return GetSize().y; }
 		
-		float GetXOffset() const { return GetOffset().x; }
-		float GetYOffset() const { return GetOffset().y; }
+		float GetXOrigin() const { return GetOrigin().x; }
+		float GetYOrigin() const { return GetOrigin().y; }
 
 		Vec2 GetTopLeftOffset() const {
-			return { - GetXOffset(), - GetYOffset() };
+			return { - GetXOrigin(), - GetYOrigin() };
 		}
 		Vec2 GetTopRightOffset() const {
-			return { static_cast<float>(GetWidth()) - GetXOffset(), - GetYOffset() };
+			return { static_cast<float>(GetWidth()) - GetXOrigin(), - GetYOrigin() };
 		}
 		Vec2 GetBottomLeftOffset() const {
-			return { - GetXOffset(), static_cast<float>(GetHeight()) - GetYOffset() };
+			return { - GetXOrigin(), static_cast<float>(GetHeight()) - GetYOrigin() };
 		}
 		Vec2 GetBottomRightOffset() const {
-			return { static_cast<float>(GetWidth()) - GetXOffset(), static_cast<float>(GetHeight()) - GetYOffset() };
+			return { static_cast<float>(GetWidth()) - GetXOrigin(), static_cast<float>(GetHeight()) - GetYOrigin() };
 		}
 
-		virtual void SetOffset(const Vec2 & vOffset) = 0;
+		virtual void SetOrigin(const Vec2 & origin) = 0;
 		//virtual void SetSize(TODO) = 0; // TODO
 	};
 
 	struct SSpriteImage : public ISprite {
 		SSpriteImage() = delete;
 		// 会自动生成一个新的纹理页
-		SSpriteImage(const unsigned char * data, int channel, Vec2i & refSize, Vec2 & refVOffset)
+		SSpriteImage(const unsigned char * data, int channel, Vec2i & refSize, Vec2 & refOrigin)
 			: m_refSize { refSize }
-			, m_refVOffset { refVOffset }
+			, m_refOrigin { refOrigin }
 		{
 			m_textureId = GenerateTexture(data, channel, refSize);
 		}
 		// 不会生成新的纹理页，直接使用现有纹理页
-		SSpriteImage(unsigned int textureId, Vec2 uvLT, Vec2 uvRB, Vec2i & refSize, Vec2 & refVOffset)
+		SSpriteImage(unsigned int textureId, Vec2 uvLT, Vec2 uvRB, Vec2i & refSize, Vec2 & refOrigin)
 			: m_textureId { textureId }
 			, m_uvLT { uvLT }
 			, m_uvRB { uvRB }
 			, m_refSize { refSize }
-			, m_refVOffset { refVOffset }
+			, m_refOrigin { refOrigin }
 		{}
 		virtual ~SSpriteImage();
 
 		/* ---------- ISprite ---------- */
 		virtual const Vec2i & GetSize() const override { return m_refSize; }
-		virtual const Vec2 & GetOffset() const override { return m_refVOffset; }
+		virtual const Vec2 & GetOrigin() const override { return m_refOrigin; }
 	private:
-		virtual void SetOffset(const Vec2 &) override {};
+		virtual void SetOrigin(const Vec2 &) override {};
 		/* ---------- ~ISprite ---------- */
 	public:
 
@@ -121,7 +121,7 @@ namespace Frame {
 		Vec2 m_uvRB { 1.f, 0.f };
 
 		Vec2i & m_refSize;
-		Vec2 & m_refVOffset;
+		Vec2 & m_refOrigin;
 	};
 
 	class CStaticSprite : public ISprite {
@@ -133,9 +133,9 @@ namespace Frame {
 
 		/* ---------- ISprite ---------- */
 		virtual const Vec2i & GetSize() const override { return m_size; }
-		virtual const Vec2 & GetOffset() const override { return m_vOffset; }
+		virtual const Vec2 & GetOrigin() const override { return m_origin; }
 
-		virtual void SetOffset(const Vec2 & vOffset) override { m_vOffset = vOffset; }
+		virtual void SetOrigin(const Vec2 & origin) override { m_origin = origin; }
 		/* --------- ~ISprite ---------- */
 
 		const SSpriteImage * GetImage() const { return m_pImage; }
@@ -144,7 +144,7 @@ namespace Frame {
 		SSpriteImage * m_pImage;
 
 		Vec2i m_size {};
-		Vec2 m_vOffset {};
+		Vec2 m_origin {};
 	};
 
 	class CAnimatedSprite : public ISprite {
@@ -158,9 +158,9 @@ namespace Frame {
 
 		/* ---------- ISprite ---------- */
 		virtual const Vec2i & GetSize() const override { return m_size; }
-		virtual const Vec2 & GetOffset() const override { return m_vOffset; }
+		virtual const Vec2 & GetOrigin() const override { return m_origin; }
 
-		virtual void SetOffset(const Vec2 & vOffset) override { m_vOffset = vOffset; }
+		virtual void SetOrigin(const Vec2 & origin) override { m_origin = origin; }
 		/* --------- ~ISprite ---------- */
 
 		const SSpriteImage * GetFrame(int frame) const {
@@ -177,7 +177,7 @@ namespace Frame {
 		int m_frameCount;
 
 		Vec2i m_size {};
-		Vec2 m_vOffset {};
+		Vec2 m_origin {};
 	};
 
 }

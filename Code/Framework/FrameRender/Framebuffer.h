@@ -34,7 +34,7 @@ namespace Frame {
 
 		SSpriteImage * m_pImage = nullptr;
 		Vec2i m_size {};
-		Vec2 m_offset {};
+		Vec2 m_origin {};
 	};
 
 }
