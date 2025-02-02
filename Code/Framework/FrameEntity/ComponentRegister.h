@@ -15,7 +15,7 @@ namespace Frame {
 
 	template<typename ComponentType>
 	struct SComponentType {
-		static inline SComponentTypeConfig config {};
+		static SComponentTypeConfig config;
 	};
 
 	template<typename ComponentType>
@@ -30,4 +30,5 @@ namespace Frame {
 }
 
 #define REGISTER_ENTITY_COMPONENT(ComponentType) \
+	template<> Frame::SComponentTypeConfig Frame::SComponentType<ComponentType>::config {}; \
 	Frame::__ComponentRegister<ComponentType> ___Register##ComponentType##__COUNTER__ {};
