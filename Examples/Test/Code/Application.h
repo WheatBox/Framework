@@ -2,7 +2,7 @@
 
 #include <FrameCore/IApplication.h>
 
-class CDiaryApplication final : public Frame::IApplication {
+class CApplication final : public Frame::IApplication {
 
 protected:
 	

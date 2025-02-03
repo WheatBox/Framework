@@ -5,7 +5,7 @@ setlocal
 set "vcpkg_cmake=C:/DevPacks/vcpkg/scripts/buildsystems/vcpkg.cmake"
 
 if exist "%vcpkg_cmake%" (
-	cmake -S . -B Build_mingw -G "MinGW Makefiles" -DCMAKE_TOOLCHAIN_FILE="%vcpkg_cmake%" -DVCPKG_TARGET_TRIPLET=x64-mingw-static -DCMAKE_EXPORT_COMPILE_COMMANDS=1
+	cmake -S . -B Build_mingw -G "MinGW Makefiles" -DCMAKE_TOOLCHAIN_FILE="%vcpkg_cmake%" -DVCPKG_TARGET_TRIPLET=x64-mingw -DCMAKE_EXPORT_COMPILE_COMMANDS=1
 	move Build_mingw\compile_commands.json .\
 ) else (
 	echo +-------------------------------------------------------------

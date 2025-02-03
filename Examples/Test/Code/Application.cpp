@@ -1,14 +1,14 @@
-﻿#include "DiaryApplication.h"
+﻿#include "Application.h"
 
 #include <FrameCore/Globals.h>
 #include <FrameEntity/EntitySystem.h>
 #include <FrameRender/Renderer.h>
 
-#include "Diary/Components/TestComponent.h"
+#include "Components/TestComponent.h"
 
 #include <iostream>
 
-void CDiaryApplication::Initialize() {
+void CApplication::Initialize() {
 	//SetVSync(true);
 	SetVSync(false);
 	SetMaxFPS(60);
