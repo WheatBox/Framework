@@ -78,6 +78,8 @@ add_library(${CMAKE_PROJECT_NAME} SHARED
 	utils.cmake
 )
 
+set_target_properties(${CMAKE_PROJECT_NAME} PROPERTIES DEBUG_POSTFIX "_d")
+
 target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE
 	${CMAKE_SOURCE_DIR}/Framework/
 	${THIRD_PARTY_DIR}/glad/include/
