@@ -39,10 +39,9 @@ namespace Frame::Log {
 #endif // _WIN32
 	}
 
-	const char * GetTimeStampString(char dateDelimiter, char date_clock_Delimiter, char clockDelimiter) {
+	std::string GetTimeStampString(char dateDelimiter, char date_clock_Delimiter, char clockDelimiter) {
 		auto [tm, msec] = GetTimeStamp();
-		static char buffer[256] = { };
-
+		char buffer[256] = { };
 		snprintf(buffer, 256, "%04d%c%02d%c%02d%c%02d%c%02d%c%02d%c%03d",
 			tm->tm_year + 1900, dateDelimiter, tm->tm_mon + 1, dateDelimiter, tm->tm_mday,
 			date_clock_Delimiter,
@@ -90,19 +89,27 @@ namespace Frame::Log {
 			}
 		}
 
-		char szMessage[__bufSize] { '\0' };
-
 		va_list argList;
+
 		va_start(argList, szFormat);
-		vsnprintf(szMessage, __bufSize, szFormat, argList);
+		int len = vsnprintf(nullptr, 0, szFormat, argList);
 		va_end(argList);
 
-		char szLogBuf[__bufSize] { '\0' };
-		snprintf(szLogBuf, __bufSize, "[%s] %s} %.*s",
-			GetLevelName(level), GetTimeStampString('-', ' ', ':'), static_cast<int>(__bufSize - 6), szMessage
-		);
+		if(len <= 0) {
+			return;
+		}
 
-		__logStrsQueue.push({ szLogBuf });
+		std::string head = "[" + std::string { GetLevelName(level) } + "] " + GetTimeStampString('-', ' ', ':') + "} ";
+
+		char * szMessage = (char *)malloc(sizeof(char) * (len + 1));
+
+		va_start(argList, szFormat);
+		vsnprintf(szMessage, len + 1, szFormat, argList);
+		va_end(argList);
+
+		__logStrsQueue.push(head + szMessage);
+
+		free(szMessage);
 
 		cv.notify_one();
 	}

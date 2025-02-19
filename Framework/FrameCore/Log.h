@@ -6,7 +6,7 @@ struct tm;
 
 namespace Frame::Log {
 
-	enum class ELevel {
+	enum ELevel {
 		Debug = 0,
 		Info,
 		Warn,
@@ -15,7 +15,7 @@ namespace Frame::Log {
 	};
 
 	std::pair<tm *, int> GetTimeStamp();
-	const char * GetTimeStampString(char dateDelimiter, char date_clock_Delimiter, char clockDelimiter);
+	std::string GetTimeStampString(char dateDelimiter, char date_clock_Delimiter, char clockDelimiter);
 
 	constexpr const char * GetLevelName(ELevel level) {
 		switch(level) {
@@ -31,11 +31,6 @@ namespace Frame::Log {
 			return "Fatal";
 		}
 		return "Unknown";
-	}
-
-	constexpr size_t __bufSize = 1024;
-	constexpr size_t GetBufSize() {
-		return __bufSize;
 	}
 
 	bool Open(std::string pathName = "./Logs/");
