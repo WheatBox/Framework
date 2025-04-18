@@ -20,7 +20,7 @@ namespace Frame {
 			m_vPos = { static_cast<float>(xpos), static_cast<float>(ypos) };
 		}
 		void __ScrollCallback(double xpos, double ypos) {
-			m_scrollCallback(xpos, ypos);
+			if(m_scrollCallback) m_scrollCallback(xpos, ypos);
 		}
 
 		void SetPosition(const Vec2 & vPos);
