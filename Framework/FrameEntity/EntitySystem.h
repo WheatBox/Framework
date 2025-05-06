@@ -19,7 +19,7 @@ namespace Frame {
 
 	private:
 		EntitiesMap m_entities {};
-		EntityId m_idNext = 0;
+		EntityId m_idNext = 1;
 
 	public:
 
