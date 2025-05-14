@@ -24,9 +24,7 @@ namespace Frame {
 			Nothing = 0,
 		
 			// 更新（每次游戏循环都会调用）
-			// params[0].f = 这一帧的执行耗时
 			// Update (Called in everytime the game loop)
-			// params[0].f = The execution time of this frame
 			Update = FlagBit(EFlagIndex::eEFI_Update),
 			BeforeUpdate = FlagBit(EFlagIndex::eEFI_BeforeUpdate),
 			AfterUpdate = FlagBit(EFlagIndex::eEFI_AfterUpdate),

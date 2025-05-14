@@ -40,18 +40,15 @@ namespace Frame {
 
 #undef __ComponentDoSomethingAboutProcessors
 
-	void CEntitySystem::ProcessBeforeUpdateEvent(float frameTime) {
-		m_pEventProcessors[EntityEvent::EFlagIndex::eEFI_BeforeUpdate]->SetEventParam(0, frameTime);
+	void CEntitySystem::ProcessBeforeUpdateEvent() {
 		m_pEventProcessors[EntityEvent::EFlagIndex::eEFI_BeforeUpdate]->Process();
 	}
 
-	void CEntitySystem::ProcessUpdateEvent(float frameTime) {
-		m_pEventProcessors[EntityEvent::EFlagIndex::eEFI_Update]->SetEventParam(0, frameTime);
+	void CEntitySystem::ProcessUpdateEvent() {
 		m_pEventProcessors[EntityEvent::EFlagIndex::eEFI_Update]->Process();
 	}
 
-	void CEntitySystem::ProcessAfterUpdateEvent(float frameTime) {
-		m_pEventProcessors[EntityEvent::EFlagIndex::eEFI_AfterUpdate]->SetEventParam(0, frameTime);
+	void CEntitySystem::ProcessAfterUpdateEvent() {
 		m_pEventProcessors[EntityEvent::EFlagIndex::eEFI_AfterUpdate]->Process();
 	}
 

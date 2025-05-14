@@ -13,6 +13,36 @@
 
 namespace Frame {
 
+	int __maxFPS = 0;
+	bool __bVSync = true;
+	std::chrono::duration<double> __targetFrameTime { 0.0 };
+	float __frameTime = 0.f;
+
+	bool GetVSync() {
+		return __bVSync;
+	}
+
+	void SetVSync(bool bEnable) {
+		__bVSync = bEnable;
+		glfwSwapInterval(bEnable);
+	}
+
+	int GetMaxFPS() {
+		return __maxFPS;
+	}
+
+	void SetMaxFPS(int fps) {
+		__maxFPS = fps > 0 ? fps : 0;
+
+		if(__maxFPS != 0) {
+			__targetFrameTime = std::chrono::duration<double> { 1.0 / static_cast<double>(fps) };
+		}
+	}
+
+	float GetFrameTime() {
+		return __frameTime;
+	}
+
 	void IApplication::Terminate() {
 		delete gRenderer;
 		gRenderer = nullptr;
@@ -81,6 +111,9 @@ namespace Frame {
 		std::chrono::duration<double> frameTime(0.0);
 		std::chrono::duration<double> sleepAdjust(0.0);
 		while(!glfwWindowShouldClose(m_pWindow)) {
+			
+			__frameTime = static_cast<float>(frameTime.count());
+
 			std::chrono::steady_clock::time_point t1 = std::chrono::steady_clock::now();
 
 			gInput->Process();
@@ -91,10 +124,9 @@ namespace Frame {
 			MainLoopPriority();
 			/* ------------- Main Loop ------------- */
 
-			float _frameTime = static_cast<float>(frameTime.count());
-			gEntitySystem->ProcessBeforeUpdateEvent(_frameTime);
-			gEntitySystem->ProcessUpdateEvent(_frameTime);
-			gEntitySystem->ProcessAfterUpdateEvent(_frameTime);
+			gEntitySystem->ProcessBeforeUpdateEvent();
+			gEntitySystem->ProcessUpdateEvent();
+			gEntitySystem->ProcessAfterUpdateEvent();
 
 			gEntitySystem->ProcessRenderEvent();
 
@@ -106,14 +138,14 @@ namespace Frame {
 			glfwSwapBuffers(m_pWindow);
 			glfwPollEvents();
 
-			if(!m_bVSync && m_maxFPS != 0) {
+			if(!__bVSync && __maxFPS != 0) {
 				// https://github.com/erincatto/box2d/blob/main/testbed/main.cpp
 
 				// Throttle to cap at 60Hz. This adaptive using a sleep adjustment. This could be improved by
 				// using mm_pause or equivalent for the last millisecond.
 				std::chrono::steady_clock::time_point t2 = std::chrono::steady_clock::now();
 				std::chrono::duration<double> timeUsed = t2 - t1;
-				std::chrono::duration<double> sleepTime = m_targetFrameTime - timeUsed + sleepAdjust;
+				std::chrono::duration<double> sleepTime = __targetFrameTime - timeUsed + sleepAdjust;
 				if (sleepTime > std::chrono::duration<double>(0))
 				{
 					std::this_thread::sleep_for(sleepTime);
@@ -123,18 +155,13 @@ namespace Frame {
 				frameTime = t3 - t1;
 
 				// Compute the sleep adjustment using a low pass filter
-				sleepAdjust = 0.9 * sleepAdjust + 0.1 * (m_targetFrameTime - frameTime);
+				sleepAdjust = 0.9 * sleepAdjust + 0.1 * (__targetFrameTime - frameTime);
 			} else {
 				frameTime = std::chrono::steady_clock::now() - t1;
 			}
 		}
 
 		Terminate();
-	}
-
-	void IApplication::SetVSync(bool bEnable) {
-		m_bVSync = bEnable;
-		glfwSwapInterval(bEnable);
 	}
 
 }

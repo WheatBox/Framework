@@ -9,7 +9,14 @@ struct GLFWwindow;
 
 namespace Frame {
 
-	class CShader;
+	bool GetVSync();
+	void SetVSync(bool bEnable);
+
+	int GetMaxFPS();
+	// 0 = 无限大 | Infinite
+	void SetMaxFPS(int fps);
+
+	float GetFrameTime();
 
 	struct IApplication {
 	protected:
@@ -45,26 +52,7 @@ namespace Frame {
 		virtual void MainLoopPriority() {}
 		virtual void MainLoopLast() {}
 
-		bool GetVSync() const { return m_bVSync; }
-		void SetVSync(bool bEnable);
-
-		int GetMaxFPS() const { return m_maxFPS; }
-		// 0 = 无限大 | Infinite
-		void SetMaxFPS(int fps) {
-			m_maxFPS = fps > 0 ? fps : 0;
-
-			if(m_maxFPS != 0) {
-				m_targetFrameTime = std::chrono::duration<double> { 1.0 / static_cast<double>(fps) };
-			}
-		}
-
-		int m_maxFPS = 0;
-
 		bool m_quit = false;
-
-	private:
-		bool m_bVSync = true;
-		std::chrono::duration<double> m_targetFrameTime { 0.0 };
 
 	};
 

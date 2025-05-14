@@ -11,6 +11,7 @@
 #include <FrameCore/Camera.h>
 #include <FrameMath/Matrix33.h>
 #include <FrameMath/Matrix22.h>
+#include <FrameCore/IApplication.h>
 
 REGISTER_ENTITY_COMPONENT(CTestComponent);
 REGISTER_ENTITY_COMPONENT(CTestComponent2);
@@ -189,7 +190,7 @@ void CTestComponent2::ProcessEvent(const Frame::EntityEvent::SEvent & event) {
 	switch(event.flag) {
 	case Frame::EntityEvent::Update:
 	{
-		float frameTime = event.params[0].f;
+		float frameTime = Frame::GetFrameTime();
 
 		//printf("fps: %f\n", 1.f / frameTime);
 
