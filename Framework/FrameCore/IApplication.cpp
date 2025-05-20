@@ -16,7 +16,7 @@ namespace Frame {
 	int __maxFPS = 0;
 	bool __bVSync = true;
 	std::chrono::duration<double> __targetFrameTime { 0.0 };
-	float __frameTime = 0.f;
+	float __frameTime = 0.f, __maxFrameTime = 1.f;
 
 	bool GetVSync() {
 		return __bVSync;
@@ -40,7 +40,15 @@ namespace Frame {
 	}
 
 	float GetFrameTime() {
-		return __frameTime;
+		return Min(__frameTime, __maxFrameTime);
+	}
+
+	void SetMaxFrameTime(float time) {
+		__maxFrameTime = time;
+	}
+
+	float GetMaxFrameTime() {
+		return __maxFrameTime;
 	}
 
 	void IApplication::Terminate() {
