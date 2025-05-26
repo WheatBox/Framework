@@ -1,10 +1,10 @@
-﻿#include <FrameCore/Globals.h>
+﻿#include "Globals.h"
 
-#include <FrameRender/Renderer.h>
-#include <FrameEntity/EntitySystem.h>
-#include <FrameInput/Input.h>
-#include <FrameAudio/AudioPlayer.h>
-#include <FrameCore/Camera.h>
+#include "../FrameRender/Renderer.h"
+#include "../FrameEntity/EntitySystem.h"
+#include "../FrameInput/Input.h"
+#include "../FrameAudio/AudioPlayer.h"
+#include "../FrameCore/Camera.h"
 
 namespace Frame {
 

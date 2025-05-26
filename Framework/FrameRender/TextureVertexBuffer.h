@@ -1,8 +1,8 @@
 ﻿#pragma once
 
-#include <FrameCore/BasicTypes.h>
-#include <FrameMath/Vector2.h>
-#include <FrameMath/ColorMath.h>
+#include "../FrameCore/BasicTypes.h"
+#include "../FrameMath/Vector2.h"
+#include "../FrameMath/ColorMath.h"
 
 namespace Frame {
 

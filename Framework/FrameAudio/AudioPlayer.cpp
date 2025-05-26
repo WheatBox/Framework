@@ -1,6 +1,6 @@
-﻿#include <FrameAudio/AudioPlayer.h>
+﻿#include "AudioPlayer.h"
 
-#include <FrameCore/Log.h>
+#include "../FrameCore/Log.h"
 
 #include <AL/al.h>
 #include <AL/alc.h>

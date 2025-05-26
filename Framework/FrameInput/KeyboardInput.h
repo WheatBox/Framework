@@ -1,6 +1,6 @@
 ﻿#pragma once
 
-#include <FrameInput/ButtonInputBase.h>
+#include "../FrameInput/ButtonInputBase.h"
 
 namespace Frame {
 

@@ -1,6 +1,6 @@
-﻿#include <FrameAsset/Sound.h>
+﻿#include "Sound.h"
 
-#include <FrameCore/Log.h>
+#include "../FrameCore/Log.h"
 
 #include <sndfile.h>
 #include <AL/al.h>

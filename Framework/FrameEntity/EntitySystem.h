@@ -1,7 +1,7 @@
 ﻿#pragma once
 
-#include <FrameEntity/Entity.h>
-#include <FrameEntity/IEntityComponent.h>
+#include "../FrameEntity/Entity.h"
+#include "../FrameEntity/IEntityComponent.h"
 
 #include <unordered_map>
 
@@ -60,4 +60,4 @@ namespace Frame {
 
 }
 
-#include <FrameEntity/ComponentRegister.h>
+#include "../FrameEntity/ComponentRegister.h"

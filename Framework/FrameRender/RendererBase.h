@@ -1,6 +1,6 @@
 ﻿#pragma once
 
-#include <FrameMath/ColorMath.h>
+#include "../FrameMath/ColorMath.h"
 
 #include <tuple>
 

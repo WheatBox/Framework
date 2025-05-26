@@ -1,8 +1,8 @@
-﻿#include <FrameAsset/Font.h>
+﻿#include "Font.h"
 
-#include <FrameAsset/Sprite.h>
-#include <FrameCore/Log.h>
-#include <FrameRender/RendererBase.h>
+#include "../FrameAsset/Sprite.h"
+#include "../FrameCore/Log.h"
+#include "../FrameRender/RendererBase.h"
 
 #include <ft2build.h>
 #include <freetype/freetype.h>

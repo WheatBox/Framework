@@ -1,7 +1,7 @@
-﻿#include <FrameRender/Shader.h>
+﻿#include "Shader.h"
 
-#include <FrameCore/Globals.h>
-#include <FrameCore/Log.h>
+#include "../FrameCore/Globals.h"
+#include "../FrameCore/Log.h"
 
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>

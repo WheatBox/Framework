@@ -1,7 +1,7 @@
 ﻿#pragma once
 
-#include <FrameInput/KeyboardInput.h>
-#include <FrameInput/MouseInput.h>
+#include "../FrameInput/KeyboardInput.h"
+#include "../FrameInput/MouseInput.h"
 
 struct GLFWwindow;
 

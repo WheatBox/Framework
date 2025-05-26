@@ -1,8 +1,8 @@
-﻿#include <FrameAsset/Sprite.h>
-#include <FrameAsset/ErrorSprite.h>
+﻿#include "Sprite.h"
+#include "ErrorSprite.h"
 
-#include <FrameCore/Log.h>
-#include <FrameRender/RendererBase.h>
+#include "../FrameCore/Log.h"
+#include "../FrameRender/RendererBase.h"
 
 #include <glad/glad.h>
 #include <stb_image.h>

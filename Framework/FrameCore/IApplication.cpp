@@ -1,10 +1,11 @@
-﻿#include <FrameCore/IApplication.h>
-#include <FrameCore/Globals.h>
-#include <FrameRender/Renderer.h>
-#include <FrameEntity/EntitySystem.h>
-#include <FrameInput/Input.h>
-#include <FrameAudio/AudioPlayer.h>
-#include <FrameCore/Camera.h>
+﻿#include "IApplication.h"
+
+#include "../FrameCore/Globals.h"
+#include "../FrameRender/Renderer.h"
+#include "../FrameEntity/EntitySystem.h"
+#include "../FrameInput/Input.h"
+#include "../FrameAudio/AudioPlayer.h"
+#include "../FrameCore/Camera.h"
 
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>

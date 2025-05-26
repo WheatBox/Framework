@@ -1,4 +1,4 @@
-﻿#include <FrameCore/Log.h>
+﻿#include "Log.h"
 
 #include <iostream>
 #include <fstream>

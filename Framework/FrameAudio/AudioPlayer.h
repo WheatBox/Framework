@@ -1,8 +1,8 @@
 ﻿#pragma once
 
-#include <FrameMath/Vector3.h>
+#include "../FrameMath/Vector3.h"
 
-#include <FrameAudio/AudioSource.h>
+#include "../FrameAudio/AudioSource.h"
 
 #include <memory>
 #include <list>

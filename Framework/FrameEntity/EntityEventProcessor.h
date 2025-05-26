@@ -1,6 +1,6 @@
 ﻿#pragma once
 
-#include <FrameEntity/EntityEvent.h>
+#include "../FrameEntity/EntityEvent.h"
 
 #include <stdint.h>
 #include <initializer_list>

@@ -1,7 +1,7 @@
-﻿#include <FrameInput/MouseInput.h>
+﻿#include "MouseInput.h"
 
-#include <FrameCore/Globals.h>
-#include <FrameCore/Camera.h>
+#include "../FrameCore/Globals.h"
+#include "../FrameCore/Camera.h"
 
 #include <GLFW/glfw3.h>
 

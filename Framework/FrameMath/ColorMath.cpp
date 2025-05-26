@@ -1,6 +1,6 @@
-﻿#include <FrameMath/ColorMath.h>
+﻿#include "ColorMath.h"
 
-#include <FrameMath/Math.h>
+#include "../FrameMath/Math.h"
 #include <algorithm>
 
 namespace Frame {

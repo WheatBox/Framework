@@ -1,10 +1,10 @@
 ﻿#pragma once
 
-#include <FrameRender/RendererBase.h>
+#include "../FrameRender/RendererBase.h"
 
-#include <FrameCore/BasicTypes.h>
-#include <FrameMath/ColorMath.h>
-#include <FrameMath/Vector2.h>
+#include "../FrameCore/BasicTypes.h"
+#include "../FrameMath/ColorMath.h"
+#include "../FrameMath/Vector2.h"
 
 namespace Frame {
 

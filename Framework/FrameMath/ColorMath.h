@@ -1,6 +1,6 @@
 ﻿#pragma once
 
-#include <FrameCore/BasicTypes.h>
+#include "../FrameCore/BasicTypes.h"
 
 #define ONECOL(_color_value) (_color_value / 255.f)
 #define ONERGB(_ColorRGB) ONECOL(_ColorRGB.r), ONECOL(_ColorRGB.g), ONECOL(_ColorRGB.b)

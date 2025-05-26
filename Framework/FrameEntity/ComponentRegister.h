@@ -1,6 +1,6 @@
 ﻿#pragma once
 
-#include <FrameUtility/GUID.h>
+#include "../FrameUtility/GUID.h"
 
 namespace Frame {
 

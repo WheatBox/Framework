@@ -1,13 +1,13 @@
-﻿#include <FrameRender/Renderer.h>
+﻿#include "Renderer.h"
 
-#include <FrameRender/DefaultShaders.h>
+#include "../FrameRender/DefaultShaders.h"
 
-#include <FrameAsset/Sprite.h>
-#include <FrameRender/Shader.h>
-#include <FrameCore/Camera.h>
-#include <FrameCore/Globals.h> // for gShaderInUsing & gCamera
-#include <FrameCore/Log.h>
-#include <FrameRender/RendererBase.h>
+#include "../FrameAsset/Sprite.h"
+#include "../FrameRender/Shader.h"
+#include "../FrameCore/Camera.h"
+#include "../FrameCore/Globals.h" // for gShaderInUsing & gCamera
+#include "../FrameCore/Log.h"
+#include "../FrameRender/RendererBase.h"
 
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
@@ -43,7 +43,8 @@ namespace Frame {
 		//glFrontFace(GL_CCW);
 
 		glEnable(GL_BLEND);
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		//glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
 
 		unsigned int indices[] = {
 			1, 0, 3, 2

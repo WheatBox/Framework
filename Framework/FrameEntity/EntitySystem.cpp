@@ -1,6 +1,6 @@
-﻿#include <FrameEntity/EntitySystem.h>
+﻿#include "EntitySystem.h"
 
-#include <FrameEntity/EntityEventProcessor.h>
+#include "../FrameEntity/EntityEventProcessor.h"
 
 namespace Frame {
 

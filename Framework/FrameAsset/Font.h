@@ -1,9 +1,9 @@
 ﻿#pragma once
 
-#include <FrameCore/BasicTypes.h>
-#include <FrameMath/Vector2.h>
+#include "../FrameCore/BasicTypes.h"
+#include "../FrameMath/Vector2.h"
 
-#include <FrameUtility/UTF8Utils.h>
+#include "../FrameUtility/UTF8Utils.h"
 
 #include <unordered_map>
 #include <unordered_set>

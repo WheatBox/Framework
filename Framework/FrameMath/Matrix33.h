@@ -1,8 +1,8 @@
 ﻿#pragma once
 
-#include <FrameMath/Matrix_tpl.h>
-#include <FrameMath/Vector2.h>
-#include <FrameMath/Vector3.h>
+#include "../FrameMath/Matrix_tpl.h"
+#include "../FrameMath/Vector2.h"
+#include "../FrameMath/Vector3.h"
 
 namespace Frame {
 

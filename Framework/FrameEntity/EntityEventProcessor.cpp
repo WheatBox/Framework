@@ -1,7 +1,7 @@
-﻿#include <FrameEntity/EntityEventProcessor.h>
+﻿#include "EntityEventProcessor.h"
 
-#include <FrameEntity/Entity.h>
-#include <FrameEntity/IEntityComponent.h>
+#include "../FrameEntity/Entity.h"
+#include "../FrameEntity/IEntityComponent.h"
 
 #include <vector>
 #include <algorithm>

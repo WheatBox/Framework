@@ -1,6 +1,6 @@
-﻿#include <FrameAudio/AudioSource.h>
+﻿#include "AudioSource.h"
 
-#include <FrameAsset/Sound.h>
+#include "../FrameAsset/Sound.h"
 
 #include <AL/al.h>
 

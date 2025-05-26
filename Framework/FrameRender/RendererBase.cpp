@@ -1,6 +1,6 @@
-﻿#include <FrameRender/RendererBase.h>
+﻿#include "RendererBase.h"
 
-#include <FrameRender/Renderer.h>
+#include "../FrameRender/Renderer.h"
 
 #include <glad/glad.h>
 

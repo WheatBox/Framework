@@ -1,14 +1,14 @@
 ﻿#pragma once
 
-#include <FrameRender/RendererBase.h>
+#include "../FrameRender/RendererBase.h"
 
-#include <FrameCore/BasicTypes.h>
-#include <FrameMath/ColorMath.h>
-#include <FrameMath/Vector2.h>
+#include "../FrameCore/BasicTypes.h"
+#include "../FrameMath/ColorMath.h"
+#include "../FrameMath/Vector2.h"
 
-#include <FrameAsset/Font.h>
+#include "../FrameAsset/Font.h"
 
-#include <FrameUtility/BitOperation.h>
+#include "../FrameUtility/BitOperation.h"
 
 namespace Frame {
 

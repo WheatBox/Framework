@@ -1,6 +1,6 @@
 ﻿#pragma once
 
-#include <FrameMath/Vector2.h>
+#include "../FrameMath/Vector2.h"
 
 namespace Frame {
 

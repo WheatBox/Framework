@@ -1,14 +1,14 @@
 ﻿#pragma once
 
-#include <FrameRender/RendererBase.h>
+#include "../FrameRender/RendererBase.h"
 
-#include <FrameRender/TextureVertexBuffer.h>
-#include <FrameRender/ShapeRenderer.h>
-#include <FrameRender/TextRenderer.h>
-#include <FrameRender/Shader.h>
+#include "../FrameRender/TextureVertexBuffer.h"
+#include "../FrameRender/ShapeRenderer.h"
+#include "../FrameRender/TextRenderer.h"
+#include "../FrameRender/Shader.h"
 
-#include <FrameMath/ColorMath.h>
-#include <FrameMath/Matrix33.h>
+#include "../FrameMath/ColorMath.h"
+#include "../FrameMath/Matrix33.h"
 
 struct GLFWwindow;
 

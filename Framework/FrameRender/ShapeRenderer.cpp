@@ -1,9 +1,9 @@
-﻿#include <FrameRender/ShapeRenderer.h>
+﻿#include "ShapeRenderer.h"
 
-#include <FrameRender/DefaultShaders.h>
-#include <FrameRender/Renderer.h>
-#include <FrameRender/RendererBase.h>
-#include <FrameCore/Log.h>
+#include "../FrameRender/DefaultShaders.h"
+#include "../FrameRender/Renderer.h"
+#include "../FrameRender/RendererBase.h"
+#include "../FrameCore/Log.h"
 
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>

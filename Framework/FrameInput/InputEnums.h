@@ -1,6 +1,6 @@
 ﻿#pragma once
 
-#include <FrameUtility/BitOperation.h>
+#include "../FrameUtility/BitOperation.h"
 
 namespace Frame {
 

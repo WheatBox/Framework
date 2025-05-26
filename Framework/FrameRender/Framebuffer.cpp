@@ -1,9 +1,9 @@
-﻿#include <FrameRender/Framebuffer.h>
+﻿#include "Framebuffer.h"
 
-#include <FrameAsset/Sprite.h>
-#include <FrameCore/Globals.h>
-#include <FrameCore/Camera.h>
-#include <FrameRender/Renderer.h>
+#include "../FrameAsset/Sprite.h"
+#include "../FrameCore/Globals.h"
+#include "../FrameCore/Camera.h"
+#include "../FrameRender/Renderer.h"
 
 #include <glad/glad.h>
 

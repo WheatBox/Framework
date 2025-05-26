@@ -1,6 +1,6 @@
 ﻿#pragma once
 
-#include <FrameInput/InputEnums.h>
+#include "../FrameInput/InputEnums.h"
 
 #include <unordered_map>
 #include <list>

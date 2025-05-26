@@ -2,8 +2,8 @@
 
 #include <chrono> // for m_maxFrameDelay
 
-#include <FrameCore/Log.h>
-#include <FrameMath/Vector2.h>
+#include "../FrameCore/Log.h"
+#include "../FrameMath/Vector2.h"
 
 struct GLFWwindow;
 

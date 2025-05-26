@@ -374,24 +374,6 @@ void CTestComponent2::ProcessEvent(const Frame::EntityEvent::SEvent & event) {
 #if 1
 		Frame::gRenderer->DrawSpriteBlended(m_pTextureAtlasTestSprite->GetImage(), 0.f, 0xFFFFFF, 1.f);
 #endif
-#if 1
-		if(!m_pFramebuffer) {
-			m_pFramebuffer = new Frame::CFramebuffer { 200 };
-		}
-		if(!m_pFramebuffer2) {
-			m_pFramebuffer2 = new Frame::CFramebuffer { 100 };
-		}
-
-		m_pFramebuffer->Bind();
-		Frame::gRenderer->pShapeRenderer->DrawRectangleBlended(50, 150, 0xCCCC00, 1.f);
-		m_pFramebuffer2->Bind();
-		Frame::gRenderer->DrawSprite(m_pSprite->GetImage(), Frame::Vec2Cast(m_pFramebuffer2->GetSize()) * .5f, 1.f, m_angle);
-		m_pFramebuffer2->Unbind();
-		Frame::gRenderer->DrawSprite(m_pFramebuffer2->GetImage(), Frame::Vec2 { 50.f }.GetRotated(m_angle) + 100.f, 1.f, -m_angle);
-		Frame::gRenderer->pShapeRenderer->DrawRectangleBlended(50, 150, 0xCC0000, 1.f, 4.f);
-		m_pFramebuffer->Unbind();
-		Frame::gRenderer->DrawSprite(m_pFramebuffer->GetImage(), -100.f, 1.f, 0.f);
-#endif
 
 		if(Frame::gInput->pKeyboard->GetPressed(Frame::EKeyId::eKI_Space))
 			Frame::Log::Log(Frame::Log::ELevel::Debug, "Test");
@@ -462,6 +444,28 @@ void CTestComponent2::ProcessEvent(const Frame::EntityEvent::SEvent & event) {
 			Frame::gRenderer->pShapeRenderer->DrawLine(0.f, vecpos);
 			Frame::gRenderer->pTextRenderer->DrawText("      7", vecpos);
 		}
+
+#if 1
+		if(!m_pFramebuffer) {
+			m_pFramebuffer = new Frame::CFramebuffer { 200 };
+		}
+		if(!m_pFramebuffer2) {
+			m_pFramebuffer2 = new Frame::CFramebuffer { 100 };
+		}
+
+		m_pFramebuffer->Bind();
+		Frame::gRenderer->pShapeRenderer->DrawRectangleBlended(50, 150, 0xCCCC00, 1.f);
+		m_pFramebuffer2->Bind();
+		//Frame::gRenderer->Clear(0xFFFFFF, 1.f);
+		Frame::gRenderer->DrawSpriteBlended(m_pSprite->GetImage(), Frame::Vec2Cast(m_pFramebuffer2->GetSize()) * .5f, 0xFFFFFF, 1.f, 1.f, m_angle);
+		Frame::gRenderer->DrawSpriteBlended(m_pSprite->GetImage(), Frame::Vec2Cast(m_pFramebuffer2->GetSize()) * .0f, 0xFFFFFF, .5f, 1.f, m_angle);
+		Frame::gRenderer->pShapeRenderer->DrawRectangleBlended(0, 70, 0x00FF00, .5f);
+		m_pFramebuffer2->Unbind();
+		Frame::gRenderer->DrawSprite(m_pFramebuffer2->GetImage(), Frame::Vec2 { 50.f }.GetRotated(m_angle) + 100.f, 1.f, -m_angle);
+		Frame::gRenderer->pShapeRenderer->DrawRectangleBlended(50, 150, 0xCC0000, 1.f, 4.f);
+		m_pFramebuffer->Unbind();
+		Frame::gRenderer->DrawSprite(m_pFramebuffer->GetImage(), { 200.f, -200.f }, 1.f, 0.f);
+#endif
 	}
 	break;
 	}

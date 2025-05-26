@@ -1,6 +1,6 @@
 ﻿#pragma once
 
-#include <FrameEntity/EntityEvent.h>
+#include "../FrameEntity/EntityEvent.h"
 
 namespace Frame {
 
@@ -53,4 +53,4 @@ namespace Frame {
 
 };
 
-#include <FrameEntity/ComponentRegister.h>
+#include "../FrameEntity/ComponentRegister.h"

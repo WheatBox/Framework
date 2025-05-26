@@ -1,4 +1,4 @@
-﻿#include <FrameCore/Camera.h>
+﻿#include "Camera.h"
 
 #include <glad/glad.h>
 

@@ -1,7 +1,7 @@
-﻿#include <FrameEntity/Entity.h>
+﻿#include "Entity.h"
 
-#include <FrameCore/Globals.h>
-#include <FrameEntity/EntitySystem.h>
+#include "../FrameCore/Globals.h"
+#include "../FrameEntity/EntitySystem.h"
 
 namespace Frame {
 

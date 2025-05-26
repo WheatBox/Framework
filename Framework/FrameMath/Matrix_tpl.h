@@ -1,6 +1,6 @@
 ﻿#pragma once
 
-#include <FrameMath/MathCommon.h>
+#include "../FrameMath/MathCommon.h"
 
 #include <initializer_list>
 #include <functional>

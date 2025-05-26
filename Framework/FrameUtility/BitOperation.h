@@ -1,6 +1,6 @@
 ﻿#pragma once
 
-#include <FrameCore/BasicTypes.h>
+#include "../FrameCore/BasicTypes.h"
 
 namespace Frame {
 

@@ -1,7 +1,7 @@
 ﻿#pragma once
 
-#include <FrameMath/Math.h>
-#include <FrameMath/Vector2.h>
+#include "../FrameMath/Math.h"
+#include "../FrameMath/Vector2.h"
 
 namespace Frame {
 	

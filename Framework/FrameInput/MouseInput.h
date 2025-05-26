@@ -1,7 +1,7 @@
 ﻿#pragma once
 
-#include <FrameInput/ButtonInputBase.h>
-#include <FrameMath/Vector2.h>
+#include "../FrameInput/ButtonInputBase.h"
+#include "../FrameMath/Vector2.h"
 
 #include <functional>
 
