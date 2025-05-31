@@ -29,6 +29,11 @@ namespace Frame {
 
 }
 
+#define __REGISTER_ENTITY_COMPONENT__MAKE_NAME_(n) ___RegisterEntityComponent_##n
+#define __REGISTER_ENTITY_COMPONENT__MAKE_NAME(n) __REGISTER_ENTITY_COMPONENT__MAKE_NAME_(n)
+
 #define REGISTER_ENTITY_COMPONENT(ComponentType) \
-	template<> Frame::SComponentTypeConfig Frame::SComponentType<ComponentType>::config {}; \
-	Frame::__ComponentRegister<ComponentType> ___Register##ComponentType##__COUNTER__ {};
+namespace Frame { \
+	template<> SComponentTypeConfig SComponentType<ComponentType>::config {}; \
+	__ComponentRegister<ComponentType> __REGISTER_ENTITY_COMPONENT__MAKE_NAME(__COUNTER__) {}; \
+}
