@@ -37,6 +37,9 @@ namespace Frame {
 	}
 
 	void CAudioSource::Play(const CSound * pSound) {
+		if(!pSound) {
+			return;
+		}
 		m_sound = pSound;
 		alSourcei(m_sourceId, AL_BUFFER, pSound->GetBufferId());
 		alSourcePlay(m_sourceId);
@@ -68,11 +71,14 @@ namespace Frame {
 	}
 
 	void CAudioSource::SetParams(const SAudioSourceParams & params) {
-		SetPosition(params.vPos);
+		SetPosition(params.pos);
 		SetPositionRelative(params.bPosRelative);
 		SetGain(params.gain);
 		SetPitch(params.pitch);
 		SetLooping(params.loop);
+		SetMaxDistance(params.maxDistance);
+		SetRolloffFactor(params.rolloffFactor);
+		SetReferenceDistance(params.referenceDistance);
 	}
 
 	Vec3 CAudioSource::GetPosition() const {
@@ -109,8 +115,8 @@ namespace Frame {
 		return _ALGetSourceF(m_sourceId, AL_REFERENCE_DISTANCE);
 	}
 
-	void CAudioSource::SetPosition(const Vec3 & vPos) {
-		alSource3f(m_sourceId, AL_POSITION, vPos.x, vPos.y, vPos.z);
+	void CAudioSource::SetPosition(const Vec3 & pos) {
+		alSource3f(m_sourceId, AL_POSITION, pos.x, pos.y, pos.z);
 	}
 
 	void CAudioSource::SetPositionRelative(bool bRelative) {

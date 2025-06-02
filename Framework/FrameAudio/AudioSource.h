@@ -11,7 +11,7 @@ namespace Frame {
 	class CSound;
 
 	struct SAudioSourceParams {
-		Vec3 vPos { 0.f };
+		Vec3 pos { 0.f };
 		bool bPosRelative = false;
 		
 		float gain = 1.f;
@@ -55,7 +55,7 @@ namespace Frame {
 		float GetRolloffFactor() const;
 		float GetReferenceDistance() const;
 
-		void SetPosition(const Vec3 & vPos);
+		void SetPosition(const Vec3 & pos);
 		void SetPositionRelative(bool bRelative);
 		void SetGain(float gain);
 		void SetPitch(float pitch);
