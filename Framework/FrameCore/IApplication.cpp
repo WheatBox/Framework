@@ -40,7 +40,10 @@ namespace Frame {
 		}
 	}
 
-	float GetFrameTime() {
+	float GetFrameTime(bool ignoreMaxFrameTime) {
+		if(ignoreMaxFrameTime) {
+			return __frameTime;
+		}
 		return Min(__frameTime, __maxFrameTime);
 	}
 
