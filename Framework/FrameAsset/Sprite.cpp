@@ -38,19 +38,19 @@ namespace Frame {
 		return resultTextureId;
 	}
 
-	CTextureAtlas::CTextureAtlas(const char * filename, const std::unordered_map<std::string, std::pair<Vec2, Vec2>> & _uvs)
+	CTextureAtlas::CTextureAtlas(const char * filename, const std::unordered_map<std::string, std::pair<Vec2, Vec2>> & _uvs, bool bGenerateMipMap)
 		: m_uvs { _uvs }
 	{
 		int channel;
 		unsigned char * data = stbi_load(filename, & m_size.x, & m_size.y, & channel, 0);
 		if(data) {
-			m_textureId = GenerateTexture(data, channel, m_size);
+			m_textureId = GenerateTexture(data, channel, m_size, bGenerateMipMap);
 		} else {
 			Log::Log(Log::ELevel::Error, "Failed to load texture atlas file: %s", filename);
 
 			m_size.x = __errorSpriteDataWidth;
 			m_size.y = __errorSpriteDataHeight;
-			m_textureId = GenerateTexture(__errorSpriteData, __errorSpriteDataChannel, m_size);
+			m_textureId = GenerateTexture(__errorSpriteData, __errorSpriteDataChannel, m_size, bGenerateMipMap);
 			for(auto & elem : m_uvs) {
 				elem.second.first = { 0.f, 1.f };
 				elem.second.second = { 1.f, 0.f };
@@ -67,17 +67,17 @@ namespace Frame {
 		glDeleteTextures(1, & m_textureId);
 	}
 
-	CStaticSprite::CStaticSprite(const char * filename) {
+	CStaticSprite::CStaticSprite(const char * filename, bool bGenerateMipMap) {
 		int channel;
 		unsigned char * data = stbi_load(filename, & m_size.x, & m_size.y, & channel, 0);
 		if(data) {
-			m_pImage = new SSpriteImage { data, channel, m_size, m_origin };
+			m_pImage = new SSpriteImage { data, channel, m_size, m_origin, bGenerateMipMap };
 		} else {
 			Log::Log(Log::ELevel::Error, "Failed to load static sprite file: %s", filename);
 
 			m_size.x = __errorSpriteDataWidth;
 			m_size.y = __errorSpriteDataHeight;
-			m_pImage = new SSpriteImage { __errorSpriteData, __errorSpriteDataChannel, m_size, m_origin };
+			m_pImage = new SSpriteImage { __errorSpriteData, __errorSpriteDataChannel, m_size, m_origin, bGenerateMipMap };
 		}
 		stbi_image_free(data);
 	}

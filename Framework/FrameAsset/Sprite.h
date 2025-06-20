@@ -16,7 +16,7 @@ namespace Frame {
 	class CTextureAtlas {
 	public:
 		CTextureAtlas() = delete;
-		CTextureAtlas(const char * filename, const std::unordered_map<std::string, std::pair<Vec2, Vec2>> & _uvs);
+		CTextureAtlas(const char * filename, const std::unordered_map<std::string, std::pair<Vec2, Vec2>> & _uvs, bool bGenerateMipMap = true);
 		virtual ~CTextureAtlas();
 
 		bool GetUV(Vec2 * outLT, Vec2 * outRB, const char * uvKey) const {
@@ -73,11 +73,11 @@ namespace Frame {
 	struct SSpriteImage : public ISprite {
 		SSpriteImage() = delete;
 		// 会自动生成一个新的纹理页
-		SSpriteImage(const unsigned char * data, int channel, Vec2i & refSize, Vec2 & refOrigin)
+		SSpriteImage(const unsigned char * data, int channel, Vec2i & refSize, Vec2 & refOrigin, bool bGenerateMipMap = true)
 			: m_refSize { refSize }
 			, m_refOrigin { refOrigin }
 		{
-			m_textureId = GenerateTexture(data, channel, refSize);
+			m_textureId = GenerateTexture(data, channel, refSize, bGenerateMipMap);
 		}
 		// 不会生成新的纹理页，直接使用现有纹理页
 		SSpriteImage(unsigned int textureId, Vec2 uvLT, Vec2 uvRB, Vec2i & refSize, Vec2 & refOrigin)
@@ -127,7 +127,7 @@ namespace Frame {
 	class CStaticSprite : public ISprite {
 	public:
 		CStaticSprite() = delete;
-		CStaticSprite(const char * filename);
+		CStaticSprite(const char * filename, bool bGenerateMipMap = true);
 		CStaticSprite(const CTextureAtlas * pTextureAtlas, const char * uvKey);
 		virtual ~CStaticSprite();
 
