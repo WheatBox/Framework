@@ -108,6 +108,7 @@ namespace Frame {
 
 	void CShader::Destroy() {
 		glDeleteProgram(m_glProgramId);
+		m_glProgramId = 0;
 	}
 
 	void CShader::Use() const {
@@ -117,31 +118,31 @@ namespace Frame {
 		}
 	}
 
-	void CShader::SetUniformInt(const char * szUniformName, int value) {
+	void CShader::SetUniformInt(const char * szUniformName, int value) const {
 		glUniform1i(glGetUniformLocation(m_glProgramId, szUniformName), value);
 	}
 
-	void CShader::SetUniformFloat(const char * szUniformName, float value) {
+	void CShader::SetUniformFloat(const char * szUniformName, float value) const {
 		glUniform1f(glGetUniformLocation(m_glProgramId, szUniformName), value);
 	}
 
-	void CShader::SetUniformVec2(const char * szUniformName, float value0, float value1) {
+	void CShader::SetUniformVec2(const char * szUniformName, float value0, float value1) const {
 		glUniform2f(glGetUniformLocation(m_glProgramId, szUniformName), value0, value1);
 	}
 
-	void CShader::SetUniformVec3(const char * szUniformName, float value0, float value1, float value2) {
+	void CShader::SetUniformVec3(const char * szUniformName, float value0, float value1, float value2) const {
 		glUniform3f(glGetUniformLocation(m_glProgramId, szUniformName), value0, value1, value2);
 	}
 
-	void CShader::SetUniformVec4(const char * szUniformName, float value0, float value1, float value2, float value3) {
+	void CShader::SetUniformVec4(const char * szUniformName, float value0, float value1, float value2, float value3) const {
 		glUniform4f(glGetUniformLocation(m_glProgramId, szUniformName), value0, value1, value2, value3);
 	}
 
-	void CShader::SetUniformMat3(const char * szUniformName, const float * values) {
+	void CShader::SetUniformMat3(const char * szUniformName, const float * values) const {
 		glUniformMatrix3fv(glGetUniformLocation(m_glProgramId, szUniformName), 1, GL_FALSE, values);
 	}
 
-	void CShader::SetUniformMat4(const char * szUniformName, const float * values) {
+	void CShader::SetUniformMat4(const char * szUniformName, const float * values) const {
 		glUniformMatrix4fv(glGetUniformLocation(m_glProgramId, szUniformName), 1, GL_FALSE, values);
 	}
 	
