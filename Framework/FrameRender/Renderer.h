@@ -65,24 +65,24 @@ namespace Frame {
 		ColorRGB m_backgroundColor { 0, 0, 0 };
 
 		CShader * const m_pDefaultShader;
-		CShader * m_pShader = nullptr;
+		const CShader * m_pShader = nullptr;
 
 		CShader * const m_pDefaultInstanceShader;
-		CShader * m_pInstanceShader = nullptr;
+		const CShader * m_pInstanceShader = nullptr;
 
 	public:
 		void RenderBegin();
 		void RenderEnd();
 
 		void ResetShader() { m_pShader = m_pDefaultShader; }
-		void SetShader(CShader * pShader) { m_pShader = pShader; }
-		CShader * GetShader() const { return m_pShader; }
+		void SetShader(const CShader * pShader) { m_pShader = pShader; }
+		const CShader * GetShader() const { return m_pShader; }
 
 		void ResetInstanceShader() { m_pInstanceShader = m_pDefaultInstanceShader; }
-		void SetInstanceShader(CShader * pShader) { m_pInstanceShader = pShader; }
-		CShader * GetInstanceShader() const { return m_pInstanceShader; }
+		void SetInstanceShader(const CShader * pShader) { m_pInstanceShader = pShader; }
+		const CShader * GetInstanceShader() const { return m_pInstanceShader; }
 
-		void SetShaderProjectionMatrix(CShader * pShader) const;
+		void SetShaderProjectionMatrix(const CShader * pShader) const;
 
 		STextureVertexBuffer & GetTextureVertexBuffer() {
 			return m_defaultTextureVertexBuffer;
@@ -110,7 +110,7 @@ namespace Frame {
 		void DrawTexture(unsigned int textureId, const STextureVertexBuffer & textureVertexBuffer) {
 			DrawTexture(textureId, textureVertexBuffer, m_pShader);
 		}
-		void DrawTexture(unsigned int textureId, const STextureVertexBuffer & textureVertexBuffer, CShader * _pShader);
+		void DrawTexture(unsigned int textureId, const STextureVertexBuffer & textureVertexBuffer, const CShader * _pShader);
 
 		void DrawSprite(const SSpriteImage * pSpriteImage, const Vec2 & vPos, STextureVertexBuffer & textureVertexBuffer);
 		void DrawSprite(const SSpriteImage * pSpriteImage, const Vec2 & vPos, const Vec2 & vScale, float rotation, STextureVertexBuffer & textureVertexBuffer);
@@ -237,7 +237,7 @@ namespace Frame {
 		void DrawTexturesInstanced(unsigned int textureId, const STextureVertexBuffer & textureVertexBuffer, const std::vector<SInstanceBuffer> & instances) {
 			DrawTexturesInstanced(textureId, textureVertexBuffer, instances, m_pInstanceShader);
 		}
-		void DrawTexturesInstanced(unsigned int textureId, const STextureVertexBuffer & textureVertexBuffer, const std::vector<SInstanceBuffer> & instances, CShader * _pShader);
+		void DrawTexturesInstanced(unsigned int textureId, const STextureVertexBuffer & textureVertexBuffer, const std::vector<SInstanceBuffer> & instances, const CShader * _pShader);
 
 		void DrawSpritesInstanced(const SSpriteImage * pSpriteImage, const std::vector<SInstanceBuffer> & instances, STextureVertexBuffer & textureVertexBuffer);
 		void DrawSpritesInstanced(const SSpriteImage * pSpriteImage, const std::vector<SInstanceBuffer> & instances, STextureVertexBuffer && textureVertexBuffer) {

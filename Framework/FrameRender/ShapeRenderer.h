@@ -25,7 +25,7 @@ namespace Frame {
 		};
 
 		CShader * const m_pDefaultShader;
-		CShader * m_pShader = nullptr;
+		const CShader * m_pShader = nullptr;
 
 	public:
 
@@ -33,8 +33,8 @@ namespace Frame {
 		virtual ~CShapeRenderer();
 
 		void ResetShader() { m_pShader = m_pDefaultShader; }
-		void SetShader(CShader * pShader) { m_pShader = pShader; }
-		CShader * GetShader() const { return m_pShader; }
+		void SetShader(const CShader * pShader) { m_pShader = pShader; }
+		const CShader * GetShader() const { return m_pShader; }
 
 		/* +-----------------------------------------------+ */
 		/* |               Draw Basic Shapes               | */

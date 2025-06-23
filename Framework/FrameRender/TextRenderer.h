@@ -37,7 +37,7 @@ namespace Frame {
 		CRenderer * m_pRenderer;
 
 		CShader * const m_pDefaultShader;
-		CShader * m_pShader = nullptr;
+		const CShader * m_pShader = nullptr;
 
 		CFont * m_pFont = nullptr;
 
@@ -47,8 +47,8 @@ namespace Frame {
 		virtual ~CTextRenderer();
 
 		void ResetShader() { m_pShader = m_pDefaultShader; }
-		void SetShader(CShader * pShader) { m_pShader = pShader; }
-		CShader * GetShader() const { return m_pShader; }
+		void SetShader(const CShader * pShader) { m_pShader = pShader; }
+		const CShader * GetShader() const { return m_pShader; }
 
 		void SetFont(CFont * pFont) {
 			m_pFont = pFont;

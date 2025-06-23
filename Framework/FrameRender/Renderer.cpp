@@ -119,7 +119,7 @@ namespace Frame {
 	void CRenderer::RenderEnd() {
 	}
 
-	void CRenderer::SetShaderProjectionMatrix(CShader * pShader) const {
+	void CRenderer::SetShaderProjectionMatrix(const CShader * pShader) const {
 		const Vec2 viewSize = Vec2Cast<float>(gCamera->GetViewSize());
 		
 		pShader->SetUniformMat3("u_mProj", (
@@ -146,7 +146,7 @@ namespace Frame {
 	/* |                  Draw Sprite                  | */
 	/* +-----------------------------------------------+ */
 
-	void CRenderer::DrawTexture(unsigned int textureId, const STextureVertexBuffer & textureVertexBuffer, CShader * _pShader) {
+	void CRenderer::DrawTexture(unsigned int textureId, const STextureVertexBuffer & textureVertexBuffer, const CShader * _pShader) {
 		RendererBase::BindVAO(m_VAO);
 
 		RendererBase::BindVBO(m_VBO);
@@ -196,7 +196,7 @@ namespace Frame {
 	/* |             Draw Sprites Instanced            | */
 	/* +-----------------------------------------------+ */
 
-	void CRenderer::DrawTexturesInstanced(unsigned int textureId, const STextureVertexBuffer & textureVertexBuffer, const std::vector<SInstanceBuffer> & instances, CShader * _pShader) {
+	void CRenderer::DrawTexturesInstanced(unsigned int textureId, const STextureVertexBuffer & textureVertexBuffer, const std::vector<SInstanceBuffer> & instances, const CShader * _pShader) {
 		RendererBase::BindVAO(m_VAO);
 
 		RendererBase::BindVBO(m_VBO);
