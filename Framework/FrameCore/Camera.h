@@ -94,6 +94,11 @@ namespace Frame {
 			return -RadToDeg(m_data.rotation);
 		}
 
+		// = view size / window size
+		Frame::Vec2 GetViewScale() const {
+			return Vec2Cast(GetViewSize()) / Vec2Cast(GetWindowSize());
+		}
+
 		void PushOntoStack() {
 			m_stack.push(m_data);
 		}

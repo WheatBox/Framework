@@ -77,8 +77,34 @@ namespace Frame {
 		return { w, h };
 	}
 
-	void IApplication::SetWindowSize(const Frame::Vec2i & siz) {
+	void IApplication::SetWindowSize(const Frame::Vec2i & siz) const {
 		glfwSetWindowSize(m_pWindow, siz.x, siz.y);
+	}
+
+	void IApplication::SetCursorMode(ECursorMode mode) const {
+		switch(mode) {
+		case ECursorMode::Normal:
+			glfwSetInputMode(m_pWindow, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+			break;
+		case ECursorMode::Hidden:
+			glfwSetInputMode(m_pWindow, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
+			break;
+		case ECursorMode::Disabled:
+			glfwSetInputMode(m_pWindow, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+			break;
+		}
+	}
+
+	IApplication::ECursorMode IApplication::GetCursorMode() const {
+		switch(glfwGetInputMode(m_pWindow, GLFW_CURSOR)) {
+		case GLFW_CURSOR_NORMAL:
+			return ECursorMode::Normal;
+		case GLFW_CURSOR_HIDDEN:
+			return ECursorMode::Hidden;
+		case GLFW_CURSOR_DISABLED:
+			return ECursorMode::Disabled;
+		}
+		return ECursorMode::Normal;
 	}
 
 	bool IApplication::InitializeWindow(const char * title, const Frame::Vec2i & windowSize) {

@@ -43,7 +43,15 @@ namespace Frame {
 		void Terminate();
 
 		Frame::Vec2i GetWindowSize() const;
-		void SetWindowSize(const Frame::Vec2i & siz);
+		void SetWindowSize(const Frame::Vec2i & siz) const;
+
+		enum class ECursorMode {
+			Normal,
+			Hidden,
+			Disabled
+		};
+		void SetCursorMode(ECursorMode mode) const;
+		ECursorMode GetCursorMode() const;
 
 	protected:
 
