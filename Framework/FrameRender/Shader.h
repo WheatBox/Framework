@@ -37,11 +37,16 @@ namespace Frame {
 			SetUniformVec4(szUniformName, values[0], values[1], values[2], values[3]);
 		}
 		void SetUniformVec4(const char * szUniformName, float value0, float value1, float value2, float value3) const;
-
+		
 		void SetUniformMat3(const char * szUniformName, const float * values) const;
 
 		void SetUniformMat4(const char * szUniformName, const float * values) const;
 
+		void SetUniformIntArray(const char * szUniformName, int count, const int * values) const;
+		void SetUniformFloatArray(const char * szUniformName, int count, const float * values) const;
+		void SetUniformVec2Array(const char * szUniformName, int count, const float * values) const;
+		void SetUniformVec3Array(const char * szUniformName, int count, const float * values) const;
+		void SetUniformVec4Array(const char * szUniformName, int count, const float * values) const;
 	};
 
 }

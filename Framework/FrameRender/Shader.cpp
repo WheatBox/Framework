@@ -145,5 +145,25 @@ namespace Frame {
 	void CShader::SetUniformMat4(const char * szUniformName, const float * values) const {
 		glUniformMatrix4fv(glGetUniformLocation(m_glProgramId, szUniformName), 1, GL_FALSE, values);
 	}
+
+	void CShader::SetUniformIntArray(const char * szUniformName, int count, const int * values) const {
+		glUniform1iv(glGetUniformLocation(m_glProgramId, szUniformName), count, values);
+	}
+
+	void CShader::SetUniformFloatArray(const char * szUniformName, int count, const float * values) const {
+		glUniform1fv(glGetUniformLocation(m_glProgramId, szUniformName), count, values);
+	}
+
+	void CShader::SetUniformVec2Array(const char * szUniformName, int count, const float * values) const {
+		glUniform2fv(glGetUniformLocation(m_glProgramId, szUniformName), count, values);
+	}
+
+	void CShader::SetUniformVec3Array(const char * szUniformName, int count, const float * values) const {
+		glUniform3fv(glGetUniformLocation(m_glProgramId, szUniformName), count, values);
+	}
+
+	void CShader::SetUniformVec4Array(const char * szUniformName, int count, const float * values) const {
+		glUniform4fv(glGetUniformLocation(m_glProgramId, szUniformName), count, values);
+	}
 	
 }

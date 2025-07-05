@@ -42,6 +42,40 @@ namespace Frame {
 		CRenderer();
 		virtual ~CRenderer();
 
+		enum class EBlendFactor {
+			Zero = 0, // GL_ZERO
+			One = 1, // GL_ONE
+			SrcColor = 0x0300, // GL_SRC_COLOR
+			OneMinusSrcColor = 0x0301, // GL_ONE_MINUS_SRC_COLOR
+			SrcAlpha = 0x0302, // GL_SRC_ALPHA
+			OneMinusSrcAlpha = 0x0303, // GL_ONE_MINUS_SRC_ALPHA
+			DstAlpha = 0x0304, // GL_DST_ALPHA
+			OneMinusDstAlpha = 0x0305, // GL_ONE_MINUS_DST_ALPHA
+			DstColor = 0x0306, // GL_DST_COLOR
+			OneMinusDstColor = 0x0307, // GL_ONE_MINUS_DST_COLOR
+			SrcAlphaSaturate = 0x0308, // GL_SRC_ALPHA_SATURATE
+		};
+
+		enum class EBlendEquation {
+			Add = 0x8006, // GL_FUNC_ADD
+			ReverseSubtract = 0x800A, // GL_FUNC_SUBTRACT
+			Subtract = 0x800B, // GL_FUNC_REVERSE_SUBTRACT
+		};
+		
+		static void SetBlendEnable(bool enable);
+		
+		static void SetBlendFunc(EBlendFactor src, EBlendFactor dst);
+		static void SetBlendFunc(EBlendFactor srcColor, EBlendFactor dstColor, EBlendFactor srcAlpha, EBlendFactor dstAlpha);
+		static void SetBlendFuncDefault() {
+			SetBlendFunc(EBlendFactor::SrcAlpha, EBlendFactor::OneMinusSrcAlpha, EBlendFactor::One, EBlendFactor::OneMinusSrcAlpha);
+		}
+
+		static void SetBlendEquation(EBlendEquation equation);
+		static void SetBlendEquation(EBlendEquation colorEquation, EBlendEquation alphaEquation);
+		static void SetBlendEquationDefault() {
+			SetBlendEquation(EBlendEquation::Add);
+		}
+
 		void Initialize();
 
 		CShapeRenderer * pShapeRenderer = nullptr;

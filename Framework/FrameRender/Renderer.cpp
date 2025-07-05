@@ -36,15 +36,34 @@ namespace Frame {
 		}
 	}
 
+	void CRenderer::SetBlendEnable(bool enable) {
+		(enable ? glEnable : glDisable)(GL_BLEND);
+	}
+
+	void CRenderer::SetBlendFunc(EBlendFactor src, EBlendFactor dst) {
+		glBlendFunc(static_cast<int>(src), static_cast<int>(dst));
+	}
+
+	void CRenderer::SetBlendFunc(EBlendFactor srcColor, EBlendFactor dstColor, EBlendFactor srcAlpha, EBlendFactor dstAlpha) {
+		glBlendFuncSeparate(static_cast<int>(srcColor), static_cast<int>(dstColor), static_cast<int>(srcAlpha), static_cast<int>(dstAlpha));
+	}
+
+	void CRenderer::SetBlendEquation(EBlendEquation equation) {
+		glBlendEquation(static_cast<int>(equation));
+	}
+
+	void CRenderer::SetBlendEquation(EBlendEquation colorEquation, EBlendEquation alphaEquation) {
+		glBlendEquationSeparate(static_cast<int>(colorEquation), static_cast<int>(alphaEquation));
+	}
+
 	void CRenderer::Initialize() {
 
 		//glEnable(GL_CULL_FACE);
 		//glCullFace(GL_BACK);
 		//glFrontFace(GL_CCW);
 
-		glEnable(GL_BLEND);
-		//glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-		glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+		SetBlendEnable(true);
+		SetBlendFuncDefault();
 
 		unsigned int indices[] = {
 			1, 0, 3, 2
