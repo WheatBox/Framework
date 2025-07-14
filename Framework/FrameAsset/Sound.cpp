@@ -18,6 +18,10 @@ namespace Frame {
 		}
 
 		alGenBuffers(1, & m_bufferId);
+		if(ALenum error = alGetError(); error != AL_NO_ERROR) {
+			Log::Log(Log::ELevel::Error, "Sound file %s: Failed to generate OpenAL buffer: %s", filename, alGetString(error));
+			return;
+		}
 
 		int format = 0;
 		switch(sfInfo.channels) {
@@ -34,21 +38,32 @@ namespace Frame {
 			return;
 		}
 
-		size_t dataSize = sfInfo.frames * sfInfo.channels * sizeof(short);
-		short * data = new short[dataSize] {};
-		sf_read_short(sndFile, data, sfInfo.frames);
+		sf_count_t totalSamples = sfInfo.frames * sfInfo.channels;
+		short * data = new short[totalSamples] {};
+
+		sf_count_t readCount = sf_read_short(sndFile, data, totalSamples);
+		if(readCount != totalSamples) {
+			Log::Log(Log::ELevel::Error, "Sound file %s: Failed to read all frames: read %ld/%ld", filename, readCount, totalSamples);
+		}
 
 		// 立体声转单声道
 		// Stereo to Mono
 		if(stereoToMono_ifItIsStereo && format == AL_FORMAT_STEREO16) {
-			dataSize /= 2;
-			for(size_t i = 0; i < dataSize; i++) {
-				data[i] = data[i * 2] / 2 + data[i * 2 + 1] / 2;
+			totalSamples /= 2;
+			short * monoData = new short[totalSamples];
+			for(sf_count_t i = 0; i < totalSamples; i++) {
+				int mixed = (data[i * 2] + data[i * 2 + 1]) / 2;
+				monoData[i] = static_cast<short>(mixed);
 			}
+			delete[] data;
+			data = monoData;
 			format = AL_FORMAT_MONO16;
 		}
 
-		alBufferData(m_bufferId, format, data, static_cast<ALsizei>(dataSize), sfInfo.samplerate);
+		alBufferData(m_bufferId, format, data, static_cast<ALsizei>(sfInfo.frames * sizeof(* data)), sfInfo.samplerate);
+		if(ALenum error = alGetError(); error != AL_NO_ERROR) {
+			Log::Log(Log::ELevel::Error, "Sound file %s: Failed to fill OpenAL buffer: %s", filename, alGetString(error));
+		}
 		
 		sf_close(sndFile);
 		delete[] data;

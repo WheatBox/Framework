@@ -1,7 +1,5 @@
 ﻿#pragma once
 
-// TODO - 距离衰减
-
 #include "../FrameMath/Vector3.h"
 
 #include <memory>
@@ -35,8 +33,8 @@ namespace Frame {
 		// 如果是想暂停而不是终止，使用 Pause()
 		// If you want to pause instead of stop, use Pause()
 		void Stop();
-		void Pause();
-		void Resume();
+		void Pause() const;
+		void Resume() const;
 
 		const CSound * GetSound() const { return m_sound; }
 
@@ -55,14 +53,14 @@ namespace Frame {
 		float GetRolloffFactor() const;
 		float GetReferenceDistance() const;
 
-		void SetPosition(const Vec3 & pos);
-		void SetPositionRelative(bool bRelative);
-		void SetGain(float gain);
-		void SetPitch(float pitch);
-		void SetLooping(bool bLooping);
-		void SetMaxDistance(float dis);
-		void SetRolloffFactor(float factor);
-		void SetReferenceDistance(float dis);
+		void SetPosition(const Vec3 & pos) const;
+		void SetPositionRelative(bool bRelative) const;
+		void SetGain(float gain) const;
+		void SetPitch(float pitch) const;
+		void SetLooping(bool bLooping) const;
+		void SetMaxDistance(float dis) const;
+		void SetRolloffFactor(float factor) const;
+		void SetReferenceDistance(float dis) const;
 
 	private:
 		unsigned int m_sourceId = 0;

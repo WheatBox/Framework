@@ -50,11 +50,11 @@ namespace Frame {
 		alSourceStop(m_sourceId);
 	}
 
-	void CAudioSource::Pause() {
+	void CAudioSource::Pause() const {
 		alSourcePause(m_sourceId);
 	}
 
-	void CAudioSource::Resume() {
+	void CAudioSource::Resume() const {
 		alSourcePlay(m_sourceId);
 	}
 
@@ -115,35 +115,35 @@ namespace Frame {
 		return _ALGetSourceF(m_sourceId, AL_REFERENCE_DISTANCE);
 	}
 
-	void CAudioSource::SetPosition(const Vec3 & pos) {
+	void CAudioSource::SetPosition(const Vec3 & pos) const {
 		alSource3f(m_sourceId, AL_POSITION, pos.x, pos.y, pos.z);
 	}
 
-	void CAudioSource::SetPositionRelative(bool bRelative) {
+	void CAudioSource::SetPositionRelative(bool bRelative) const {
 		_AlSourceBool(m_sourceId, AL_SOURCE_RELATIVE, bRelative);
 	}
 
-	void CAudioSource::SetGain(float gain) {
+	void CAudioSource::SetGain(float gain) const {
 		alSourcef(m_sourceId, AL_GAIN, gain);
 	}
 
-	void CAudioSource::SetPitch(float pitch) {
+	void CAudioSource::SetPitch(float pitch) const {
 		alSourcef(m_sourceId, AL_PITCH, pitch);
 	}
 
-	void CAudioSource::SetLooping(bool bLooping) {
+	void CAudioSource::SetLooping(bool bLooping) const {
 		_AlSourceBool(m_sourceId, AL_LOOPING, bLooping);
 	}
 
-	void CAudioSource::SetMaxDistance(float dis) {
+	void CAudioSource::SetMaxDistance(float dis) const {
 		alSourcef(m_sourceId, AL_MAX_DISTANCE, dis);
 	}
 
-	void CAudioSource::SetRolloffFactor(float factor) {
+	void CAudioSource::SetRolloffFactor(float factor) const {
 		alSourcef(m_sourceId, AL_ROLLOFF_FACTOR, factor);
 	}
 
-	void CAudioSource::SetReferenceDistance(float dis) {
+	void CAudioSource::SetReferenceDistance(float dis) const {
 		alSourcef(m_sourceId, AL_REFERENCE_DISTANCE, dis);
 	}
 
