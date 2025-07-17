@@ -33,6 +33,7 @@ namespace Frame {
 		T Cross(const Vec2_tpl<T> & v) const { return this->x * v.y - this->y * v.x; }
 
 		T Length() const { return std::sqrt(x * x + y * y); }
+		T Len2() const { return x * x + y * y; }
 
 		T Radian() const {
 			double res = static_cast<double>(std::acos(x / Length()));
