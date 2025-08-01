@@ -54,21 +54,6 @@ namespace Frame {
 		virtual void Remove(IEntityComponent * pComponent) override;
 	};
 
-	// 在 Join() 时，立刻生效
-	// Effective immediately, when Join().
-	class CEntityEventProcessorImmediately final : public IEntityEventProcessor {
-	public:
-		CEntityEventProcessorImmediately(EntityEvent::EFlag flag)
-			: IEntityEventProcessor(flag)
-		{}
-
-		virtual void Add(IEntityComponent * pComponent) override;
-
-	private:
-		virtual void Process() override {}
-		virtual void Remove(IEntityComponent *) override {}
-	};
-
 	// 根据 CEntity::m_zDepth 进行排序
 	// Sort according to CEntity::m_zDepth
 	class CEntityEventProcessorZSort final : public IEntityEventProcessor {

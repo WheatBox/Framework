@@ -21,39 +21,72 @@ namespace Frame {
 		}
 	}
 
-#define __ComponentDoSomethingAboutProcessors(__doWhat) \
+	void CEntitySystem::__ComponentAddIntoProcessors(IEntityComponent * pComponent) {
+		m_addingComponents.push(pComponent);
+	}
+
+	void CEntitySystem::__ComponentRemoveFromProcessors(IEntityComponent * pComponent) {
+		m_removingComponents.push(pComponent);
+	}
+
+	void CEntitySystem::__ProcessBeforeUpdateEvent() {
+		m_pEventProcessors[EntityEvent::EFlagIndex::eEFI_BeforeUpdate]->Process();
+	}
+
+	void CEntitySystem::__ProcessUpdateEvent() {
+		m_pEventProcessors[EntityEvent::EFlagIndex::eEFI_Update]->Process();
+	}
+
+	void CEntitySystem::__ProcessAfterUpdateEvent() {
+		m_pEventProcessors[EntityEvent::EFlagIndex::eEFI_AfterUpdate]->Process();
+	}
+
+	void CEntitySystem::__ProcessRenderEvent() {
+		m_pEventProcessors[EntityEvent::EFlagIndex::eEFI_Render]->Process();
+	}
+
+#define __ComponentDoSomethingAboutProcessors(__doWhat, pComponent) {\
 	EntityEvent::Flags flags = pComponent->GetEventFlags(); \
 	for(uint8 i = 0; flags && i < EntityEvent::EFlagIndex::eEFI__END; i++) { \
 		if(flags & 1) { \
 			m_pEventProcessors[i]->__doWhat(pComponent); \
 		} \
 		flags >>= 1; \
+	} \
+}
+
+	void CEntitySystem::__AddAddingComponents() {
+		while(!m_addingComponents.empty()) {
+			auto p = m_addingComponents.front();
+			m_addingComponents.pop();
+
+			__ComponentDoSomethingAboutProcessors(Add, p);
+		}
 	}
 
-	void CEntitySystem::ComponentAddIntoProcessors(IEntityComponent * pComponent) {
-		__ComponentDoSomethingAboutProcessors(Add);
-	}
+	void CEntitySystem::__RemoveRemovingComponents() {
+		while(!m_removingComponents.empty()) {
+			auto p = m_removingComponents.front();
+			m_removingComponents.pop();
 
-	void CEntitySystem::ComponentRemoveFromProcessors(IEntityComponent * pComponent) {
-		__ComponentDoSomethingAboutProcessors(Remove);
+			__ComponentDoSomethingAboutProcessors(Remove, p);
+
+			p->OnShutDown();
+			delete p;
+		}
 	}
 
 #undef __ComponentDoSomethingAboutProcessors
 
-	void CEntitySystem::ProcessBeforeUpdateEvent() {
-		m_pEventProcessors[EntityEvent::EFlagIndex::eEFI_BeforeUpdate]->Process();
-	}
-
-	void CEntitySystem::ProcessUpdateEvent() {
-		m_pEventProcessors[EntityEvent::EFlagIndex::eEFI_Update]->Process();
-	}
-
-	void CEntitySystem::ProcessAfterUpdateEvent() {
-		m_pEventProcessors[EntityEvent::EFlagIndex::eEFI_AfterUpdate]->Process();
-	}
-
-	void CEntitySystem::ProcessRenderEvent() {
-		m_pEventProcessors[EntityEvent::EFlagIndex::eEFI_Render]->Process();
+	void CEntitySystem::__RemoveRemovingEntities() {
+		while(!m_removingEntities.empty()) {
+			EntitiesMap::iterator it = m_entities.find(m_removingEntities.front());
+			if(it != m_entities.end()) {
+				delete it->second;
+				m_entities.erase(it);
+			}
+			m_removingEntities.pop();
+		}
 	}
 
 }

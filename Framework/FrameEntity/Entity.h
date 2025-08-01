@@ -20,9 +20,7 @@ namespace Frame {
 		CEntity(EntityId id)
 			: m_id(id)
 		{}
-		virtual ~CEntity() {
-			RemoveAllComponents();
-		}
+		virtual ~CEntity() = default;
 
 	private:
 
@@ -97,7 +95,6 @@ namespace Frame {
 		void RemoveComponent() {
 			if(auto it = m_components.find(SComponentType<ComponentType>::config.GetGUID()); it != m_components.end()) {
 				RemoveComponent_And_RemoveFromProcessors(it->second);
-				delete it->second;
 				m_components.erase(it);
 			}
 		}

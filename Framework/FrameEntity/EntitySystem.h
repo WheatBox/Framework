@@ -4,6 +4,7 @@
 #include "../FrameEntity/IEntityComponent.h"
 
 #include <unordered_map>
+#include <queue>
 
 namespace Frame {
 
@@ -29,6 +30,7 @@ namespace Frame {
 		}
 		const EntitiesMap & GetEntities() const { return m_entities; }
 
+		// m_entities 没有相关轮询，所以为立即执行
 		CEntity * SpawnEntity() {
 			CEntity * p = new CEntity { m_idNext };
 			if(p != nullptr) {
@@ -37,25 +39,36 @@ namespace Frame {
 			return p;
 		}
 
-		void RemoveEntity(EntityId id) {
-			EntitiesMap::iterator it = m_entities.find(id);
-			if(it != m_entities.end()) {
-				delete it->second;
-				m_entities.erase(it);
+		// 因为要清除实体内的组件，所以需要延迟执行
+		void RemoveEntity(CEntity * pEntity) {
+			if(pEntity) {
+				pEntity->RemoveAllComponents();
+				m_removingEntities.push(pEntity->GetId());
 			}
 		}
+		// 因为要清除实体内的组件，所以需要延迟执行
+		void RemoveEntity(EntityId id) {
+			RemoveEntity(GetEntity(id));
+		}
 
-		void ComponentAddIntoProcessors(IEntityComponent * pComponent);
-		void ComponentRemoveFromProcessors(IEntityComponent * pComponent);
+		void __ComponentAddIntoProcessors(IEntityComponent * pComponent);
+		void __ComponentRemoveFromProcessors(IEntityComponent * pComponent);
 
-		void ProcessBeforeUpdateEvent();
-		void ProcessUpdateEvent();
-		void ProcessAfterUpdateEvent();
-		void ProcessRenderEvent();
+		void __ProcessBeforeUpdateEvent();
+		void __ProcessUpdateEvent();
+		void __ProcessAfterUpdateEvent();
+		void __ProcessRenderEvent();
+
+		void __AddAddingComponents();
+		void __RemoveRemovingComponents();
+		void __RemoveRemovingEntities();
 
 	private:
 		IEntityEventProcessor * m_pEventProcessors[EntityEvent::EFlagIndex::eEFI__END];
-
+		
+		std::queue<IEntityComponent *> m_addingComponents;
+		std::queue<IEntityComponent *> m_removingComponents;
+		std::queue<EntityId> m_removingEntities;
 	};
 
 }

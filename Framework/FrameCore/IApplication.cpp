@@ -162,16 +162,20 @@ namespace Frame {
 			MainLoopPriority();
 			/* ------------- Main Loop ------------- */
 
-			gEntitySystem->ProcessBeforeUpdateEvent();
-			gEntitySystem->ProcessUpdateEvent();
-			gEntitySystem->ProcessAfterUpdateEvent();
+			gEntitySystem->__ProcessBeforeUpdateEvent();
+			gEntitySystem->__ProcessUpdateEvent();
+			gEntitySystem->__ProcessAfterUpdateEvent();
 
-			gEntitySystem->ProcessRenderEvent();
+			gEntitySystem->__ProcessRenderEvent();
 
 			/* ------------------------------------- */
 			MainLoopLast();
 
 			gRenderer->RenderEnd();
+
+			gEntitySystem->__AddAddingComponents();
+			gEntitySystem->__RemoveRemovingComponents();
+			gEntitySystem->__RemoveRemovingEntities();
 
 			glfwSwapBuffers(m_pWindow);
 			glfwPollEvents();

@@ -9,8 +9,8 @@
 namespace Frame {
 
 	void CEntityEventProcessor::Process() {
-		for(auto pEntity : m_set) {
-			pEntity->ProcessEvent(m_event);
+		for(auto pComponent : m_set) {
+			pComponent->ProcessEvent(m_event);
 		}
 	}
 	
@@ -23,10 +23,6 @@ namespace Frame {
 		if(it != m_set.end()) {
 			m_set.erase(it);
 		}
-	}
-
-	void CEntityEventProcessorImmediately::Add(IEntityComponent * pComponent) {
-		pComponent->ProcessEvent(m_event);
 	}
 
 	void CEntityEventProcessorZSort::Process() {
