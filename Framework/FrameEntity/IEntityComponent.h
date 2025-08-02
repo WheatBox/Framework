@@ -18,7 +18,10 @@ namespace Frame {
 		// After construction
 		virtual void Initialize() {}
 
-		// Before destruction
+		// At the end of a frame. After adding to the processors
+		virtual void OnReady() {}
+
+		// At the end of a frame. Before destruction
 		virtual void OnShutDown() {}
 
 		// Example:

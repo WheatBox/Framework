@@ -174,6 +174,7 @@ namespace Frame {
 			gRenderer->RenderEnd();
 
 			gEntitySystem->__AddAddingComponents();
+			gEntitySystem->__RemoveRemovingEntitiesComponents();
 			gEntitySystem->__RemoveRemovingComponents();
 			gEntitySystem->__RemoveRemovingEntities();
 

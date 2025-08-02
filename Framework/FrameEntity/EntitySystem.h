@@ -5,6 +5,7 @@
 
 #include <unordered_map>
 #include <queue>
+#include <list>
 
 namespace Frame {
 
@@ -42,8 +43,10 @@ namespace Frame {
 		// 因为要清除实体内的组件，所以需要延迟执行
 		void RemoveEntity(CEntity * pEntity) {
 			if(pEntity) {
-				pEntity->RemoveAllComponents();
-				m_removingEntities.push(pEntity->GetId());
+				if(auto it = m_entities.find(pEntity->GetId()); it != m_entities.end()) {
+					m_removingEntities.push_back(pEntity);
+					m_entities.erase(it);
+				}
 			}
 		}
 		// 因为要清除实体内的组件，所以需要延迟执行
@@ -60,6 +63,7 @@ namespace Frame {
 		void __ProcessRenderEvent();
 
 		void __AddAddingComponents();
+		void __RemoveRemovingEntitiesComponents();
 		void __RemoveRemovingComponents();
 		void __RemoveRemovingEntities();
 
@@ -68,7 +72,7 @@ namespace Frame {
 		
 		std::queue<IEntityComponent *> m_addingComponents;
 		std::queue<IEntityComponent *> m_removingComponents;
-		std::queue<EntityId> m_removingEntities;
+		std::list<CEntity *> m_removingEntities;
 	};
 
 }

@@ -61,6 +61,13 @@ namespace Frame {
 			m_addingComponents.pop();
 
 			__ComponentDoSomethingAboutProcessors(Add, p);
+			p->OnReady();
+		}
+	}
+
+	void CEntitySystem::__RemoveRemovingEntitiesComponents() {
+		for(const auto & pEntity : m_removingEntities) {
+			pEntity->RemoveAllComponents();
 		}
 	}
 
@@ -79,14 +86,10 @@ namespace Frame {
 #undef __ComponentDoSomethingAboutProcessors
 
 	void CEntitySystem::__RemoveRemovingEntities() {
-		while(!m_removingEntities.empty()) {
-			EntitiesMap::iterator it = m_entities.find(m_removingEntities.front());
-			if(it != m_entities.end()) {
-				delete it->second;
-				m_entities.erase(it);
-			}
-			m_removingEntities.pop();
+		for(const auto & pEntity : m_removingEntities) {
+			delete pEntity;
 		}
+		m_removingEntities.clear();
 	}
 
 }
