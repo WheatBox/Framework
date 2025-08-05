@@ -16,6 +16,11 @@ namespace Frame {
 	// 0 = 无限大 | Infinite
 	void SetMaxFPS(int fps);
 
+	// 0: sleep
+	// 1: buzy wait
+	void SetFrameLockScheme(int scheme);
+	int GetFrameLockScheme();
+
 	float GetFrameTime(bool ignoreMaxFrameTime = false);
 	
 	void SetMaxFrameTime(float time); // 设定 GetFrameTime() 的最大值，默认为 1.f，防止卡顿产生一些异常的 BUG

@@ -192,7 +192,20 @@ void CTestComponent2::ProcessEvent(const Frame::EntityEvent::SEvent & event) {
 	{
 		float frameTime = Frame::GetFrameTime();
 
-		//printf("fps: %f\n", 1.f / frameTime);
+		{
+			static int count = 0;
+			static float avg = 0.f, sec = 0.f;
+			avg += Frame::GetFrameTime();
+			count++;
+			sec += Frame::GetFrameTime();
+
+			if(sec >= 1.f) {
+				sec = 0.f;
+				printf("%f\n", 1.f / (avg / (float)count));
+				count = 0;
+				avg = 0.f;
+			}
+		}
 
 		m_seconds += frameTime;
 
@@ -285,7 +298,7 @@ void CTestComponent2::ProcessEvent(const Frame::EntityEvent::SEvent & event) {
 
 		Frame::gRenderer->DrawSprite(m_pAnimSprite->GetFrame(static_cast<int>(m_seconds)), { 100, 100 });
 #endif
-#if 1
+#if 0
 
 		//Frame::gRenderer->pTextRenderer->SetColorAlpha(0xFFFFFF, .4f);
 		//Frame::gRenderer->pTextRenderer->DrawText("Hello, world! 你好，世界！", { 20, 20 });

@@ -12,6 +12,7 @@ void CApplication::Initialize() {
 	//SetVSync(true);
 	Frame::SetVSync(false);
 	Frame::SetMaxFPS(60);
+	//Frame::SetMaxFPS(400);
 
 	if(Frame::CEntity * pEntity = Frame::gEntitySystem->SpawnEntity()) {
 		pEntity->SetPosition({ 400, 300 });
