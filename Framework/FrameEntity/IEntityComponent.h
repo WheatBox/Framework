@@ -21,6 +21,9 @@ namespace Frame {
 		// At the end of a frame. After adding to the processors
 		virtual void OnReady() {}
 
+		// CEntity::RemoveComponent();
+		virtual void OnRemove() {}
+
 		// At the end of a frame. Before destruction
 		virtual void OnShutDown() {}
 

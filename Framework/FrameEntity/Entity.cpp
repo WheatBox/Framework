@@ -19,6 +19,7 @@ namespace Frame {
 	}
 
 	void CEntity::RemoveComponent_And_RemoveFromProcessors(IEntityComponent * pComponent) {
+		pComponent->OnRemove();
 		gEntitySystem->__ComponentRemoveFromProcessors(pComponent);
 	}
 
