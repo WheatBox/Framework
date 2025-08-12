@@ -18,45 +18,10 @@ REGISTER_ENTITY_COMPONENT(CTestComponent2);
 REGISTER_ENTITY_COMPONENT(CTestComponent3);
 
 Frame::EntityEvent::Flags CTestComponent::GetEventFlags() const {
-	return Frame::EntityEvent::EFlag::Update
-		 | Frame::EntityEvent::EFlag::Render
-		;
+	return Frame::EntityEvent::Nothing;
 }
 
-void CTestComponent::ProcessEvent(const Frame::EntityEvent::SEvent & event) {
-	switch(event.flag) {
-	case Frame::EntityEvent::Update:
-	{
-		m_pEntity->Rotate(Frame::DegToRad(1.f));
-		
-		//Frame::Vec2 pos = m_pEntity->GetPosition();
-
-		Frame::gRenderer->SetColor(0x81F377);
-		/*Frame::gRenderer->pShapeRenderer->DrawRectangle(
-			pos.x - m_size.x / 2,
-			pos.y - m_size.y / 2,
-			pos.x + m_size.x / 2,
-			pos.y + m_size.y / 2,
-			true
-		);*/
-	}
-	break;
-	case Frame::EntityEvent::Render:
-	{
-		//Frame::Vec2 pos = m_pEntity->GetPosition();
-
-		Frame::gRenderer->SetColor(0x8D6B94);
-		/*Frame::gRenderer->pShapeRenderer->DrawRectangle(
-			pos.x - m_size.x / 3,
-			pos.y - m_size.y / 3,
-			pos.x + m_size.x / 3,
-			pos.y + m_size.y / 3,
-			true
-		);*/
-	}
-	break;
-	}
-}
+void CTestComponent::ProcessEvent(const Frame::EntityEvent::SEvent &) {}
 #include <iostream>
 //#include <glad/glad.h>
 //#include <GLFW/glfw3.h>
@@ -269,6 +234,16 @@ void CTestComponent2::ProcessEvent(const Frame::EntityEvent::SEvent & event) {
 	break;
 	case Frame::EntityEvent::Render:
 	{
+#if 0
+		//Frame::gRenderer->DrawSpriteTransform(m_pSprite->GetImage(), Frame::Matrix33::CreateIdentity());
+		for(int i = -100; i < 100; i++) {
+			for(int j = -100; j < 100; j++) {
+				Frame::gRenderer->DrawSprite(m_pSprite->GetImage(), { (float)i * 4.f, (float)j * 3.f }, Frame::ColorRGB { uint8(i + 155), uint8(j + 155), 0 }, .5f, 0.05f, m_angle + Frame::DegToRad(float(i + j)));
+			}
+		}
+		//Frame::gRenderer->pShapeRenderer->DrawPoint(Frame::gInput->pMouse->GetPositionInScene(), 0xFFFFFF, 1.f, 12.f);
+		if(1) break;
+#endif
 #if 1
 		Frame::Vec2 vPos { 400.f, 300.f };
 		//Frame::Vec2 vPos { 0.f, 0.f };
@@ -279,26 +254,22 @@ void CTestComponent2::ProcessEvent(const Frame::EntityEvent::SEvent & event) {
 		//Frame::gCamera->SetViewSize({ 200, 600 });
 
 		//Frame::gRenderer->pShapeRenderer->DrawPoint(Frame::gCamera->WindowToScene(Frame::gInput->pMouse->GetPosition()), 12.f);
-		Frame::gRenderer->pShapeRenderer->DrawPoint(Frame::gInput->pMouse->GetPositionInScene(), 12.f);
+		Frame::gRenderer->pShapeRenderer->DrawPoint(Frame::gInput->pMouse->GetPositionInScene(), 0xFFFFFF, 1.f, 12.f);
 
-		Frame::gRenderer->pShapeRenderer->DrawPoint(vPos, 12.f);
-		Frame::gRenderer->pShapeRenderer->DrawPoint(vPos + Frame::Vec2 { Frame::gAudioPlayer->GetListenerOrientation().first.x, Frame::gAudioPlayer->GetListenerOrientation().first.y } * 10, 4.f);
-		Frame::gRenderer->pShapeRenderer->DrawPointColorBlended(vPos + Frame::Vec2 { 10 * std::cos(m_angle), 10 * std::sin(m_angle) } * 10, 0xFFFF00, 12.f);
+		Frame::gRenderer->pShapeRenderer->DrawPoint(vPos, 0xFFFFFF, 1.f, 12.f);
+		Frame::gRenderer->pShapeRenderer->DrawPoint(vPos + Frame::Vec2 { Frame::gAudioPlayer->GetListenerOrientation().first.x, Frame::gAudioPlayer->GetListenerOrientation().first.y } * 10, 0xFFFFFF, 1.f, 4.f);
+		Frame::gRenderer->pShapeRenderer->DrawPoint(vPos + Frame::Vec2 { 10 * std::cos(m_angle), 10 * std::sin(m_angle) } * 10, 0xFFFF00, 1.f, 12.f);
 #endif
 #if 1
 		//Frame::gRenderer->pSpriteShader->Use();
 		//Frame::gRenderer->pSpriteShader->SetUniformInt("u_BaseTexture", 0);
 		
-		Frame::gRenderer->DrawSprite(m_pSprite->GetImage(), { 340.f , 400.f }, 0.7f, m_angle);
-		Frame::gRenderer->DrawSpriteBlended(m_pSprite->GetImage(), { 400.f , 300.f },
-			0xFF0000, 1.f, 0x00FF00, 1.f,
-			0x0000FF, 0.f, 0xFFFF00, 0.f,
-			{ 1.f, -1.f }, -m_angle
-		);
+		Frame::gRenderer->DrawSprite(m_pSprite->GetImage(), { 340.f , 400.f }, 0xFF0000, 1.f, 0.7f, m_angle);
+		Frame::gRenderer->DrawSprite(m_pSprite->GetImage(), { 400.f , 300.f }, 0xFFFFFF, 1.f, { 1.f, -1.f }, -m_angle);
 
 		Frame::gRenderer->DrawSprite(m_pAnimSprite->GetFrame(static_cast<int>(m_seconds)), { 100, 100 });
 #endif
-#if 0
+#if 1
 
 		//Frame::gRenderer->pTextRenderer->SetColorAlpha(0xFFFFFF, .4f);
 		//Frame::gRenderer->pTextRenderer->DrawText("Hello, world! 你好，世界！", { 20, 20 });
@@ -308,13 +279,10 @@ void CTestComponent2::ProcessEvent(const Frame::EntityEvent::SEvent & event) {
 		//Frame::gRenderer->pTextRenderer->SetColorAlpha(0xFFFFFF, .7f);
 		//Frame::gRenderer->pTextRenderer->DrawText("月落乌啼霜满天，\n江枫渔火对愁眠。", { 20, 100 });
 		//Frame::gRenderer->pTextRenderer->GetFont()->SetFontSize(33.f);
-		Frame::gRenderer->pTextRenderer->SetColorAlpha(0xFFFFFF, .5f);
 		//Frame::gRenderer->pTextRenderer->DrawText("月落乌啼霜满天，\n江枫渔火对愁眠。", { 20, 100 });
 		//constexpr UnicodeChar uni = Frame::UTF8Utils::ToUnicodeCharacter("😀");
 
-		Frame::gRenderer->pTextRenderer->SetColorAlpha(0xFFFFFF, 1.f);
-
-		Frame::gRenderer->pTextRenderer->DrawTextAutoWrapBlended(
+		Frame::gRenderer->pTextRenderer->DrawTextAutoWrap(
 			"先帝创 业未半  而中道崩\n殂，今天\n\n下三分，益州疲弊，此诚危急存亡之秋也。然侍卫之臣不懈于内，忠志之士忘身于外者，盖追先帝之殊遇，欲报之于陛下也。诚宜开张圣听，以光先帝遗德，恢弘志士之气，不宜妄自菲薄，引喻失义，以塞忠谏之路也。\n"
 			"宫中府中，俱为一体，陟罚臧否，不宜异同。若有作奸犯科及为忠善者，宜付有司论其刑赏，以昭陛下平明之理，不宜偏私，使内外异法也。\n"
 			"侍中、侍郎郭攸之、费祎、董允等，此皆良实，志虑忠纯，是以先帝简拔以遗陛下。愚以为宫中之事，事无大小，悉以咨之，然后施行，必能裨补阙漏，有所广益。\n"
@@ -331,19 +299,19 @@ void CTestComponent2::ProcessEvent(const Frame::EntityEvent::SEvent & event) {
 			{ 0.f }, 500.f, 0xFFFF00, 0.3f
 		);
 		
-		Frame::gRenderer->pTextRenderer->DrawTextAutoWrapLineFormatsAlign(m_text, { 1200.f, 800.f }, m_lineFormats, Frame::ETextHAlign::Center, Frame::ETextVAlign::Bottom);
+		Frame::gRenderer->pTextRenderer->DrawTextAutoWrapLineFormatsAlign(m_text, { 1200.f, 800.f }, m_lineFormats, Frame::ETextHAlign::Center, Frame::ETextVAlign::Bottom, 0xFFFFFF, 1.f);
 
 		Frame::Vec2 vOff { 700, 500 };
-		Frame::gRenderer->pShapeRenderer->DrawPointBlended(
+		Frame::gRenderer->pShapeRenderer->DrawPoint(
 			vOff, 0xFFFF00, 1.f, 4.f
 		);
-		Frame::gRenderer->pTextRenderer->DrawTextAutoWrapAlignColorBlended(
+		Frame::gRenderer->pTextRenderer->DrawTextAutoWrapAlign(
 			"先帝\n创业未 半  \n 而中道崩殂。"
 			"先帝创业未半而中道崩殂。"
 			"The qui\nck\nbrown \nfox\n jumps over the lazy dog."
 			"The quick brown fox jumps over the lazy dog."
 			,
-			vOff, 120.f, Frame::ETextHAlign::Right, Frame::ETextVAlign::Bottom, 0xFF00FF
+			vOff, 120.f, Frame::ETextHAlign::Right, Frame::ETextVAlign::Bottom, 0xFF00FF, 1.f
 		);
 		//std::cout << pFont->TextWidth("先帝\n创业未 半  \n 而中道崩殂。", 80.f) << std::endl;
 		//std::cout << pFont->TextHeight("先帝\n创业未 半  \n 而中道崩殂。", 80.f) << std::endl;
@@ -357,12 +325,12 @@ void CTestComponent2::ProcessEvent(const Frame::EntityEvent::SEvent & event) {
 		//	}
 		//);
 
-		Frame::gRenderer->pShapeRenderer->DrawPointColorBlended({ 100.f, 300.f }, 0x00FF00, 32.f);
+		Frame::gRenderer->pShapeRenderer->DrawPoint({ 100.f, 300.f }, 0x00FF00, 1.f, 32.f);
 
-		Frame::gRenderer->pShapeRenderer->DrawLineBlended({ 200.f, 200.f }, { 700.f, 500.f }, 0x00FF00, 1.f, 0x0000FF, 0.f, 16.f);
-		Frame::gRenderer->pShapeRenderer->DrawLineAlphaBlended({ 200.f, 500.f }, { 700.f, 500.f }, 1.f, 0.f, 16.f);
+		Frame::gRenderer->pShapeRenderer->DrawLine({ 200.f, 200.f }, { 700.f, 500.f }, 0x00FF00, 1.f, 0x0000FF, 0.f, 16.f);
+		Frame::gRenderer->pShapeRenderer->DrawLine({ 200.f, 500.f }, { 700.f, 500.f }, 0xFF00FF, 1.f, 0xFF00FF, 0.f, 16.f);
 		
-		Frame::gRenderer->pShapeRenderer->DrawQuadrilateralBlended(
+		Frame::gRenderer->pShapeRenderer->DrawQuadrilateral(
 			{ 100.f, 300.f }, { 170.f, 280.f },
 			{ 120.f, 400.f }, { 210.f, 360.f },
 			0xFF0000, 1.f, 0x00FF00, .5f,
@@ -370,8 +338,8 @@ void CTestComponent2::ProcessEvent(const Frame::EntityEvent::SEvent & event) {
 			0.f
 		);
 		
-		Frame::gRenderer->pShapeRenderer->DrawTriangle({ 100, 200 }, { 400, 300 }, { 200, 250 });
-		Frame::gRenderer->pShapeRenderer->DrawTriangle({ 100, 400 }, { 200, 450 }, { 400, 500 });
+		Frame::gRenderer->pShapeRenderer->DrawTriangle({ 100, 200 }, { 400, 300 }, { 200, 250 }, 0xFFFFFF, 1.f);
+		Frame::gRenderer->pShapeRenderer->DrawTriangle({ 100, 400 }, { 200, 450 }, { 400, 500 }, 0xFFFFFF, 1.f);
 #endif
 #if 0
 		for(int i = 0; i < 100; i++) Frame::gRenderer->DrawSpriteBlended(pSprite, { 400 , 300 }, 0xFFFFFF, 0.5f, { 1.f }, angle);
@@ -385,7 +353,7 @@ void CTestComponent2::ProcessEvent(const Frame::EntityEvent::SEvent & event) {
 		Frame::gRenderer->pTextRenderer->DrawTextAutoWrapAlignBlended("Hello, world!\n你好，世界，我在这里！", { 400, 300 }, 160, Frame::ETextHAlign::Center, Frame::ETextVAlign::Bottom, 0xFFFFFF, 1.f);
 #endif
 #if 1
-		Frame::gRenderer->DrawSpriteBlended(m_pTextureAtlasTestSprite->GetImage(), 0.f, 0xFFFFFF, 1.f);
+		Frame::gRenderer->DrawSprite(m_pTextureAtlasTestSprite->GetImage(), 0.f, 0xFFFFFF, 1.f);
 #endif
 
 		if(Frame::gInput->pKeyboard->GetPressed(Frame::EKeyId::eKI_Space))
@@ -394,37 +362,35 @@ void CTestComponent2::ProcessEvent(const Frame::EntityEvent::SEvent & event) {
 		//Frame::gRenderer->DrawSprite(m_pTextureAtlasTestSprite->GetImage(), { -200.f, 0.f });
 		
 		auto pSpriteImage = m_pTextureAtlasTestSprite->GetImage();
-		Frame::gRenderer->DrawSpritesInstancedBlended(pSpriteImage, {
-			{},
-			{ Frame::Matrix33::CreateTranslation({ -100.f }) },
-			{ Frame::Matrix33::CreateTranslation({ -200.f, -100.f }), { 1.f, 1.f, 1.f, 1.f }, 1.f, -.5f },
-			{ Frame::Matrix33::CreateRotationZ(Frame::DegToRad(30.f)), { 1.f, 0.f, 0.f, 1.f } },
-			{ Frame::Matrix33::CreateTranslation({ -50.f, 50.f }) * Frame::Matrix33::CreateRotationZ(Frame::DegToRad(30.f)) },
-			{ Frame::Matrix33::CreateTranslation({ -50.f, 50.f }), { 0.f, 0.f, 1.f, 1.f } },
-			{ Frame::Matrix33::CreateTranslation({ 80.f, 20.f }) * Frame::Matrix33::CreateScale({ 2.f, .5f }) * Frame::Matrix33::CreateTranslation({ -100.f }) },
-			{ Frame::Matrix33::CreateScale({ 2.f, .5f }) * Frame::Matrix33::CreateTranslation({ 80.f, 20.f }) * Frame::Matrix33::CreateTranslation({ -100.f }) }
-			}, 0xFFFFFF, .5f);
+		Frame::gRenderer->DrawSpriteTransform(pSpriteImage, Frame::Matrix33::CreateIdentity(), 0xFFFFFF, .5f);
+		Frame::gRenderer->DrawSpriteTransform(pSpriteImage, Frame::Matrix33::CreateTranslation({ -100.f }), 0xFFFFFF, .5f);
+		Frame::gRenderer->DrawSpriteTransform(pSpriteImage, Frame::Matrix33::CreateTranslation({ -200.f, -100.f }), 0xFFFFFF, .5f);
+		Frame::gRenderer->DrawSpriteTransform(pSpriteImage, Frame::Matrix33::CreateRotationZ(Frame::DegToRad(30.f)), 0xFFFFFF, .5f);
+		Frame::gRenderer->DrawSpriteTransform(pSpriteImage, Frame::Matrix33::CreateTranslation({ -50.f, 50.f }) * Frame::Matrix33::CreateRotationZ(Frame::DegToRad(30.f)), 0xFFFFFF, .5f);
+		Frame::gRenderer->DrawSpriteTransform(pSpriteImage, Frame::Matrix33::CreateTranslation({ -50.f, 50.f }), 0xFFFFFF, .5f);
+		Frame::gRenderer->DrawSpriteTransform(pSpriteImage, Frame::Matrix33::CreateTranslation({ 80.f, 20.f }) * Frame::Matrix33::CreateScale({ 2.f, .5f }) * Frame::Matrix33::CreateTranslation({ -100.f }), 0xFFFFFF, .5f);
+		Frame::gRenderer->DrawSpriteTransform(pSpriteImage, Frame::Matrix33::CreateScale({ 2.f, .5f }) * Frame::Matrix33::CreateTranslation({ 80.f, 20.f }) * Frame::Matrix33::CreateTranslation({ -100.f }), 0xFFFFFF, .5f);
 
 		{
 			Frame::Vec2 vecpos { 100.f, 0.f };
 
-			Frame::gRenderer->pShapeRenderer->DrawLine(0.f, vecpos);
-			Frame::gRenderer->pTextRenderer->DrawText("1", vecpos);
+			Frame::gRenderer->pShapeRenderer->DrawLine(0.f, vecpos, 0xFFFFFF, 1.f);
+			Frame::gRenderer->pTextRenderer->DrawText("1", vecpos, 0xFFFFFF, 1.f);
 
 			vecpos = Frame::Matrix33::CreateTranslation({ 20.f, -30.f }) * vecpos;
 			
-			Frame::gRenderer->pShapeRenderer->DrawLine(0.f, vecpos);
-			Frame::gRenderer->pTextRenderer->DrawText("2", vecpos);
+			Frame::gRenderer->pShapeRenderer->DrawLine(0.f, vecpos, 0xFFFFFF, 1.f);
+			Frame::gRenderer->pTextRenderer->DrawText("2", vecpos, 0xFFFFFF, 1.f);
 			
 			vecpos = Frame::Matrix33::CreateScale({ -.5f, 2.f }) * vecpos;
 			
-			Frame::gRenderer->pShapeRenderer->DrawLine(0.f, vecpos);
-			Frame::gRenderer->pTextRenderer->DrawText("3", vecpos);
+			Frame::gRenderer->pShapeRenderer->DrawLine(0.f, vecpos, 0xFFFFFF, 1.f);
+			Frame::gRenderer->pTextRenderer->DrawText("3", vecpos, 0xFFFFFF, 1.f);
 			
 			vecpos = Frame::Matrix33::CreateRotationZ(Frame::DegToRad(60.f)) * vecpos;
 			
-			Frame::gRenderer->pShapeRenderer->DrawLine(0.f, vecpos);
-			Frame::gRenderer->pTextRenderer->DrawText("4", vecpos);
+			Frame::gRenderer->pShapeRenderer->DrawLine(0.f, vecpos, 0xFFFFFF, 1.f);
+			Frame::gRenderer->pTextRenderer->DrawText("4", vecpos, 0xFFFFFF, 1.f);
 		}
 
 		{
@@ -434,8 +400,8 @@ void CTestComponent2::ProcessEvent(const Frame::EntityEvent::SEvent & event) {
 				* Frame::Matrix33::CreateTranslation({ 20.f, -30.f })
 				* Frame::Vec2 { 100.f, 0.f };
 
-			Frame::gRenderer->pShapeRenderer->DrawLine(0.f, vecpos);
-			Frame::gRenderer->pTextRenderer->DrawText("  5", vecpos);
+			Frame::gRenderer->pShapeRenderer->DrawLine(0.f, vecpos, 0xFFFFFF, 1.f);
+			Frame::gRenderer->pTextRenderer->DrawText("  5", vecpos, 0xFFFFFF, 1.f);
 		}
 
 		{
@@ -444,8 +410,8 @@ void CTestComponent2::ProcessEvent(const Frame::EntityEvent::SEvent & event) {
 			vecpos *= Frame::Vec2 { -.5f, 2.f };
 			vecpos = vecpos.GetRotatedDegree(60.f);
 
-			Frame::gRenderer->pShapeRenderer->DrawLine(0.f, vecpos);
-			Frame::gRenderer->pTextRenderer->DrawText("    6", vecpos);
+			Frame::gRenderer->pShapeRenderer->DrawLine(0.f, vecpos, 0xFFFFFF, 1.f);
+			Frame::gRenderer->pTextRenderer->DrawText("    6", vecpos, 0xFFFFFF, 1.f);
 		}
 
 		{
@@ -454,8 +420,8 @@ void CTestComponent2::ProcessEvent(const Frame::EntityEvent::SEvent & event) {
 				* Frame::Matrix22::CreateScale({ -.5f, 2.f })
 				* (Frame::Vec2 { 100.f, 0.f } + Frame::Vec2 { 20.f, -30.f });
 
-			Frame::gRenderer->pShapeRenderer->DrawLine(0.f, vecpos);
-			Frame::gRenderer->pTextRenderer->DrawText("      7", vecpos);
+			Frame::gRenderer->pShapeRenderer->DrawLine(0.f, vecpos, 0xFFFFFF, 1.f);
+			Frame::gRenderer->pTextRenderer->DrawText("      7", vecpos, 0xFFFFFF, 1.f);
 		}
 
 #if 1
@@ -465,19 +431,24 @@ void CTestComponent2::ProcessEvent(const Frame::EntityEvent::SEvent & event) {
 		if(!m_pFramebuffer2) {
 			m_pFramebuffer2 = new Frame::CFramebuffer { 100 };
 		}
+#endif
+#if 1
+		{
+			Frame::gRenderer->DrawSprite(m_pSprite->GetImage(), { 300, -150 });
 
-		m_pFramebuffer->Bind();
-		Frame::gRenderer->pShapeRenderer->DrawRectangleBlended(50, 150, 0xCCCC00, 1.f);
-		m_pFramebuffer2->Bind();
-		//Frame::gRenderer->Clear(0xFFFFFF, 1.f);
-		Frame::gRenderer->DrawSpriteBlended(m_pSprite->GetImage(), Frame::Vec2Cast(m_pFramebuffer2->GetSize()) * .5f, 0xFFFFFF, 1.f, 1.f, m_angle);
-		Frame::gRenderer->DrawSpriteBlended(m_pSprite->GetImage(), Frame::Vec2Cast(m_pFramebuffer2->GetSize()) * .0f, 0xFFFFFF, .5f, 1.f, m_angle);
-		Frame::gRenderer->pShapeRenderer->DrawRectangleBlended(0, 70, 0x00FF00, .5f);
-		m_pFramebuffer2->Unbind();
-		Frame::gRenderer->DrawSprite(m_pFramebuffer2->GetImage(), Frame::Vec2 { 50.f }.GetRotated(m_angle) + 100.f, 1.f, -m_angle);
-		Frame::gRenderer->pShapeRenderer->DrawRectangleBlended(50, 150, 0xCC0000, 1.f, 4.f);
-		m_pFramebuffer->Unbind();
-		Frame::gRenderer->DrawSprite(m_pFramebuffer->GetImage(), { 200.f, -200.f }, 1.f, 0.f);
+			m_pFramebuffer->Bind();
+			Frame::gRenderer->pShapeRenderer->DrawRectangle(50, 150, 0xCCCC00, 1.f);
+			m_pFramebuffer2->Bind();
+			//Frame::gRenderer->Clear(0xFFFFFF, 1.f);
+			Frame::gRenderer->DrawSprite(m_pSprite->GetImage(), Frame::Vec2Cast(m_pFramebuffer2->GetSize()) * .5f, 0xFFFFFF, 1.f, 1.f, m_angle);
+			Frame::gRenderer->DrawSprite(m_pSprite->GetImage(), Frame::Vec2Cast(m_pFramebuffer2->GetSize()) * .0f, 0xFFFFFF, .5f, 1.f, m_angle);
+			Frame::gRenderer->pShapeRenderer->DrawRectangle(0, 70, 0x00FF00, .5f);
+			m_pFramebuffer2->Unbind();
+			Frame::gRenderer->DrawSprite(m_pFramebuffer2->GetImage(), Frame::Vec2 { 50.f }.GetRotated(m_angle) + 100.f, 0xFFFFFF, 1.f, 1.f, -m_angle);
+			Frame::gRenderer->pShapeRenderer->DrawRectangle(50, 150, 0xCC0000, 1.f, 4.f);
+			m_pFramebuffer->Unbind();
+			Frame::gRenderer->DrawSprite(m_pFramebuffer->GetImage(), { 200.f, -200.f });
+		}
 #endif
 	}
 	break;

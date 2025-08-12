@@ -18,6 +18,4 @@ namespace Frame {
 	extern FRAME_API class CAudioPlayer * gAudioPlayer;
 	extern FRAME_API class CCamera * gCamera;
 
-	extern FRAME_API class CShader * gShaderInUsing;
-
 }

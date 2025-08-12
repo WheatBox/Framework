@@ -1,6 +1,7 @@
 ﻿#pragma once
 
 #include "../FrameMath/Vector2.h"
+#include "../FrameMath/Matrix33.h"
 
 #include <stack>
 
@@ -109,6 +110,11 @@ namespace Frame {
 			m_data = m_stack.top();
 			SetViewport(m_data.viewportPos, m_data.viewportSize);
 			m_stack.pop();
+		}
+
+		Matrix33 CreateProjectionMatrix() const {
+			const Vec2 viewSize = Vec2Cast<float>(GetViewSize());
+			return Matrix33::CreateTransformSRT(Vec2 { 2.f / viewSize.x, -2.f / viewSize.y } * GetZoom(), GetViewRotation(), -GetPos());
 		}
 
 	private:

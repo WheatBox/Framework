@@ -1,58 +1,43 @@
 ﻿#include "Renderer.h"
 
-#include "../FrameRender/DefaultShaders.h"
+#include "DefaultShaders.h"
+#include "RendererBase.h"
 
 #include "../FrameAsset/Sprite.h"
 #include "../FrameRender/Shader.h"
 #include "../FrameCore/Camera.h"
-#include "../FrameCore/Globals.h" // for gShaderInUsing & gCamera
+#include "../FrameCore/Globals.h" // for gCamera
 #include "../FrameCore/Log.h"
-#include "../FrameRender/RendererBase.h"
 
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
 namespace Frame {
 
-	CRenderer::CRenderer()
-		: m_pDefaultShader { new CShader {} }
-		, m_pDefaultInstanceShader { new CShader {} }
-	{}
+	static CShader * pDefaultShader = nullptr;
 
-	CRenderer::~CRenderer() {
-		delete m_pDefaultShader;
-		delete m_pDefaultInstanceShader;
-	}
-
-	void EnableInstancingVertexAttribArrays() {
-		for(int i = 0; i < 3 + 3 + 1; i++) {
-			glEnableVertexAttribArray(3 + i);
-		}
-	}
-
-	void DisableInstancingVertexAttribArrays() {
-		for(int i = 0; i < 3 + 3 + 1; i++) {
-			glDisableVertexAttribArray(3 + i);
-		}
-	}
-
-	void CRenderer::SetBlendEnable(bool enable) {
+	void CRenderer::SetBlendEnable(bool enable) const {
+		m_pRenderQueue->Render();
 		(enable ? glEnable : glDisable)(GL_BLEND);
 	}
 
-	void CRenderer::SetBlendFunc(EBlendFactor src, EBlendFactor dst) {
+	void CRenderer::SetBlendFunc(EBlendFactor src, EBlendFactor dst) const {
+		m_pRenderQueue->Render();
 		glBlendFunc(static_cast<int>(src), static_cast<int>(dst));
 	}
 
-	void CRenderer::SetBlendFunc(EBlendFactor srcColor, EBlendFactor dstColor, EBlendFactor srcAlpha, EBlendFactor dstAlpha) {
+	void CRenderer::SetBlendFunc(EBlendFactor srcColor, EBlendFactor dstColor, EBlendFactor srcAlpha, EBlendFactor dstAlpha) const {
+		m_pRenderQueue->Render();
 		glBlendFuncSeparate(static_cast<int>(srcColor), static_cast<int>(dstColor), static_cast<int>(srcAlpha), static_cast<int>(dstAlpha));
 	}
 
-	void CRenderer::SetBlendEquation(EBlendEquation equation) {
+	void CRenderer::SetBlendEquation(EBlendEquation equation) const {
+		m_pRenderQueue->Render();
 		glBlendEquation(static_cast<int>(equation));
 	}
 
-	void CRenderer::SetBlendEquation(EBlendEquation colorEquation, EBlendEquation alphaEquation) {
+	void CRenderer::SetBlendEquation(EBlendEquation colorEquation, EBlendEquation alphaEquation) const {
+		m_pRenderQueue->Render();
 		glBlendEquationSeparate(static_cast<int>(colorEquation), static_cast<int>(alphaEquation));
 	}
 
@@ -62,9 +47,155 @@ namespace Frame {
 		//glCullFace(GL_BACK);
 		//glFrontFace(GL_CCW);
 
+		m_pRenderQueue = new CRenderQueue;
+
 		SetBlendEnable(true);
 		SetBlendFuncDefault();
 
+		pShapeRenderer = new CShapeRenderer { this };
+		pTextRenderer = new CTextRenderer { this };
+
+		if(!pDefaultShader) {
+			pDefaultShader = new CShader;
+			if(!pDefaultShader->CompileFiles(DEFAULT_SPRITE_SHADER_FILES)) {
+				Log::Log(Log::ELevel::Error, "Failed to load or compile default sprite shader files: %s; %s; So now using in-build default sprite shaders", DEFAULT_SPRITE_SHADER_FILES);
+				pDefaultShader->Compile(DEFAULT_SPRITE_SHADER);
+			}
+		}
+		SetShader(pDefaultShader);
+		SetUniformInt("u_BaseTexture", 0);
+
+		glActiveTexture(GL_TEXTURE0);
+	}
+
+	void CRenderer::RenderBegin() const {
+		Clear(m_backgroundColor, 1.f);
+	}
+
+	void CRenderer::RenderEnd() const {
+		m_pRenderQueue->Render();
+	}
+
+	void CRenderer::Clear(ColorRGB color, float alpha) const {
+		m_pRenderQueue->Render();
+		glClearColor(ONERGB(color), alpha);
+		glClear(GL_COLOR_BUFFER_BIT);
+	}
+
+	void CRenderer::ResetShader() {
+		SetShader(pDefaultShader);
+	}
+
+	void CRenderer::SetShader(const CShader * pShader) {
+		m_pShader = pShader;
+		__UseShader();
+	}
+
+	const CShader * CRenderer::GetShader() const {
+		return m_pShader;
+	}
+
+	void CRenderer::__UseShader(const CShader * pShader) {
+		if(m_pUsingShader != pShader) {
+			m_pRenderQueue->Render();
+			m_pRenderQueue->m_pUsingShader = m_pUsingShader = pShader;
+			glUseProgram(m_pUsingShader->GetGlProgramId());
+		}
+	}
+
+	void CRenderer::__UseShader() {
+		__UseShader(m_pShader);
+	}
+
+	static void __SetUniformMat3(const CShader * pShader, const char * szUniformName, const float * values) {
+		glUniformMatrix3fv(glGetUniformLocation(pShader->GetGlProgramId(), szUniformName), 1, GL_FALSE, values);
+	}
+	static void __SetUniformProjMat_(const CShader * pShader) {
+		__SetUniformMat3(pShader, "u_mProj", gCamera->CreateProjectionMatrix().data);
+	}
+
+	void CRenderer::__SetUniformProjMat() const {
+		SetUniformMat3("u_mProj", gCamera->CreateProjectionMatrix().data);
+	}
+
+	void CRenderer::SetUniformInt(const char * szUniformName, int value) const {
+		m_pRenderQueue->Render();
+		glUniform1i(glGetUniformLocation(m_pUsingShader->GetGlProgramId(), szUniformName), value);
+	}
+
+	void CRenderer::SetUniformFloat(const char * szUniformName, float value) const {
+		m_pRenderQueue->Render();
+		glUniform1f(glGetUniformLocation(m_pUsingShader->GetGlProgramId(), szUniformName), value);
+	}
+
+	void CRenderer::SetUniformVec2(const char * szUniformName, float value0, float value1) const {
+		m_pRenderQueue->Render();
+		glUniform2f(glGetUniformLocation(m_pUsingShader->GetGlProgramId(), szUniformName), value0, value1);
+	}
+
+	void CRenderer::SetUniformVec3(const char * szUniformName, float value0, float value1, float value2) const {
+		m_pRenderQueue->Render();
+		glUniform3f(glGetUniformLocation(m_pUsingShader->GetGlProgramId(), szUniformName), value0, value1, value2);
+	}
+
+	void CRenderer::SetUniformVec4(const char * szUniformName, float value0, float value1, float value2, float value3) const {
+		m_pRenderQueue->Render();
+		glUniform4f(glGetUniformLocation(m_pUsingShader->GetGlProgramId(), szUniformName), value0, value1, value2, value3);
+	}
+
+	void CRenderer::SetUniformMat3(const char * szUniformName, const float * values) const {
+		m_pRenderQueue->Render();
+		__SetUniformMat3(m_pUsingShader, szUniformName, values);
+	}
+
+	void CRenderer::SetUniformMat4(const char * szUniformName, const float * values) const {
+		m_pRenderQueue->Render();
+		glUniformMatrix4fv(glGetUniformLocation(m_pUsingShader->GetGlProgramId(), szUniformName), 1, GL_FALSE, values);
+	}
+
+	void CRenderer::SetUniformIntArray(const char * szUniformName, int count, const int * values) const {
+		m_pRenderQueue->Render();
+		glUniform1iv(glGetUniformLocation(m_pUsingShader->GetGlProgramId(), szUniformName), count, values);
+	}
+
+	void CRenderer::SetUniformFloatArray(const char * szUniformName, int count, const float * values) const {
+		m_pRenderQueue->Render();
+		glUniform1fv(glGetUniformLocation(m_pUsingShader->GetGlProgramId(), szUniformName), count, values);
+	}
+
+	void CRenderer::SetUniformVec2Array(const char * szUniformName, int count, const float * values) const {
+		m_pRenderQueue->Render();
+		glUniform2fv(glGetUniformLocation(m_pUsingShader->GetGlProgramId(), szUniformName), count, values);
+	}
+
+	void CRenderer::SetUniformVec3Array(const char * szUniformName, int count, const float * values) const {
+		m_pRenderQueue->Render();
+		glUniform3fv(glGetUniformLocation(m_pUsingShader->GetGlProgramId(), szUniformName), count, values);
+	}
+
+	void CRenderer::SetUniformVec4Array(const char * szUniformName, int count, const float * values) const {
+		m_pRenderQueue->Render();
+		glUniform4fv(glGetUniformLocation(m_pUsingShader->GetGlProgramId(), szUniformName), count, values);
+	}
+
+	void CRenderer::DrawSpriteTransform(const SSpriteImage * pImage, const Matrix33 & transform, ColorRGB blend, float alpha) {
+		__UseShader();
+		
+		SInstanceBuffer buffer {
+			transform * Matrix33::CreateTransformTS(-pImage->GetOrigin(), Vec2Cast<float>(pImage->GetSize())),
+			{
+				static_cast<float>(blend.r) / 255.f,
+				static_cast<float>(blend.g) / 255.f,
+				static_cast<float>(blend.b) / 255.f,
+				alpha
+			},
+			pImage->GetUVLeftTop(),
+			pImage->GetUVRightBottom()
+		};
+		m_pRenderQueue->Instance(pImage->GetTextureId(), std::move(buffer));
+	}
+
+	CRenderer::CRenderQueue::CRenderQueue() {
 		unsigned int indices[] = {
 			1, 0, 3, 2
 		};
@@ -77,174 +208,86 @@ namespace Frame {
 		RendererBase::BindVAO(m_VAO);
 
 		RendererBase::BindVBO(m_VBO);
-		
+
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_EBO);
 		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_DYNAMIC_DRAW);
-		
-		GLsizei stride = (3 + 4 + 2) * (GLsizei)sizeof(float);
-		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, stride, (void *)0);
+
+		glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * (GLsizei)sizeof(float), (void *)0);
 		glEnableVertexAttribArray(0);
-		glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, stride, (void *)(3 * sizeof(float)));
-		glEnableVertexAttribArray(1);
-		glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, stride, (void *)(7 * sizeof(float)));
-		glEnableVertexAttribArray(2);
 
 		RendererBase::BindVBO(m_instanceVBO);
 
-		GLsizei instancedStride = (9 + 2 + 2 + 4) * (GLsizei)sizeof(float);
+		GLsizei instancedStride = (9 + 4 + 4) * (GLsizei)sizeof(float);
 
-		glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, instancedStride, (void *)0);
-		glVertexAttribPointer(4, 3, GL_FLOAT, GL_FALSE, instancedStride, (void *)(3 * sizeof(float)));
-		glVertexAttribPointer(5, 3, GL_FLOAT, GL_FALSE, instancedStride, (void *)(6 * sizeof(float)));
+		glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, instancedStride, (void *)0);
+		glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, instancedStride, (void *)(3 * sizeof(float)));
+		glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, instancedStride, (void *)(6 * sizeof(float)));
+		glVertexAttribDivisor(1, 1);
+		glVertexAttribDivisor(2, 1);
 		glVertexAttribDivisor(3, 1);
+
+		glVertexAttribPointer(4, 4, GL_FLOAT, GL_FALSE, instancedStride, (void *)(9 * sizeof(float)));
 		glVertexAttribDivisor(4, 1);
+
+		glVertexAttribPointer(5, 4, GL_FLOAT, GL_FALSE, instancedStride, (void *)(13 * sizeof(float)));
 		glVertexAttribDivisor(5, 1);
-		
-		glVertexAttribPointer(6, 4, GL_FLOAT, GL_FALSE, instancedStride, (void *)(9 * sizeof(float)));
-		glVertexAttribDivisor(6, 1);
-
-		glVertexAttribPointer(7, 2, GL_FLOAT, GL_FALSE, instancedStride, (void *)(13 * sizeof(float)));
-		glVertexAttribPointer(8, 2, GL_FLOAT, GL_FALSE, instancedStride, (void *)(15 * sizeof(float)));
-		glVertexAttribDivisor(7, 1);
-		glVertexAttribDivisor(8, 1);
 
 		RendererBase::BindVBO(0);
+	}
 
-		pShapeRenderer = new CShapeRenderer { this };
-		pTextRenderer = new CTextRenderer { this };
-
-		if(!m_pDefaultShader->CompileFiles(DEFAULT_SPRITE_SHADER_FILES)) {
-			Log::Log(Log::ELevel::Error, "Failed to load or compile default sprite shader files: %s; %s; So now using in-build default sprite shaders", DEFAULT_SPRITE_SHADER_FILES);
-			m_pDefaultShader->Compile(DEFAULT_SPRITE_SHADER);
+	static void EnableInstancingVertexAttribArrays() {
+		for(int i = 1; i <= 5; i++) {
+			glEnableVertexAttribArray(i);
 		}
-		m_pDefaultShader->SetUniformInt("u_BaseTexture", 0);
+	}
 
-		if(!m_pDefaultInstanceShader->CompileFiles(DEFAULT_INSTANCE_SPRITE_SHADER_FILES)) {
-			Log::Log(Log::ELevel::Error, "Failed to load or compile default instance sprite shader files: %s; %s; So now using in-build default instance sprite shaders", DEFAULT_INSTANCE_SPRITE_SHADER_FILES);
-			m_pDefaultInstanceShader->Compile(DEFAULT_INSTANCE_SPRITE_SHADER);
+	static void DisableInstancingVertexAttribArrays() {
+		for(int i = 1; i <= 5; i++) {
+			glDisableVertexAttribArray(i);
 		}
-		m_pDefaultInstanceShader->SetUniformInt("u_BaseTexture", 0);
-
-		SetShader(m_pDefaultShader);
-		SetInstanceShader(m_pDefaultInstanceShader);
-
-		glActiveTexture(GL_TEXTURE0);
 	}
 
-	void CRenderer::RenderBegin() {
-		Clear(m_backgroundColor, 1.f);
+	void CRenderer::CRenderQueue::Instance(unsigned int texId, SInstanceBuffer && buffer) {
+		if(texId != m_currTexId) {
+			Render();
+			m_currTexId = texId;
+		}
+		m_instances.push_back(std::move(buffer));
 	}
 
-	void CRenderer::RenderEnd() {
-	}
+	void CRenderer::CRenderQueue::Render() {
+		if(m_instances.empty()) {
+			return;
+		}
 
-	void CRenderer::SetShaderProjectionMatrix(const CShader * pShader) const {
-		const Vec2 viewSize = Vec2Cast<float>(gCamera->GetViewSize());
-		
-		pShader->SetUniformMat3("u_mProj", (
-			Matrix33::CreateScale(Vec2 { 2.f / viewSize.x, -2.f / viewSize.y } * gCamera->GetZoom())
-			* Matrix33::CreateRotationZ(gCamera->GetViewRotation())
-			* Matrix33::CreateTranslation(-gCamera->GetPos())
-			).data);
-	}
+		__SetUniformProjMat_(m_pUsingShader);
 
-	void CRenderer::Clear(ColorRGB color, float alpha) {
-		glClearColor(ONERGB(color), alpha);
-		glClear(GL_COLOR_BUFFER_BIT);
-	}
-
-	/* +-----------------------------------------------+ */
-	/* |                Set Draw Params                | */
-	/* +-----------------------------------------------+ */
-
-	/*void CRenderer::SetBlendMode(EBlendMode blendMode) {
-		//TODO
-	}*/
-
-	/* +-----------------------------------------------+ */
-	/* |                  Draw Sprite                  | */
-	/* +-----------------------------------------------+ */
-
-	void CRenderer::DrawTexture(unsigned int textureId, const STextureVertexBuffer & textureVertexBuffer, const CShader * _pShader) {
 		RendererBase::BindVAO(m_VAO);
 
 		RendererBase::BindVBO(m_VBO);
-		glBufferData(GL_ARRAY_BUFFER, sizeof(textureVertexBuffer.m_data), textureVertexBuffer.m_data, GL_DYNAMIC_DRAW);
-
-		RendererBase::BindVBO(0);
-
-		RendererBase::BindTextureId(textureId);
-
-		_pShader->Use();
-		SetShaderProjectionMatrix(_pShader);
-		glDrawElements(GL_TRIANGLE_STRIP, 4, GL_UNSIGNED_INT, NULL);
-	}
-
-	void CRenderer::DrawSprite(const SSpriteImage * pSpriteImage, const Vec2 & vPos, STextureVertexBuffer & textureVertexBuffer) {
-		textureVertexBuffer.SetPositions(
-			vPos + pSpriteImage->GetTopLeftOffset(),
-			vPos + pSpriteImage->GetBottomRightOffset()
-		);
-		textureVertexBuffer.SetTexCoord(pSpriteImage->GetUVLeftTop(), pSpriteImage->GetUVRightBottom());
-
-		DrawTexture(pSpriteImage->GetTextureId(), textureVertexBuffer);
-	}
-
-	void CRenderer::DrawSprite(const SSpriteImage * pSpriteImage, const Vec2 & vPos, const Vec2 & vScale, float rotation, STextureVertexBuffer & textureVertexBuffer) {
-		Vec2 vTL = pSpriteImage->GetTopLeftOffset() * vScale;
-		Vec2 vTR = pSpriteImage->GetTopRightOffset() * vScale;
-		Vec2 vBL = pSpriteImage->GetBottomLeftOffset() * vScale;
-		Vec2 vBR = pSpriteImage->GetBottomRightOffset() * vScale;
-		
-		Rotate2DVectors(rotation, { & vTL, & vTR, & vBL, & vBR });
-
-		textureVertexBuffer.SetPositions(vPos + vTL, vPos + vTR, vPos + vBL, vPos + vBR);
-
-		textureVertexBuffer.SetTexCoord(pSpriteImage->GetUVLeftTop(), pSpriteImage->GetUVRightBottom());
-
-		//if(vScale.x * vScale.y < 0.f) {
-		//	glFrontFace(GL_CW);
-		//	DrawTexture(pSpriteImage->GetTextureId(), textureVertexBuffer);
-		//	glFrontFace(GL_CCW);
-		//} else {
-			DrawTexture(pSpriteImage->GetTextureId(), textureVertexBuffer);
-		//}
-	}
-
-	/* +-----------------------------------------------+ */
-	/* |             Draw Sprites Instanced            | */
-	/* +-----------------------------------------------+ */
-
-	void CRenderer::DrawTexturesInstanced(unsigned int textureId, const STextureVertexBuffer & textureVertexBuffer, const std::vector<SInstanceBuffer> & instances, const CShader * _pShader) {
-		RendererBase::BindVAO(m_VAO);
-
-		RendererBase::BindVBO(m_VBO);
-		glBufferData(GL_ARRAY_BUFFER, sizeof(textureVertexBuffer.m_data), textureVertexBuffer.m_data, GL_DYNAMIC_DRAW);
+		constexpr float vertexBuffer[] {
+			0.f, 1.f, // Top Left
+			1.f, 1.f, // Top Right
+			0.f, 0.f, // Bottom Left
+			1.f, 0.f, // Bottom Right
+		};
+		glBufferData(GL_ARRAY_BUFFER, sizeof(vertexBuffer), vertexBuffer, GL_DYNAMIC_DRAW);
 
 		RendererBase::BindVBO(m_instanceVBO);
-		glBufferData(GL_ARRAY_BUFFER, sizeof(SInstanceBuffer) * instances.size(), instances.data(), GL_DYNAMIC_DRAW);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(SInstanceBuffer) * m_instances.size(), m_instances.data(), GL_DYNAMIC_DRAW);
 
 		RendererBase::BindVBO(0);
 
-		RendererBase::BindTextureId(textureId);
+		RendererBase::BindTextureId(m_currTexId);
 
 		EnableInstancingVertexAttribArrays();
 
-		_pShader->Use();
-		SetShaderProjectionMatrix(_pShader);
-		glDrawElementsInstanced(GL_TRIANGLE_STRIP, 4, GL_UNSIGNED_INT, NULL, static_cast<GLsizei>(instances.size()));
+		glDrawElementsInstanced(GL_TRIANGLE_STRIP, 4, GL_UNSIGNED_INT, NULL, static_cast<GLsizei>(m_instances.size()));
 
 		DisableInstancingVertexAttribArrays();
-	}
 
-	void CRenderer::DrawSpritesInstanced(const SSpriteImage * pSpriteImage, const std::vector<SInstanceBuffer> & instances, STextureVertexBuffer & textureVertexBuffer) {
-		textureVertexBuffer.SetPositions(
-			pSpriteImage->GetTopLeftOffset(),
-			pSpriteImage->GetBottomRightOffset()
-		);
-		textureVertexBuffer.SetTexCoord(pSpriteImage->GetUVLeftTop(), pSpriteImage->GetUVRightBottom());
-
-		DrawTexturesInstanced(pSpriteImage->GetTextureId(), textureVertexBuffer, instances);
+		m_currTexId = 0;
+		m_instances.clear();
 	}
 
 }

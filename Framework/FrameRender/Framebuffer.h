@@ -17,8 +17,8 @@ namespace Frame {
 			return s_pCurrentBindingFramebuffer;
 		}
 
-		void Bind(bool bClearAfterBind = true);
-		void Unbind();
+		void Bind(bool bClearAfterBind = true) const;
+		void Unbind() const;
 
 		const SSpriteImage * GetImage() const {
 			return m_pImage;

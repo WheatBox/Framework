@@ -34,11 +34,15 @@ namespace Frame {
 	}
 
 	std::stack<unsigned int> __FBOStack;
-	void __FBOPush(unsigned int FBO) {
+	static void __FBOPush(unsigned int FBO) {
+		gRenderer->GetRenderQueue()->Render();
+
 		glBindFramebuffer(GL_FRAMEBUFFER, FBO);
 		__FBOStack.push(FBO);
 	}
-	void __FBOPop() {
+	static void __FBOPop() {
+		gRenderer->GetRenderQueue()->Render();
+
 		if(__FBOStack.empty()) {
 			glBindFramebuffer(GL_FRAMEBUFFER, 0);
 			return;
@@ -51,7 +55,7 @@ namespace Frame {
 		}
 	}
 
-	void CFramebuffer::Bind(bool bClearAfterBind) {
+	void CFramebuffer::Bind(bool bClearAfterBind) const {
 		__FBOPush(m_FBO);
 		gCamera->PushOntoStack();
 
@@ -66,7 +70,7 @@ namespace Frame {
 		}
 	}
 
-	void CFramebuffer::Unbind() {
+	void CFramebuffer::Unbind() const {
 		__FBOPop();
 		gCamera->PopFromStack();
 	}

@@ -3,6 +3,7 @@
 #include "../FrameRender/DefaultShaders.h"
 #include "../FrameRender/Renderer.h"
 #include "../FrameRender/RendererBase.h"
+#include "../FrameRender/Shader.h"
 #include "../FrameCore/Log.h"
 
 #include <glad/glad.h>
@@ -10,24 +11,37 @@
 
 namespace Frame {
 
+	static CShader * pDefaultShader = nullptr;
+
 	CTextRenderer::CTextRenderer(CRenderer * pRenderer)
 		: m_pRenderer { pRenderer }
-		, m_pDefaultShader { new CShader {} }
 	{
-		if(!m_pDefaultShader->CompileFiles(DEFAULT_TEXT_SHADER_FILES)) {
-			Log::Log(Log::ELevel::Error, "Failed to load or compile default text shader files: %s; %s; So now using in-build default text shaders", DEFAULT_TEXT_SHADER_FILES);
-			m_pDefaultShader->Compile(DEFAULT_TEXT_SHADER);
+		if(!pDefaultShader) {
+			pDefaultShader = new CShader;
+			if(!pDefaultShader->CompileFiles(DEFAULT_TEXT_SHADER_FILES)) {
+				Log::Log(Log::ELevel::Error, "Failed to load or compile default text shader files: %s; %s; So now using in-build default text shaders", DEFAULT_TEXT_SHADER_FILES);
+				pDefaultShader->Compile(DEFAULT_TEXT_SHADER);
+			}
 		}
-		m_pDefaultShader->SetUniformInt("u_BaseTexture", 0);
-		SetShader(m_pDefaultShader);
+		SetShader(pDefaultShader);
+		m_pRenderer->SetUniformInt("u_BaseTexture", 0);
 	}
 
-	CTextRenderer::~CTextRenderer() {
-		delete m_pDefaultShader;
+	void CTextRenderer::ResetShader() {
+		SetShader(pDefaultShader);
+	}
+
+	void CTextRenderer::SetShader(const CShader * pShader) {
+		m_pShader = pShader;
+		m_pRenderer->__UseShader(m_pShader);
+	}
+
+	const CShader * CTextRenderer::GetShader() const {
+		return m_pShader;
 	}
 
 	void CTextRenderer::DrawCharacterTexture(CFont::SCharacter * pCharacter, Vec2 vPos) {
-		m_pShader->SetUniformVec2("u_vPos", vPos.x, vPos.y);
+		m_pRenderer->SetUniformVec2("u_vPos", vPos.x, vPos.y);
 		RendererBase::BindVAO(pCharacter->m_VAO);
 		RendererBase::BindTextureId(pCharacter->textureId);
 		glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
@@ -57,7 +71,7 @@ if(!m_pFont) { \
 	vBasePos.y += m_pFont->GetLineHeight(); \
 	vCurrPos.x = vBasePos.x;
 
-	void CTextRenderer::DrawTextBlended(UnicodeStringView unicodeText, const Vec2 & vPos, const ColorRGB & rgb, float alpha) {
+	void CTextRenderer::DrawText(UnicodeStringView unicodeText, const Vec2 & vPos, const ColorRGB & rgb, float alpha) {
 		__DRAWTEXT_CHECK_FONT_BEFORE_DRAWING
 
 		UseMyShader(rgb, alpha);
@@ -93,11 +107,11 @@ if(!m_pFont) { \
 		return __wordCharSet.find(character) != __end;
 	}
 
-	void CTextRenderer::DrawTextAutoWrapBlended(UnicodeStringView unicodeText, const Vec2 & vPos, float _maxLineWidth, const ColorRGB & rgb, float alpha) {
+	void CTextRenderer::DrawTextAutoWrap(UnicodeStringView unicodeText, const Vec2 & vPos, float _maxLineWidth, const ColorRGB & rgb, float alpha) {
 		__DRAWTEXT_CHECK_FONT_BEFORE_DRAWING
 
 		if(_maxLineWidth <= 0.f) {
-			DrawTextBlended(unicodeText, vPos, rgb, alpha);
+			DrawText(unicodeText, vPos, rgb, alpha);
 			return;
 		}
 
@@ -110,7 +124,7 @@ if(!m_pFont) { \
 		);
 	}
 
-	void CTextRenderer::DrawTextAutoWrapLineFormatsAlignBlended(UnicodeStringView unicodeText, const Vec2 & vPos, const std::vector<CFont::STextAutoWrapLineFormat> & textAutoWrapLineFormats, ETextHAlign halign, ETextVAlign valign, const ColorRGB & rgb, float alpha) {
+	void CTextRenderer::DrawTextAutoWrapLineFormatsAlign(UnicodeStringView unicodeText, const Vec2 & vPos, const std::vector<CFont::STextAutoWrapLineFormat> & textAutoWrapLineFormats, ETextHAlign halign, ETextVAlign valign, const ColorRGB & rgb, float alpha) {
 		if(textAutoWrapLineFormats.empty()) {
 			return;
 		}
@@ -149,9 +163,9 @@ if(!m_pFont) { \
 	}
 
 	void CTextRenderer::UseMyShader(const ColorRGB & rgb, float alpha) {
-		m_pShader->Use();
-		m_pShader->SetUniformVec4("u_vColor", ONERGB(rgb), alpha);
-		m_pRenderer->SetShaderProjectionMatrix(m_pShader);
+		m_pRenderer->__UseShader(m_pShader);
+		m_pRenderer->__SetUniformProjMat();
+		m_pRenderer->SetUniformVec4("u_vColor", ONERGB(rgb), alpha);
 	}
 
 #undef __DRAWTEXT_NEXTLINE
