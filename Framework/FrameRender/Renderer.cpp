@@ -76,8 +76,10 @@ namespace Frame {
 		m_pRenderQueue->Render();
 	}
 
-	void CRenderer::Clear(ColorRGB color, float alpha) const {
-		m_pRenderQueue->Render();
+	void CRenderer::Clear(ColorRGB color, float alpha, bool processRenderQueue) const {
+		if(processRenderQueue) {
+			m_pRenderQueue->Render();
+		}
 		glClearColor(ONERGB(color), alpha);
 		glClear(GL_COLOR_BUFFER_BIT);
 	}

@@ -60,7 +60,7 @@ namespace Frame {
 		void RenderBegin() const;
 		void RenderEnd() const;
 
-		void Clear(ColorRGB color, float alpha) const;
+		void Clear(ColorRGB color, float alpha, bool processRenderQueue = true) const;
 
 		void SetBackgroundColor(const ColorRGB & rgb) { m_backgroundColor = rgb; }
 		const ColorRGB & GetBackgroundColor() const { return m_backgroundColor; }
