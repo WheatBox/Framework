@@ -129,7 +129,10 @@ namespace Frame {
 		CStaticSprite() = delete;
 		CStaticSprite(const char * filename, bool bGenerateMipMap = true);
 		CStaticSprite(const CTextureAtlas * pTextureAtlas, const char * uvKey);
+		CStaticSprite(const Frame::Vec2i size, const unsigned char * data, int channels, const Frame::Vec2 & origin);
 		virtual ~CStaticSprite();
+
+		static const CStaticSprite * GetErrorSprite();
 
 		/* ---------- ISprite ---------- */
 		virtual const Vec2i & GetSize() const override { return m_size; }

@@ -3,18 +3,19 @@
 #define DEFAULT_SPRITE_SHADER_FILES \
 	"./Shaders/Sprite.vert", "./Shaders/Sprite.frag"
 #define DEFAULT_SPRITE_SHADER \
-"#version 330 core\n \
-layout (location = 0) in vec3 aPos; \
-layout (location = 1) in vec4 aColor; \
-layout (location = 2) in vec2 aTexCoord; \
-out vec4 vColor; \
-out vec2 vTexCoord; \
-uniform mat3 u_mProj; \
-void main() { \
-	gl_Position = vec4((vec3(aPos.x, aPos.y, 1.f) * u_mProj).xy, aPos.z, 1.f); \
-	vColor = aColor; \
-	vTexCoord = aTexCoord; \
-}" \
+"#version 330 core" \
+"layout (location = 0) in vec2 aUV;" \
+"layout (location = 1) in mat3 iTrans;" \
+"layout (location = 4) in vec4 iColor;" \
+"layout (location = 5) in vec4 iTexCoord;" \
+"out vec4 vColor;" \
+"out vec2 vTexCoord;" \
+"uniform mat3 u_mProj;" \
+"void main() {" \
+"	gl_Position = vec4((vec3(aUV.x, aUV.y, 1.0) * iTrans * u_mProj).xy, 0.0, 1.0);" \
+"	vColor = iColor;" \
+"	vTexCoord = mix(iTexCoord.xy, iTexCoord.zw, aUV);" \
+"}" \
 , \
 "#version 330 core\n \
 in vec4 vColor; \

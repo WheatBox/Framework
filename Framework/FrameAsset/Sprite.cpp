@@ -101,8 +101,19 @@ namespace Frame {
 		m_pImage = new SSpriteImage { pTextureAtlas->GetTextureId(), uvLT, uvRB, m_size, m_origin };
 	}
 
+	CStaticSprite::CStaticSprite(const Frame::Vec2i size, const unsigned char * data, int channels, const Frame::Vec2 & origin) {
+		m_size = size;
+		m_origin = origin;
+		m_pImage = new SSpriteImage { data, channels, m_size, m_origin };
+	}
+
 	CStaticSprite::~CStaticSprite() {
 		delete m_pImage;
+	}
+
+	const CStaticSprite * CStaticSprite::GetErrorSprite() {
+		static CStaticSprite * p = new CStaticSprite { { __errorSpriteDataWidth, __errorSpriteDataHeight }, __errorSpriteData, __errorSpriteDataChannel, Frame::Vec2Cast<float>(Frame::Vec2i { __errorSpriteDataWidth, __errorSpriteDataHeight }) * .5f };
+		return p;
 	}
 
 	CAnimatedSprite::CAnimatedSprite(const char * stripFilename, int frameCount) {

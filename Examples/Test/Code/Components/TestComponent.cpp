@@ -434,7 +434,7 @@ void CTestComponent2::ProcessEvent(const Frame::EntityEvent::SEvent & event) {
 #endif
 #if 1
 		{
-			Frame::gRenderer->DrawSprite(m_pSprite->GetImage(), { 300, -150 });
+			Frame::gRenderer->DrawSprite(Frame::CStaticSprite::GetErrorSprite()->GetImage(), { 300, -150 });
 
 			m_pFramebuffer->Bind();
 			Frame::gRenderer->pShapeRenderer->DrawRectangle(50, 150, 0xCCCC00, 1.f);
