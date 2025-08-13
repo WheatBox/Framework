@@ -91,6 +91,14 @@ namespace Frame {
 				}};
 		}
 
+		static Matrix33_tpl<T> CreateShear(const Frame::Vec2_tpl<T> & shear) {
+			return {{
+					1.f, shear.x, 0.f,
+					shear.y, 1.f, 0.f,
+					0.f, 0.f, 1.f
+				}};
+		}
+
 		// TRS
 		// translation * rotation * scale
 		static Matrix33_tpl<T> CreateTransform(const Frame::Vec2_tpl<T> & v, float rot, const Frame::Vec2_tpl<T> & scale) {
