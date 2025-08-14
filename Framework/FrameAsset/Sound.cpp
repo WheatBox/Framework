@@ -46,6 +46,8 @@ namespace Frame {
 			Log::Log(Log::ELevel::Error, "Sound file %s: Failed to read all frames: read %ld/%ld", filename, readCount, totalSamples);
 		}
 
+		int channels = sfInfo.channels;
+
 		// 立体声转单声道
 		// Stereo to Mono
 		if(stereoToMono_ifItIsStereo && format == AL_FORMAT_STEREO16) {
@@ -58,9 +60,10 @@ namespace Frame {
 			delete[] data;
 			data = monoData;
 			format = AL_FORMAT_MONO16;
+			channels = 1;
 		}
 
-		alBufferData(m_bufferId, format, data, static_cast<ALsizei>(sfInfo.frames * sizeof(* data)), sfInfo.samplerate);
+		alBufferData(m_bufferId, format, data, static_cast<ALsizei>(sfInfo.frames * channels * sizeof(* data)), sfInfo.samplerate);
 		if(ALenum error = alGetError(); error != AL_NO_ERROR) {
 			Log::Log(Log::ELevel::Error, "Sound file %s: Failed to fill OpenAL buffer: %s", filename, alGetString(error));
 		}
