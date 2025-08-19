@@ -43,7 +43,12 @@ namespace Frame {
 
 		// 弧度 | Radian
 		T IncludedAngle(const Vec2_tpl<T> & v) const {
-			return std::acos(Dot({ v.x, v.y }) / (Length() * std::sqrt(v.x * v.x + v.y * v.y)));
+			T len1 = Length();
+			T len2 = v.Length();
+			if(len1 == 0 || len2 == 0) {
+				return 0;
+			}
+			return std::acos(Clamp<T>(Dot({ v.x, v.y }) / (len1 * len2), -1, 1));
 		}
 		T IncludedAngleDegree(const Vec2_tpl<T> & v) const { return RadToDeg(IncludedAngle(v)); }
 
