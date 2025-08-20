@@ -7,6 +7,8 @@
 #include "Components/TestComponent.h"
 
 #include <iostream>
+#include <sstream>
+#include <iomanip>
 
 void CApplication::Initialize() {
 	//SetVSync(true);
@@ -29,6 +31,33 @@ void CApplication::Initialize() {
 		show();
 		pEntity->RemoveComponent<CTestComponent>();
 		show();
+	}
+
+	const auto GUIDGenTest = []() {
+		Frame::GUID guid = Frame::GUID::Generate();
+		
+		std::ostringstream oss;
+		oss << std::uppercase << std::hex << std::setfill('0');
+
+		unsigned char bytes[16];
+		for (int i = 0; i < 8; i++) {
+			bytes[7 - i] = static_cast<unsigned char>(guid.high >> (i * 8));
+			bytes[15 - i] = static_cast<unsigned char>(guid.low >> (i * 8));
+		}
+
+		oss << '{';
+		for (int i = 0; i < 16; i++) {
+			oss << std::setw(2) << static_cast<int>(bytes[i]);
+			if(i == 3 || i == 5 || i == 7 || i == 9) {
+				oss << '-';
+			}
+		}
+		oss << '}';
+
+		std::cout << oss.str() << std::endl;
+		};
+	for(int i = 0; i < 10; i++) {
+		GUIDGenTest();
 	}
 
 	Frame::gRenderer->SetBackgroundColor(0x00004F);
