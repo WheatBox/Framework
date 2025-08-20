@@ -9,14 +9,21 @@ namespace Frame {
 		uint64 low = 0;
 
 		GUID() = default;
-		GUID(const char * sz) {
-			Set(sz);
+		GUID(uint64 _high, uint64 _low) {
+			Set(_high, _low);
+		}
+		GUID(const char * szGuid) {
+			Set(szGuid);
 		}
 
 		bool operator ==(const GUID & guid) const {
 			return guid.high == high && guid.low == low;
 		}
 
+		void Set(uint64 _high, uint64 _low) {
+			high = _high;
+			low = _low;
+		}
 		void Set(const char * szGuid);
 
 		// UUID v4
