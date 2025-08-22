@@ -41,6 +41,27 @@ namespace Frame {
 		glBlendEquationSeparate(static_cast<int>(colorEquation), static_cast<int>(alphaEquation));
 	}
 
+	void CRenderer::SetActiveTextureUnit(int unitIndex) {
+		m_pRenderQueue->Render();
+		glActiveTexture(GL_TEXTURE0 + unitIndex);
+		m_activeTextureUnit = unitIndex;
+	}
+
+	int CRenderer::GetActiveTextureUnit() const {
+		return m_activeTextureUnit;
+	}
+
+	void CRenderer::BindTextureId(unsigned int textureId) const {
+		RendererBase::BindTextureId(textureId);
+	}
+
+	void CRenderer::BindTextureId(unsigned int textureId, int textureUnit) {
+		m_pRenderQueue->Render();
+		glActiveTexture(GL_TEXTURE0 + textureUnit);
+		RendererBase::BindTextureId(textureId);
+		glActiveTexture(GL_TEXTURE0 + m_activeTextureUnit);
+	}
+
 	void CRenderer::Initialize() {
 
 		//glEnable(GL_CULL_FACE);
@@ -65,7 +86,7 @@ namespace Frame {
 		SetShader(pDefaultShader);
 		SetUniformInt("u_BaseTexture", 0);
 
-		glActiveTexture(GL_TEXTURE0);
+		SetActiveTextureUnit(0);
 	}
 
 	void CRenderer::RenderBegin() const {

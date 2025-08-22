@@ -51,6 +51,11 @@ namespace Frame {
 			SetBlendEquation(EBlendEquation::Add);
 		}
 
+		void SetActiveTextureUnit(int unitIndex);
+		int GetActiveTextureUnit() const;
+		void BindTextureId(unsigned int textureId) const;
+		void BindTextureId(unsigned int textureId, int textureUnit);
+
 		void Initialize();
 
 		CShapeRenderer * pShapeRenderer = nullptr;
@@ -135,6 +140,7 @@ namespace Frame {
 		CRenderQueue * m_pRenderQueue = nullptr;
 		const CShader * m_pShader = nullptr;
 		const CShader * m_pUsingShader = nullptr;
+		int m_activeTextureUnit = 0;
 	};
 
 }
