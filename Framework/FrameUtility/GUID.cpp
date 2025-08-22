@@ -5,6 +5,11 @@
 namespace Frame {
 
 void GUID::Set(const char * szGuid) {
+	if(!szGuid) {
+		high = low = 0;
+		return;
+	}
+
 	uint8 val;
 	uint8 i = 31;
 	for(const char * pCurrentChar = szGuid; * pCurrentChar && i >= 0; pCurrentChar++) {
