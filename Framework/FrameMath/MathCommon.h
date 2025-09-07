@@ -37,6 +37,20 @@ namespace Frame {
 		return static_cast<int>(n) - (n < 0.0);
 	}
 
+	constexpr int Ceil(float n) {
+		return static_cast<int>(n) + (n > 0.f && n != static_cast<int>(n));
+	}
+	constexpr int Ceil(double n) {
+		return static_cast<int>(n) + (n > 0.0 && n != static_cast<int>(n));
+	}
+
+	constexpr int Round(float n) {
+		return static_cast<int>(n + 0.5f);
+	}
+	constexpr int Round(double n) {
+		return static_cast<int>(n + 0.5);
+	}
+
 	template<typename T>
 	constexpr T Clamp(T n, T low, T high) {
 		if(n < low) {

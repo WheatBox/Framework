@@ -84,12 +84,14 @@ namespace Frame {
 		int GetWidth() const { return W; }
 		int GetHeight() const { return H; }
 
-		void ForEachIn(const std::function<void (T * data, int i)> & func) {
+		template<typename Func>
+		constexpr void ForEachIn(Func && func) {
 			for(int i = 0, size = H * W; i < size; i++) {
 				func(this->data, i);
 			}
 		}
-		void ForEachOf(const std::function<void (T & elem)> & func) {
+		template<typename Func>
+		constexpr void ForEachOf(Func && func) {
 			for(auto & elem : data) {
 				func(elem);
 			}

@@ -13,8 +13,8 @@ namespace Frame {
 		float v = std::max({ r1, g1, b1 });
 		float v_minus_min = v - std::min({ r1, g1, b1 });
 
-		* destV = static_cast<uint8>(v);
-		* destS = (v == 0) ? 0 : static_cast<uint8>(v_minus_min / v);
+		* destV = static_cast<uint8>(Round(v * 100.f));
+		* destS = (v == 0) ? 0 : static_cast<uint8>(Round(v_minus_min / v * 100.f));
 
 		uint16 h = 0;
 		
