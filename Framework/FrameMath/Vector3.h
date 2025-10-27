@@ -27,7 +27,7 @@ namespace Frame {
 		Vec3_tpl<T> operator -() const { return { -x, -y, -z }; }
 
 		bool operator ==(const Vec3_tpl<T> & v) const { return this->x == v.x && this->y == v.y && this->z == v.z; }
-		bool operator !=(const Vec3_tpl<T> & v) const { return this->x != v.x || this->y != v.y || this->z == v.z; }
+		bool operator !=(const Vec3_tpl<T> & v) const { return this->x != v.x || this->y != v.y || this->z != v.z; }
 
 		T Dot(const Vec3_tpl<T> & v) const {
 			return this->x * v.x + this->y * v.y + this->z * v.z;
